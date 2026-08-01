@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Response;
 use App\Exports\KuesionerAlumniExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\MasterAlumni;
@@ -49,8 +48,13 @@ class KuesionerController extends Controller
             $request->validate([
                 'no_mahasiswa' => 'required',
                 'nama' => 'required',
+                'email' => 'required|email|regex:/@gmail\.com$/i',
                 'f8_status_saat_ini' => 'required',
                 'f301' => 'required',
+            ], [
+                'email.required' => 'Alamat email wajib diisi.',
+                'email.email' => 'Format alamat email tidak valid.',
+                'email.regex' => 'Email harus menggunakan @gmail.com.',
             ]);
 
             $nimInput  = $request->no_mahasiswa;
@@ -80,22 +84,12 @@ class KuesionerController extends Controller
                     ->withErrors(['autentikasi' => '❌ Nama yang Anda masukkan tidak sesuai dengan data pemilik NIM ini.']);
             }
 
-            // 2. String checklist f16
-            $alasan_terpilih = [];
-            for ($i = 1; $i <= 12; $i++) {
-                $key = 'f16' . str_pad($i, 2, '0', STR_PAD_LEFT);
-                if ($request->has($key)) {
-                    $alasan_terpilih[] = $key;
-                }
-            }
-            $f16_alasan_string = !empty($alasan_terpilih) ? implode(',', $alasan_terpilih) : null;
-
-            // 3. Direct Insert ke phpMyAdmin
+            // 2. Direct Insert ke phpMyAdmin
             DB::table('kuesioner_alumnis')->updateOrInsert(
                 ['no_mahasiswa' => $request->no_mahasiswa],
                 [
                 'user_id' => 1,
-                'kode_PT' => $request->kode_PT ?? '072004',
+                'kode_PT' => $request->kode_PT ?? '101004',
                 'tahun_lulus' => $request->tahun_lulus,
                 'kode_prodi' => $request->kode_prodi,
                 'nama' => $request->nama,
@@ -865,7 +859,7 @@ class KuesionerController extends Controller
                     '5'=> '5',
                     default => '3'
                 },
-                'f23_riset' => match ($request->f22 ?? $request->f23_riset) {
+                'f23_riset' => match ($request->f23 ?? $request->f23_riset) {
                     '1'=> '1',
                     '2'=> '2',
                     '3'=> '3',
@@ -1336,14 +1330,14 @@ class KuesionerController extends Controller
         })
             ->orderBy('tahun_lulus', 'asc')    // Sesuai kolom tahun kelulusan
             ->orderBy('kode_prodi', 'asc')     // Sesuai kolom kode prodi
-            ->orderBy('Nama', 'asc')           // <-- DIUBAH KE 'Nama' (Sesuai Gambar Tabel Anda)
+            ->orderBy('nama', 'asc')           // <-- DIUBAH KE 'nama' (Sesuai Gambar Tabel Anda)
             ->get();
 
-        // 2. Logika Hitung Keaktifan Mencari Kerja
+        // 2. Logika Hitung Keaktifan Mencari Kerja (sama dengan dashboard: 3/4 = Aktif)
         $keaktifan = ['Aktif' => 0, 'Tidak Aktif' => 0];
         foreach ($dataAlumni as $d) {
-            $jawaban = trim(strtolower($d->f10_aktif_mencari_kerja ?? ''));
-            if ($jawaban !== '' && str_contains($jawaban, 'ya')) { 
+            $jawaban = trim((string)($d->f10_aktif_mencari_kerja ?? ''));
+            if ($jawaban === '3' || $jawaban === '4') {
                 $keaktifan['Aktif']++;
             } else {
                 $keaktifan['Tidak Aktif']++;

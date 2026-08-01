@@ -69,20 +69,20 @@ return new class extends Migration
             $table->string('f15_tingkat_paling_tepat')->nullable();
 
             // --- F17 MATRIK KOMPETENSI ALUMNI ---
-            $table->integer('f1761_etika_dikuasai')->nullable();
-            $table->integer('f1762_etika_diperlukan')->nullable();
-            $table->integer('f1763_keahlian_ilmu_dikuasai')->nullable();
-            $table->integer('f1764_keahlian_ilmu_diperlukan')->nullable();
-            $table->integer('f1765_bahasa_inggris_dikuasai')->nullable();
-            $table->integer('f1766_bahasa_inggris_diperlukan')->nullable();
-            $table->integer('f1767_it_dikuasai')->nullable();
-            $table->integer('f1768_it_diperlukan')->nullable();
-            $table->integer('f1769_komunikasi_dikuasai')->nullable();
-            $table->integer('f1770_komunikasi_diperlukan')->nullable();
-            $table->integer('f1771_tim_dikuasai')->nullable();
-            $table->integer('f1772_tim_diperlukan')->nullable();
-            $table->integer('f1773_diri_dikuasai')->nullable();
-            $table->integer('f1774_diri_diperlukan')->nullable();
+            $table->string('f1701_A')->nullable();
+            $table->string('f1701_B')->nullable();
+            $table->string('f1702_A')->nullable();
+            $table->string('f1702_B')->nullable();
+            $table->string('f1703_A')->nullable();
+            $table->string('f1703_B')->nullable();
+            $table->string('f1704_A')->nullable();
+            $table->string('f1704_B')->nullable();
+            $table->string('f1705_A')->nullable();
+            $table->string('f1705_B')->nullable();
+            $table->string('f1706_A')->nullable();
+            $table->string('f1706_B')->nullable();
+            $table->string('f1707_A')->nullable();
+            $table->string('f1707_B')->nullable();
 
             // --- F2 PENEKANAN METODE PEMBELAJARAN KULIAH ---
             $table->string('f21_perkuliahan')->nullable();
@@ -101,7 +101,7 @@ return new class extends Migration
             // --- F4 CARA MENCARI PEKERJAAN ---
             $table->boolean('f401_iklan_koran_brosur')->default(0);
             $table->boolean('f402_melamar_tanpa_lowongan')->default(0);
-            $table->boolean('f403_bursa_pameran-online')->default(0);
+            $table->boolean('f403_bursa_pameran_online')->default(0);
             $table->boolean('f404_internet_iklan_online')->default(0);
             $table->boolean('f405_dihubungi_perusahaan')->default(0);
             $table->boolean('f406_menghubungi_kemenakertrans')->default(0);
@@ -114,7 +114,7 @@ return new class extends Migration
             $table->boolean('f413_penempatan_kerja_magang')->default(0);
             $table->boolean('f414_tempat_kerja_sama_kuliah')->default(0);
             $table->boolean('f415_lainnya')->default(0);
-            $table->string('f416_lainnya_teks')->nullable();
+            $table->string('f416_tuliskan')->nullable();
 
             // --- F6 PERUSAHAAN DILAMAR ---
             $table->integer('f6_perusahaan_dilamar')->nullable();
@@ -127,7 +127,7 @@ return new class extends Migration
 
             // --- F10 KEAKTIFAN MENCARI PEKERJAAN ---
             $table->string('f10_aktif_mencari_kerja')->nullable();
-            $table->string('f10_aktif_mencari_kerja_lainnya')->nullable();
+            $table->string('f10_lainnya')->nullable();
 
             // --- F16 ALASAN MENGAMBIL PEKERJAAN TIDAK SESUAI ---
             $table->boolean('f1601_pertanyaan_tidak_sesuai')->default(0);
@@ -142,8 +142,8 @@ return new class extends Migration
             $table->boolean('f1610_lokasi_dekat_rumah')->default(0);
             $table->boolean('f1611_menjamin_kebutuhan_keluarga')->default(0);
             $table->boolean('f1612_awal_menitip_karir')->default(0);
-            $table->boolean('f1613_lainnya')->default(0);
-            $table->string('f1614_lainnya_teks')->nullable();
+            $table->string('f1613_lainnya', 5)->nullable();
+            $table->string('f1614_tuliskan')->nullable();
             $table->timestamps();
         });
     }

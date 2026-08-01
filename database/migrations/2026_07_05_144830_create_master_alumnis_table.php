@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('kode_prodi', 10)->nullable();
             $table->string('nama', 150);
             $table->string('nik', 20)->unique();
+            $table->string('tahun_lulus', 10)->nullable();
             $table->timestamps();
         });
     }
