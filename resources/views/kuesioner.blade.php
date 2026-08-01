@@ -5,47 +5,161 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tracer Study - LPKM UMMY</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background-attachment: fixed;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 20% 15%, rgba(251, 191, 36, 0.13), transparent 42%),
+                radial-gradient(circle at 85% 10%, rgba(56, 189, 248, 0.15), transparent 42%),
+                radial-gradient(circle at 50% 95%, rgba(168, 85, 247, 0.12), transparent 48%);
+        }
+
+        .glass {
+            background: linear-gradient(160deg, rgba(30, 41, 59, 0.88), rgba(15, 23, 42, 0.78));
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .grad-text {
+            background: linear-gradient(90deg, #fbbf24, #f472b6, #38bdf8, #fbbf24);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shine 6s linear infinite;
+        }
+        @keyframes shine { to { background-position: 300% 0; } }
+
+        @keyframes float3d {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .float-3d {
+            animation: float3d 6s ease-in-out infinite;
+        }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+        .fade-up { animation: fadeUp .6s ease both; }
+
+        /* Input gelap seragam */
+        .inp {
+            width: 100%;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgb(71 85 105);
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            color: #fff;
+            outline: none;
+            color-scheme: dark;
+            transition: box-shadow .2s ease, border-color .2s ease, transform .2s ease;
+        }
+        .inp:focus {
+            border-color: #fbbf24;
+            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.22), 0 10px 20px -10px rgba(0, 0, 0, 0.6);
+            transform: translateY(-1px);
+        }
+        .inp::placeholder { color: #64748b; }
+        select.inp option { background: #1e293b; color: #fff; }
+        input[type="date"].inp::-webkit-calendar-picker-indicator { filter: invert(0.7); }
+
+        .card {
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(30, 41, 59, 0.42);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            box-shadow: 0 16px 40px -18px rgba(0, 0, 0, 0.6);
+            transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease;
+        }
+        .card:hover {
+            border-color: rgba(251, 191, 36, 0.35);
+            box-shadow: 0 22px 48px -18px rgba(0, 0, 0, 0.7), 0 0 24px -10px rgba(251, 191, 36, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fbbf24;
+            border-left: 4px solid #fbbf24;
+            padding-left: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .color-scheme-dark { color-scheme: dark; }
+
+        .choice {
+            transition: background .2s ease, border-color .2s ease, transform .2s ease;
+            cursor: pointer;
+        }
+        .choice:hover {
+            background: rgba(51, 65, 85, 0.7);
+            border-color: rgba(251, 191, 36, 0.5);
+            transform: translateY(-1px);
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 6px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-800 antialiased min-h-screen pb-16">
+<body class="text-gray-200 font-sans antialiased min-h-screen pb-16">
 
     <div class="max-w-4xl mx-auto px-4 pt-8">
-        
+
         <!-- HEADER -->
-        <div class="border border-black bg-blue-800 text-white p-6 rounded-t-xl shadow-md text-center">
-            <h1 class="text-2xl font-bold tracking-wide uppercase">KUESIONER TRACER STUDY UNIVERSITAS MAHAPUTRA MUHAMMAD YAMIN</h1>
-            <p class="text-sm mt-1 text-blue-200">Lembaga Pengembangan Karir dan Mahasiswa (LPKM)</p>
+        <div class="glass rounded-2xl shadow-2xl overflow-hidden fade-up">
+            <div class="relative p-6 md:p-9 text-center">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-slate-800/30 to-fuchsia-900/30 pointer-events-none"></div>
+                <div class="relative">
+                    <div class="text-5xl md:text-6xl mb-3 float-3d" style="filter: drop-shadow(0 12px 16px rgba(0,0,0,0.45));">🎓</div>
+                    <h1 class="text-xl md:text-3xl font-extrabold tracking-wide uppercase grad-text">Kuesioner Tracer Study</h1>
+                    <p class="text-sm mt-2 text-blue-300">Universitas Mahaputra Muhammad Yamin</p>
+                    <p class="text-xs text-gray-400 mt-1">Lembaga Pengembangan Karir dan Mahasiswa (LPKM)</p>
+                </div>
+            </div>
         </div>
 
         @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow-md mb-6 mt-4" role="alert">
+        <div class="fade-up bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 px-4 py-3 rounded-xl shadow-lg mb-6 mt-6" role="alert">
             <span class="block sm:inline font-medium">{{ session('success') }}</span>
         </div>
         @endif
 
-        <form action="{{ route('kuesioner.store') }}" method="POST" class="bg-blue-500 border-x border-b border-black p-8 rounded-b-xl shadow-md space-y-10">
-            @csrf 
+        <div class="mt-6 text-center text-xs text-gray-500 fade-up">
+            Bidang bertanda <span class="text-amber-400 font-semibold">*</span> wajib diisi. Silakan isi dengan jujur dan teliti.
+        </div>
+
+        <form action="{{ route('kuesioner.store') }}" method="POST" class="space-y-6 mt-4">
+            @csrf
 
             @if($errors->has('autentikasi'))
-                <div style="background-color: #ef4444; color: white; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-weight: bold;">
+                <div class="bg-rose-950/80 border border-rose-700/60 text-rose-300 px-4 py-3 rounded-xl shadow-lg font-semibold">
                     {{ $errors->first('autentikasi') }}
                 </div>
             @endif
 
             <!-- F1: IDENTITAS UTAMA ALUMNI -->
-            <div class="border border-gray-500 bg-blue-100 p-4 rounded-lg shadow-sm">
-                <h2 class="text-xl font-bold text-blue-800 mb-4 border-l-4 border-blue-800 pl-3">Identitas Alumni</h2>
+            <div class="card p-5 md:p-6 fade-up">
+                <h2 class="section-title">Identitas Alumni</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Induk Mahasiswa (NIM) *</label>
-                        <input type="text" name="no_mahasiswa" value="{{ old('no_mahasiswa') }}" required class="w-full border border-gray-500 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-amber-50">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Nomor Induk Mahasiswa (NIM) <span class="text-amber-400">*</span></label>
+                        <input type="text" name="no_mahasiswa" value="{{ old('no_mahasiswa') }}" required class="inp">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Kode Perguruan Tinggi *</label>
-                        <input type="text" name="kode_PT" value="101004" value="{{ old('kode_PT', '101004') }}" required class="w-full bg-gray-50 border border-gray-500 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-amber-50">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Kode Perguruan Tinggi <span class="text-amber-400">*</span></label>
+                        <input type="text" name="kode_PT" value="{{ old('kode_PT', '101004') }}" required class="inp">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Lulus *</label>
-                        <select type="number" name="tahun_lulus" required class="w-full border border-gray-500 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-amber-50">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Tahun Lulus <span class="text-amber-400">*</span></label>
+                        <select name="tahun_lulus" required class="inp">
                             <option value="" disabled selected>-- Pilih Tahun Lulus --</option>
                             @php
                                 $tahunMulai = 2020;
@@ -57,8 +171,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Kode Program Studi *</label>
-                        <select name="kode_prodi" required class="w-full border border-gray-500 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-amber-50">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Kode Program Studi <span class="text-amber-400">*</span></label>
+                        <select name="kode_prodi" required class="inp">
                             <option value="" disabled {{ old('kode_prodi') == '' ? 'selected' : '' }}>-- Pilih Prodi --</option>
                             <option value="54211" {{ old('kode_prodi') == '54211' ? 'selected' : '' }}>54211 Agroteknologi</option>
                             <option value="62201" {{ old('kode_prodi') == '62201' ? 'selected' : '' }}>62201 Akuntansi</option>
@@ -75,31 +189,34 @@
                         </select>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap *</label>
-                        <input type="text" name="nama" value="{{ old('nama') }}" required class="w-full border border-gray-500 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-amber-50">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Nama Lengkap <span class="text-amber-400">*</span></label>
+                        <input type="text" name="nama" value="{{ old('nama') }}" required class="inp">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon / HP *</label>
-                        <input type="text" name="no_hp" value="{{ old('no_hp') }}" minlength="10" maxlength="13" pattern="08[0-9]*" required class="w-full border border-gray-500 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-amber-50">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Nomor Telepon / HP <span class="text-amber-400">*</span></label>
+                        <input type="text" name="no_hp" id="no_hp" value="{{ old('no_hp') }}" minlength="10" maxlength="13" pattern="08[0-9]*" required class="inp">
+                        <span id="hp_error" class="hidden text-rose-400 text-xs mt-1">Nomor HP harus diawali 08 dan minimal 10 digit.</span>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Email *</label>
-                        <input type="email" name="email" value="{{ old('email') }}" required class="w-full border border-gray-500 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-amber-50">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Alamat Email <span class="text-amber-400">*</span></label>
+                        <input type="email" name="email" id="email" value="{{ old('email') }}" pattern="[a-zA-Z0-9._%+-]+@gmail\.com" title="Email harus menggunakan @gmail.com" required class="inp">
+                        <span id="email_error" class="hidden text-rose-400 text-xs mt-1">Email harus menggunakan @gmail.com</span>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">NIK (Nomor Induk Kependudukan) *</label>
-                        <input type="text" name="nik" id="nik" value="{{ old('nik') }}" oninput="validasiAngkaNIK(this)" minlength="16" maxlength="16" required class="w-full border border-gray-500 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-amber-50">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">NIK (Nomor Induk Kependudukan) <span class="text-amber-400">*</span></label>
+                        <input type="text" name="nik" id="nik" value="{{ old('nik') }}" oninput="validasiAngkaNIK(this)" minlength="16" maxlength="16" required class="inp">
+                        <span id="nik_error" class="hidden text-rose-400 text-xs mt-1">NIK harus berjumlah tepat 16 digit angka.</span>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">NPWP</label>
-                        <input type="text" name="npwp" value="{{ old('npwp') }}" class="w-full border border-gray-500 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-amber-50">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">NPWP</label>
+                        <input type="text" name="npwp" value="{{ old('npwp') }}" class="inp">
                     </div>
                 </div>
             </div>
 
             <!-- SECTION F8: STATUS SAAT INI -->
-             <div class="border border-gray-500 bg-blue-100 p-4 rounded-lg shadow-sm">
-                <h2 class="text-xl font-bold text-blue-800 mb-2 border-l-4 border-blue-800 pl-3">Jelaskan status Anda saat ini?</h2>
+             <div class="card p-5 md:p-6 fade-up">
+                <h2 class="section-title">Jelaskan status Anda saat ini?</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     @foreach([
                         '1' => 'Bekerja (full time/part time)',
@@ -108,30 +225,30 @@
                         '5' => 'Tidak Kerja tetapi sedang mencari kerja',
                         '2' => 'Belum memungkinkan bekerja'
                     ] as $value => $label)
-                    <label class="flex items-center space-x-3 cursor-pointer bg-white p-3 rounded-lg border border-gray-500 hover:bg-blue-50 hover:border-blue-300 transition shadow-xs">
-                        <input type="radio" name="f8_status_saat_ini" value="{{ $value }}" {{ old('f8_status_saat_ini') == $value ? 'checked' : '' }} required class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
-                        <span class="text-sm font-medium text-gray-700">{{ $label }}</span>
+                    <label class="choice flex items-center space-x-3 bg-slate-800/60 p-3 rounded-xl border border-slate-600">
+                        <input type="radio" name="f8_status_saat_ini" value="{{ $value }}" {{ old('f8_status_saat_ini') == $value ? 'checked' : '' }} required class="w-4 h-4 text-amber-400 border-gray-500 focus:ring-amber-400">
+                        <span class="text-sm font-medium text-gray-300">{{ $label }}</span>
                     </label>
                     @endforeach
                 </div>
             </div>
             <!-- SECTION F504: MENDAPAT PEKERJAAN 6 BULAN SETELAH LULUS -->
-    <div class="border border-gray-500 bg-blue-100 p-4 rounded-lg shadow-sm">
-        <h2 class="text-xl font-bold text-blue-800 mb-2 border-l-4 border-blue-800 pl-3">Apakah anda telah mendapatkan pekerjaan <= 6 bulan / termasuk bekerja sebelum lulus ?</h2>
+    <div class="card p-5 md:p-6 fade-up">
+        <h2 class="section-title">Apakah anda telah mendapatkan pekerjaan &le; 6 bulan / termasuk bekerja sebelum lulus ?</h2>
         <div class="space-y-4 mt-3">
             
             <!-- PILIHAN: YA -->
             <div>
                 <div class="flex items-start space-x-3">
-                    <input type="radio" name="f504_mendapat_pekerjaan_6_bulan" id="kerja_ya" value="1" {{ old('f504_mendapat_pekerjaan_6_bulan') == '1' ? 'checked' : '' }} required class="mt-1 w-4 h-4 text-blue-600">
-                    <label for="kerja_ya" class="font-medium cursor-pointer w-full">
+                    <input type="radio" name="f504_mendapat_pekerjaan_6_bulan" id="kerja_ya" value="1" {{ old('f504_mendapat_pekerjaan_6_bulan') == '1' ? 'checked' : '' }} required class="mt-1 w-4 h-4 text-amber-400">
+                    <label for="kerja_ya" class="font-medium cursor-pointer w-full text-gray-200">
                         <span>Ya</span>
 
                         <div class="mt-2 flex flex-col md:flex-row md:space-x-4 space-y-3 md:space-y-0">
 
-                            <div class="flex-1 shadow-sm p-3 rounded border border-gray-500 bg-blue-200">
-                                <span class="block text-xs text-gray-600 mb-1">Dalam berapa bulan anda mendapatkan pekerjaan? (bagi yang sudah bekerja)</span>
-                                <select name="f502_bulan_dapat_kerja_ya" id="input_bulan_ya" required class="w-full border border-gray-500 rounded px-2 py-1 text-sm outline-none bg-amber-50">
+                            <div class="flex-1 bg-slate-800/60 p-3 rounded-xl border border-slate-600">
+                                <span class="block text-xs text-gray-400 mb-1">Dalam berapa bulan anda mendapatkan pekerjaan? (bagi yang sudah bekerja)</span>
+                                <select name="f502_bulan_dapat_kerja_ya" id="input_bulan_ya" required class="inp text-sm">
                                     <option value="" disabled selected>-- Pilih Bulan --</option>
                                     @for ($i = 0; $i <= 6; $i++)
                                         <option value="{{ $i }}" {{ old('f502_bulan_dapat_kerja_ya') !== null && old('f502_bulan_dapat_kerja_ya') == $i ? 'selected' : '' }}>
@@ -141,9 +258,9 @@
                                 </select>
                             </div>
 
-                            <div class="flex-1 shadow-sm p-3 rounded border border-gray-500 bg-blue-200">
-                                <span class="block text-xs text-gray-600 mb-1">Berapa rata-rata pendapatan per bulan? (take home pay)</span>
-                                <input type="number" name="f505_pendapatan_per_bulan" id="input_gaji_ya" value="{{ old('f505_pendapatan_per_bulan') }}" required class="w-full border border-gray-500 rounded px-2 py-1 text-sm outline-none bg-amber-50">
+                            <div class="flex-1 bg-slate-800/60 p-3 rounded-xl border border-slate-600">
+                                <span class="block text-xs text-gray-400 mb-1">Berapa rata-rata pendapatan per bulan? (take home pay)</span>
+                                <input type="number" name="f505_pendapatan_per_bulan" id="input_gaji_ya" value="{{ old('f505_pendapatan_per_bulan') }}" required class="inp text-sm">
                             </div>
 
                         </div>
@@ -153,15 +270,15 @@
 
             <div class="mt-4">
                 <div class="flex items-start space-x-3">
-                    <input type="radio" name="f504_mendapat_pekerjaan_6_bulan" id="kerja_tidak" value="2" {{ old('f504_mendapat_pekerjaan_6_bulan') == '2' ? 'checked' : '' }} class="mt-1 w-4 h-4 text-blue-600">
-                    <label for="kerja_tidak" class="font-medium cursor-pointer w-full">
+                    <input type="radio" name="f504_mendapat_pekerjaan_6_bulan" id="kerja_tidak" value="2" {{ old('f504_mendapat_pekerjaan_6_bulan') == '2' ? 'checked' : '' }} class="mt-1 w-4 h-4 text-amber-400">
+                    <label for="kerja_tidak" class="font-medium cursor-pointer w-full text-gray-200">
                         <span>Tidak</span>
                         
                         <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                             
-                            <div class="flex-1 shadow-sm p-3 rounded border border-gray-500 bg-blue-200">
-                                <span class="block text-xs text-gray-600 mb-1">Di isi jika lebih dari 6 bulan belum mendapatkan pekerjaan</span>
-                                <select name="f502_bulan_dapat_kerja_tidak" id="input_bulan_tidak" required class="w-full border border-gray-500 rounded px-2 py-1 text-sm outline-none bg-amber-50">
+                            <div class="flex-1 bg-slate-800/60 p-3 rounded-xl border border-slate-600">
+                                <span class="block text-xs text-gray-400 mb-1">Di isi jika lebih dari 6 bulan belum mendapatkan pekerjaan</span>
+                                <select name="f502_bulan_dapat_kerja_tidak" id="input_bulan_tidak" required class="inp text-sm">
                                     <option value="" disabled selected>-- Pilih Bulan --</option>
                                     @for ($i = 6; $i <= 12; $i++)
                                         <option value="{{ $i }}" {{ old('f502_bulan_dapat_kerja_tidak') !== null && old('f502_bulan_dapat_kerja_tidak') == $i ? 'selected' : '' }}>
@@ -177,13 +294,13 @@
         </div>
     </div>
             <!-- SECTION F10 & F5b/c/d: SEPUTAR TEMPAT BEKERJA -->
-            <div class="border border-gray-500 bg-blue-100 p-4 rounded-lg shadow-sm">
-                <h2 class="text-xl font-bold text-blue-800 mb-4 border-l-4 border-blue-800 pl-3">Detail Tempat Bekerja</h2>
+            <div id="detailTempatBekerja" class="card p-5 md:p-6 fade-up">
+                <h2 class="section-title">Detail Tempat Bekerja</h2>
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Dimana lokasi tempat Anda bekerja?</label>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Dimana lokasi tempat Anda bekerja?</label>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <select name="f510_provinsi" id="provinsi" required class="w-full border border-gray-500 rounded px-3 py-2 outline-none bg-amber-50">
+                            <select name="f510_provinsi" id="provinsi" required class="inp">
                                 <option value="" disabled {{ old('f510_provinsi') === null ? 'selected' : '' }}>-- Pilih Provinsi --</option>
                                 <option value="Belum Bekerja" {{ old('f510_provinsi') == 'Belum Bekerja' ? 'selected' : '' }}>Belum Bekerja</option>
                                 <option value="Prov. D.K.I. Jakarta" {{ old('f510_provinsi') == 'Prov. D.K.I. Jakarta' ? 'selected' : '' }}>Prov. D.K.I. Jakarta</option>
@@ -223,38 +340,38 @@
                                 <option value="Luar Negeri" {{ old('f510_provinsi') == 'Luar Negeri' ? 'selected' : '' }}>Luar Negeri</option>
                             </select>
 
-                            <select name="f510_kab_kota" id="kab_kota" required disabled data-old="{{ old('f510_kab_kota') }}" class="w-full border border-gray-500 rounded px-3 py-2 outline-none bg-amber-50 disabled:opacity-50">
+                            <select name="f510_kab_kota" id="kab_kota" required disabled data-old="{{ old('f510_kab_kota') }}" class="inp disabled:opacity-50 disabled:cursor-not-allowed">
                                 <option value="" disabled selected>-- Pilih Kabupaten / Kota --</option>
                             </select>
                         </div>
                     </div>
 
                     <div>
-                        <div class="border border-gray-500 bg-amber-50 p-4 rounded-lg">
-                            <span class="block text-sm font-medium text-gray-700 mb-2">Apa jenis perusahaan/instansi/institusi tempat anda bekerja sekarang?</span>
+                        <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
+                            <span class="block text-sm font-medium text-gray-400 mb-2">Apa jenis perusahaan/instansi/institusi tempat anda bekerja sekarang?</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="1" {{ old('f11_jenis_instansi') == '1' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Instansi pemerintah</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="2" {{ old('f11_jenis_instansi') == '6' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>BUMN/BUMD</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="3" {{ old('f11_jenis_instansi') == '7' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Institusi/Organisasi Multilateral</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="4" {{ old('f11_jenis_instansi') == '2' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Organisasi non-profit/Lembaga Swadaya Masyarakat</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="5" {{ old('f11_jenis_instansi') == '3' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Perusahaan swasta</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="6" {{ old('f11_jenis_instansi') == '4' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Wiraswasta/Perusahaan sendiri</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="7" {{ old('f11_jenis_instansi') == '5' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Lainnya</span></label>
+                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="1" {{ old('f11_jenis_instansi') == '1' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Instansi pemerintah</span></label>
+                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="2" {{ old('f11_jenis_instansi') == '2' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">BUMN/BUMD</span></label>
+                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="3" {{ old('f11_jenis_instansi') == '3' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Institusi/Organisasi Multilateral</span></label>
+                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="4" {{ old('f11_jenis_instansi') == '4' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Organisasi non-profit/Lembaga Swadaya Masyarakat</span></label>
+                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="5" {{ old('f11_jenis_instansi') == '5' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Perusahaan swasta</span></label>
+                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="6" {{ old('f11_jenis_instansi') == '6' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Wiraswasta/Perusahaan sendiri</span></label>
+                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="7" {{ old('f11_jenis_instansi') == '7' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Lainnya</span></label>
                             </div>
                         </div>
                         <div class="mt-2">
-                            <input type="text" name="f11_02" value="{{ old('f11_02') }}" placeholder="Lainnya:" class="w-full border border-gray-500 rounded px-3 py-2 text-sm outline-none bg-amber-50" oninput="this.value = this.value.toUpperCase()">
+                            <input type="text" name="f11_02" value="{{ old('f11_02') }}" placeholder="Lainnya:" class="inp text-sm" oninput="this.value = this.value.toUpperCase()">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama perusahaan/kantor</label>
-                            <input type="text" name="f5b_nama_perusahaan" value="{{ old('f5b_nama_perusahaan') }}" class="w-full border border-gray-500 rounded px-3 py-2 outline-none bg-amber-50" oninput="this.value = this.value.toUpperCase()">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Nama perusahaan/kantor</label>
+                            <input type="text" name="f5b_nama_perusahaan" value="{{ old('f5b_nama_perusahaan') }}" class="inp" oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Bila berwiraswasta, posisi/jabatan</label>
-                            <select name="f5c_posisi" class="w-full border border-gray-500 rounded px-3 py-2 outline-none bg-amber-50">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Bila berwiraswasta, posisi/jabatan</label>
+                            <select name="f5c_posisi" class="inp">
                                 <option value="" disabled {{ old('f5c_posisi') === null ? 'selected' : '' }}>Pilih Posisi</option>
                                 <option value="Founder" {{ old('f5c_posisi') == 'Founder' ? 'selected' : '' }}>Founder</option>
                                 <option value="Co-Founder" {{ old('f5c_posisi') == 'Co-Founder' ? 'selected' : '' }}>Co-Founder</option>
@@ -263,8 +380,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tingkat tempat kerja anda</label>
-                            <select name="f5d_tingkat" class="w-full border border-gray-500 rounded px-3 py-2 outline-none bg-amber-50">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Tingkat tempat kerja anda</label>
+                            <select name="f5d_tingkat" class="inp">
                                 <option value="" disabled {{ old('f5d_tingkat') === null ? 'selected' : '' }}>Pilih Tingkatan</option>
                                 <option value="Lokal" {{ old('f5d_tingkat') == 'Lokal' ? 'selected' : '' }}>Lokal/Wilayah/wiraswasta tidak berbadan hukum</option>
                                 <option value="Nasional" {{ old('f5d_tingkat') == 'Nasional' ? 'selected' : '' }}>Nasional/Wiraswasta berbadan hukum</option>
@@ -276,68 +393,71 @@
             </div>
 
             <!-- SECTION F18 & F12: KULIAH LANJUT & PEMBIAYAAN -->
-            <div class="border border-gray-500 bg-blue-100 p-4 rounded-lg shadow-sm">
-                <h2 class="text-xl font-bold text-blue-800 mb-4 border-l-4 border-blue-800 pl-3">Riwayat Studi Lanjut & Pembiayaan Kuliah</h2>
+            <div id="riwayatStudiLanjut" class="card p-5 md:p-6 fade-up">
+                <h2 class="section-title">Riwayat Studi Lanjut & Pembiayaan Kuliah</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="border border-gray-500 bg-amber-50 p-4 rounded-lg space-y-3 shadow-inner">
-                        <span class="block font-semibold text-sm text-gray-700">Pertanyaan Studi Lanjut</span>
-                            <select name="f18a_sumber_biaya_studi" placeholder="Sumber Biaya" class="w-full border border-gray-500 bg-white rounded px-3 py-2 text-sm outline-none">
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600 space-y-3">
+                        <span class="block font-semibold text-sm text-gray-300">Pertanyaan Studi Lanjut</span>
+                            <select name="f18a_sumber_biaya_studi" placeholder="Sumber Biaya" class="inp text-sm">
                                 <option value="" disabled {{ old('f18a_sumber_biaya_studi') === null ? 'selected' : '' }}>-- Pilih sumber biaya --</option>
                                 <option value="Biaya Sendiri" {{ old('f18a_sumber_biaya_studi') == 'Biaya Sendiri' ? 'selected' : '' }}>Biaya Sendiri</option>
                                 <option value="Beasiswa" {{ old('f18a_sumber_biaya_studi') == 'Beasiswa' ? 'selected' : '' }}>Beasiswa</option>
-                            </select>   
-                        <input type="text" name="f18b_perguruan_tinggi_studi" value="{{ old('f18b_perguruan_tinggi_studi') }}" placeholder="Perguruan Tinggi" class="w-full border border-gray-500 bg-white rounded px-3 py-2 text-sm outline-none" style="text-transform: uppercase"; oninput="this.value = this.value.toUpperCase()">
-                        <input type="text" name="f18c_program_studi" value="{{ old('f18c_program_studi') }}" placeholder="Program Studi" class="w-full border border-gray-500 bg-white rounded px-3 py-2 text-sm outline-none" style="text-transform: uppercase"; oninput="this.value = this.value.toUpperCase()">
-                        <div class="bg-gray-50 p-3 rounded-lg space-y-1 shadow-inner border border-gray-300">
-                            <label class="block font-semibold text-xs text-gray-700">Tanggal Masuk</label>
-                            <input type="date" name="f18d_tanggal_masuk" value="{{ old('f18d_tanggal_masuk') }}" class="w-full border border-gray-500 bg-white rounded px-3 py-2 text-sm outline-none">
+                            </select>
+                        <input type="text" name="f18b_perguruan_tinggi_studi" value="{{ old('f18b_perguruan_tinggi_studi') }}" placeholder="Perguruan Tinggi" class="inp text-sm" style="text-transform: uppercase"; oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" name="f18c_program_studi" value="{{ old('f18c_program_studi') }}" placeholder="Program Studi" class="inp text-sm" style="text-transform: uppercase"; oninput="this.value = this.value.toUpperCase()">
+                        <div class="bg-slate-900/70 p-3 rounded-xl space-y-1 border border-slate-700">
+                            <label class="block font-semibold text-xs text-gray-400">Tanggal Masuk</label>
+                            <input type="date" name="f18d_tanggal_masuk" value="{{ old('f18d_tanggal_masuk') }}" class="inp text-sm">
                         </div>
                     </div>
 
-                    <div class="border border-gray-500 bg-amber-50 p-4 rounded-lg space-y-3 shadow-inner">
-                        <span class="block font-semibold text-sm text-gray-700 mb-2">Sebutkan sumberdana dalam pembiayaan kuliah?</span>
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600 space-y-3">
+                        <span class="block font-semibold text-sm text-gray-300 mb-2">Sebutkan sumberdana dalam pembiayaan kuliah?</span>
                         <div class="space-y-2 text-sm">
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="1" {{ old('f12_01') == '1' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Biaya Sendiri / Keluarga</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="2" {{ old('f12_01') == '2' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Beasiswa ADIK</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="3" {{ old('f12_01') == '3' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Beasiswa BIDIKMISI</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="4" {{ old('f12_01') == '4' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Beasiswa PPA</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="5" {{ old('f12_01') == '5' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Beasiswa AFIRMASI</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="6" {{ old('f12_01') == '6' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Beasiswa Perusahaan/Swasta</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="7" {{ old('f12_01') == '7' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Lainnya</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="1" {{ old('f12_01') == '1' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Biaya Sendiri / Keluarga</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="2" {{ old('f12_01') == '2' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Beasiswa ADIK</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="3" {{ old('f12_01') == '3' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Beasiswa BIDIKMISI</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="4" {{ old('f12_01') == '4' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Beasiswa PPA</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="5" {{ old('f12_01') == '5' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Beasiswa AFIRMASI</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="6" {{ old('f12_01') == '6' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Beasiswa Perusahaan/Swasta</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="7" {{ old('f12_01') == '7' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Lainnya</span></label>
                         </div>
-                        <input type="text" name="f12_02" value="{{ old('f12_02') }}" placeholder="Lainnya, tuliskan:" class="w-full border border-gray-500 rounded px-3 py-1.5 text-sm mt-3 outline-none bg-white" oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" name="f12_02" value="{{ old('f12_02') }}" placeholder="Lainnya, tuliskan:" class="inp text-sm mt-3" oninput="this.value = this.value.toUpperCase()">
                     </div>
                 </div>
             </div>
 
             <!-- SECTION F14 & F15: KESELARASAN KERJA -->
-            <div class="border border-gray-500 grid grid-cols-1 md:grid-cols-2 gap-6 bg-blue-100 p-4 rounded-lg shadow-sm">
-                <div class="border border-gray-500 p-4 rounded-lg bg-amber-50">
-                    <span class="block text-sm font-semibold text-gray-800 mb-2">Seberapa erat hubungan antara bidang studi dengan pekerjaan anda?</span>
-                    <div class="space-y-2 text-sm">
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="1" {{ old('f14') == '1' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Sangat Erat</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="2" {{ old('f14') == '2' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Erat</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="3" {{ old('f14') == '3' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Cukup Erat</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="4" {{ old('f14') == '4' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Kurang Erat</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="5" {{ old('f14') == '5' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Tidak Sama Sekali</span></label>
+            <div id="keselarasanKerja" class="card p-5 md:p-6 fade-up">
+                <h2 class="section-title">Keselarasan Bidang Studi dengan Pekerjaan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
+                        <span class="block text-sm font-semibold text-gray-300 mb-2">Seberapa erat hubungan antara bidang studi dengan pekerjaan anda?</span>
+                        <div class="space-y-2 text-sm">
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="1" {{ old('f14') == '1' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Sangat Erat</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="2" {{ old('f14') == '2' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Erat</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="3" {{ old('f14') == '3' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Cukup Erat</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="4" {{ old('f14') == '4' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Kurang Erat</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="5" {{ old('f14') == '5' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Tidak Sama Sekali</span></label>
+                        </div>
                     </div>
-                </div>
 
-                <div class="border border-gray-500 p-4 rounded-lg bg-amber-50">
-                    <span class="block text-sm font-semibold text-gray-800 mb-2">Tingkat pendidikan apa yang paling tepat/sesuai untuk pekerjaan anda saat ini?</span>
-                    <div class="space-y-2 text-sm">
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="1" {{ old('f15') == '1' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Setingkat Lebih Tinggi</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="2" {{ old('f15') == '2' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Tingkat yang Sama</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="3" {{ old('f15') == '3' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Setingkat Lebih Rendah</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="4" {{ old('f15') == '4' ? 'checked' : '' }} class="w-4 h-4 text-blue-600"><span>Tidak Perlu Pendidikan Tinggi</span></label>
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
+                        <span class="block text-sm font-semibold text-gray-300 mb-2">Tingkat pendidikan apa yang paling tepat/sesuai untuk pekerjaan anda saat ini?</span>
+                        <div class="space-y-2 text-sm">
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="1" {{ old('f15') == '1' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Setingkat Lebih Tinggi</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="2" {{ old('f15') == '2' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Tingkat yang Sama</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="3" {{ old('f15') == '3' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Setingkat Lebih Rendah</span></label>
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="4" {{ old('f15') == '4' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Tidak Perlu Pendidikan Tinggi</span></label>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- SECTION F17: MATRIKS KOMPETENSI (A & B) -->
-            <div class="border border-gray-500 bg-blue-100 p-4 rounded-lg shadow-sm overflow-x-auto">
-                <h2 class="text-xl font-bold text-blue-800 mb-1 border-l-4 border-blue-800 pl-3">Kompetensi dikuasai dan diperlukan saat bekerja</h2>
-                <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-700 mb-4 font-medium">
+            <div id="kompetensiSection" class="card p-5 md:p-6 fade-up overflow-x-auto">
+                <h2 class="section-title">Kompetensi dikuasai dan diperlukan saat bekerja</h2>
+                <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400 mb-4 font-medium">
                     <span>(1: Sangat Rendah)</span>
                     <span>(2: Rendah)</span>
                     <span>(3: Cukup Tinggi)</span>
@@ -347,20 +467,20 @@
                 
                 <table class="w-full text-left border-collapse text-xs md:text-sm min-w-[600px]">
                     <thead>
-                        <tr class="bg-gray-100 border- border-gray-500">
-                            <th class="p-3 text-center font-semibold text-gray-700 border border-gray-500" rowspan="2">Aspek Kompetensi</th>
-                            <th class="p-2 text-center font-semibold text-gray-700 border border-gray-500" colspan="5">A: Kompetensi Saat Lulus</th>
-                            <th class="p-2 text-center font-semibold text-gray-700 border border-gray-500" colspan="5">B: Kebutuhan di Pekerjaan</th>
+                        <tr class="bg-slate-800 border-slate-600">
+                            <th class="p-3 text-center font-semibold text-gray-300 border border-slate-600" rowspan="2">Aspek Kompetensi</th>
+                            <th class="p-2 text-center font-semibold text-gray-300 border border-slate-600" colspan="5">A: Kompetensi Saat Lulus</th>
+                            <th class="p-2 text-center font-semibold text-gray-300 border border-slate-600" colspan="5">B: Kebutuhan di Pekerjaan</th>
                         </tr>
-                        <tr class="bg-gray-50 text-[11px] text-center">
+                        <tr class="bg-slate-800/60 text-[11px] text-center">
                             @for($k = 0; $k < 2; $k++)
                                 @for($i = 1; $i <= 5; $i++)
-                                    <th class="p-1 font-normal text-gray-500 border border-gray-500">{{ $i }}</th>
+                                    <th class="p-1 font-normal text-gray-500 border border-slate-600">{{ $i }}</th>
                                 @endfor
                             @endfor
                         </tr>
                     </thead>
-                    <tbody class="border border-gray-500 bg-amber-50">
+                    <tbody class="border border-slate-600 bg-slate-800/40">
                         @php
                             $kompetensi = [
                                 'f1761_f1762' => 'Etika',
@@ -373,18 +493,18 @@
                             ];
                         @endphp
                         @foreach($kompetensi as $key => $label)
-                        <tr class="hover:bg-amber-100 border border-gray-500">
-                            <td class="p-3 font-medium text-gray-800 border-r border-gray-500">{{ $label }}</td>
+                        <tr class="hover:bg-slate-700/40 border border-slate-600 transition">
+                            <td class="p-3 font-medium text-gray-300 border-r border-slate-600">{{ $label }}</td>
                             <!-- Kompetensi A -->
                             @for($i = 1; $i <= 5; $i++)
-                            <td class="p-1 text-center border border-gray-500 ">
-                                <input type="radio" name="comp_a_{{ $key }}" value="{{ $i }}" {{ old('comp_a_' . $key) == $i ? 'checked' : '' }} required class="text-blue-600">
+                            <td class="p-1 text-center border border-slate-600">
+                                <input type="radio" name="comp_a_{{ $key }}" value="{{ $i }}" {{ old('comp_a_' . $key) == $i ? 'checked' : '' }} required class="text-amber-400">
                             </td>
                             @endfor
                             <!-- Kebutuhan B -->
                             @for($i = 1; $i <= 5; $i++)
-                            <td class="p-1 text-center border border-gray-500 last:border-r-0">
-                                <input type="radio" name="comp_b_{{ $key }}" value="{{ $i }}" {{ old('comp_b_' . $key) == $i ? 'checked' : '' }} required class="text-blue-600">
+                            <td class="p-1 text-center border border-slate-600 last:border-r-0">
+                                <input type="radio" name="comp_b_{{ $key }}" value="{{ $i }}" {{ old('comp_b_' . $key) == $i ? 'checked' : '' }} required class="text-amber-400">
                             </td>
                             @endfor
                         </tr>
@@ -394,8 +514,8 @@
             </div>
 
             <!-- SECTION F2: PENEKANAN METODE PEMBELAJARAN -->
-            <div class="border border-gray-500 bg-blue-100 p-4 rounded-lg shadow-sm">
-                <h2 class="text-xl font-bold text-blue-800 mb-1 border-l-4 border-blue-800 pl-3">Penekanan Metode Pembelajaran</h2>
+            <div class="card p-5 md:p-6 fade-up">
+                <h2 class="section-title">Penekanan Metode Pembelajaran</h2>
                 <p class="text-xs text-gray-500 mb-4">Menurut anda seberapa besar penekanan pada metode pembelajaran di bawah ini dilaksanakan di program studi anda?</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
@@ -406,13 +526,13 @@
                         ];
                     @endphp
                     @foreach($metode as $code => $title)
-                    <div class="p-3 border border-gray-500 rounded-lg bg-amber-50 shadow-sm">
-                        <span class="font-semibold block text-gray-800 mb-2">{{ $title }}</span>
+                    <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-600 transition hover:border-amber-400/40">
+                        <span class="font-semibold block text-gray-300 mb-2">{{ $title }}</span>
                         <div class="flex flex-wrap gap-x-4 gap-y-1">
                             @foreach([1=>'Sangat Besar', 2=>'Besar', 3=>'Cukup', 4=>'Kurang', 5=>'Tidak Sama Sekali'] as $v => $l)
                             <label class="flex items-center space-x-1 cursor-pointer">
-                                <input type="radio" name="{{ $code }}" value="{{ $v }}" {{ old($code) == $v ? 'checked' : '' }} required class="text-blue-600 w-3.5 h-3.5">
-                                <span class="text-gray-600 text-[11px]">{{ $l }}</span>
+                                <input type="radio" name="{{ $code }}" value="{{ $v }}" {{ old($code) == $v ? 'checked' : '' }} required class="text-amber-400 w-3.5 h-3.5">
+                                <span class="text-gray-500 text-[11px]">{{ $l }}</span>
                             </label>
                             @endforeach
                         </div>
@@ -422,40 +542,40 @@
             </div>
 
             <!-- SECTION F3: KAPAN MULAI MENCARI PEKERJAAN -->
-            <div class="border border-gray-500 bg-blue-100 p-4 rounded-lg shadow-sm">
-                <h2 class="text-xl font-bold text-blue-800 mb-2 border-l-4 border-blue-800 pl-3">Kapan Anda Mulai Mencari Pekerjaan?</h2>
+            <div class="card p-5 md:p-6 fade-up">
+                <h2 class="section-title">Kapan Anda Mulai Mencari Pekerjaan?</h2>
                 <p class="text-xs text-gray-500 mb-4">(Tidak termasuk pekerjaan sambilan)</p>
                 
                 <div class="space-y-4 text-sm">
                     <div class="flex items-center space-x-3">
-                        <input type="radio" name="f301" id="f301_1" value="1" {{ old('f301') == '1' ? 'checked' : '' }} required class="w-4 h-4 text-blue-600">
-                        <label for="f301_1" class="flex items-center space-x-2 cursor-pointer text-gray-700">
-                            <input type="number" name="f302" value="{{ old('f302') }}" class="w-16 border border-gray-500 rounded px-2 py-1 text-center outline-none bg-white">
-                            <span class="text-xs">bulan sebelum lulus</span>
+                        <input type="radio" name="f301" id="f301_1" value="1" {{ old('f301') == '1' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400">
+                        <label for="f301_1" class="flex items-center space-x-2 cursor-pointer text-gray-300">
+                            <input type="number" name="f302" value="{{ old('f302') }}" class="w-20 bg-slate-800/80 border border-slate-600 rounded-lg px-2 py-1 text-center outline-none focus:border-amber-400 color-scheme-dark">
+                            <span class="text-xs text-gray-500">bulan sebelum lulus</span>
                         </label>
                     </div>
 
                     <div class="flex items-center space-x-3">
-                        <input type="radio" name="f301" id="f301_2" value="2" {{ old('f301') == '2' ? 'checked' : '' }} class="w-4 h-4 text-blue-600">
-                        <label for="f301_2" class="flex items-center space-x-2 cursor-pointer text-gray-700">
-                            <input type="number" name="f303" value="{{ old('f303') }}" class="w-16 border border-gray-500 rounded px-2 py-1 text-center outline-none bg-white">
-                            <span class="text-xs">bulan sesudah lulus</span>
+                        <input type="radio" name="f301" id="f301_2" value="2" {{ old('f301') == '2' ? 'checked' : '' }} class="w-4 h-4 text-amber-400">
+                        <label for="f301_2" class="flex items-center space-x-2 cursor-pointer text-gray-300">
+                            <input type="number" name="f303" value="{{ old('f303') }}" class="w-20 bg-slate-800/80 border border-slate-600 rounded-lg px-2 py-1 text-center outline-none focus:border-amber-400 color-scheme-dark">
+                            <span class="text-xs text-gray-500">bulan sesudah lulus</span>
                         </label>
                     </div>
 
                     <div class="flex items-center space-x-3">
-                        <input type="radio" name="f301" id="f301_3" value="3" {{ old('f301') == '3' ? 'checked' : '' }} class="w-4 h-4 text-blue-600">
-                        <label for="f301_3" class="font-medium text-gray-700 cursor-pointer">
+                        <input type="radio" name="f301" id="f301_3" value="3" {{ old('f301') == '3' ? 'checked' : '' }} class="w-4 h-4 text-amber-400">
+                        <label for="f301_3" class="font-medium text-gray-300 cursor-pointer">
                             <span>Saya tidak mencari kerja</span> 
-                            <span class="text-xs text-gray-400 font-normal">(Langsung ke pertanyaan selanjutnya)</span>
+                            <span class="text-xs text-gray-500 font-normal">(Langsung ke pertanyaan selanjutnya)</span>
                         </label>
                     </div>
                 </div>
             </div>
 
             <!-- SECTION F4: BAGAIMANA CARA MENCARI PEKERJAAN -->
-            <div class="border border-gray-500 bg-blue-100 p-4 rounded-lg shadow-sm">
-                <h2 class="text-xl font-bold text-blue-800 mb-2 border-l-4 border-blue-800 pl-3">Bagaimana cara anda mencari pekerjaan tersebut?</h2>
+            <div class="card p-5 md:p-6 fade-up">
+                <h2 class="section-title">Bagaimana cara anda mencari pekerjaan tersebut?</h2>
                 <p class="text-xs text-gray-500 mb-3">(Jawaban bisa lebih dari satu)</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                     @php
@@ -479,57 +599,61 @@
                     @endphp
                     @foreach($cara_cari as $code => $text)
                     <label class="flex items-start space-x-2 cursor-pointer">
-                        <input type="checkbox" name="{{ $code }}" value="1" {{ old($code) == '1' ? 'checked' : '' }} class="mt-1 rounded text-blue-600">
-                        <span>{{ $text }}</span>
+                        <input type="checkbox" name="{{ $code }}" value="1" {{ old($code) == '1' ? 'checked' : '' }} class="mt-1 rounded text-amber-400 bg-slate-800 border-slate-600">
+                        <span class="text-gray-300">{{ $text }}</span>
                     </label>
                     @endforeach
                     <div class="md:col-span-2 mt-1">
-                        <input type="text" name="f416_tuliskan" value="{{ old('f416_tuliskan') }}" placeholder="Lainnya:" class="w-full border border-gray-500 rounded px-3 py-2 text-sm outline-none bg-amber-50" oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" name="f416_tuliskan" value="{{ old('f416_tuliskan') }}" placeholder="Lainnya:" class="inp text-sm" oninput="this.value = this.value.toUpperCase()">
                     </div>
                 </div>
             </div>
 
             <!-- SECTION F6, F7, F17a: JUMLAH LAMARAN -->
-            <div class="border border-gray-500 grid grid-cols-1 md:grid-cols-3 gap-4 bg-blue-100 p-4 rounded-lg shadow-sm">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 border border-gray-500 bg-blue-200 p-4 rounded-lg h-full flex flex-col justify-between"> 
-                        <span class="mb-2 block">Berapa perusahaan/instansi yang sudah anda lamar sebelum memperoleh pekerjaan pertama?</span>
-                        <input type="number" name="f6_jumlah_lamaran" value="{{ old('f6_jumlah_lamaran') }}" required placeholder="... perusahaan" class="w-full border border-gray-500 rounded px-3 py-2 text-sm outline-none bg-amber-50">
-                    </label>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 border border-gray-500 bg-blue-200 p-4 rounded-lg h-full flex flex-col justify-between"> 
-                        <span class="mb-2 block">Berapa banyak perusahaan/instansi yang merespons lamaran anda selama ini?</span>
-                        <input type="number" name="f7_jumlah_respons" value="{{ old('f7_jumlah_respons') }}" required placeholder="... perusahaan" class="w-full border border-gray-500 rounded px-3 py-2 text-sm outline-none bg-amber-50">
-                    </label>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 border border-gray-500 bg-blue-200 p-4 rounded-lg h-full flex flex-col justify-between"> 
-                        <span class="mb-2 block">Berapa banyak perusahaan/instansi yang mengundang anda untuk wawancara?</span>
-                        <input type="number" name="f17a_jumlah_wawancara" value="{{ old('f17a_jumlah_wawancara') }}" required placeholder="... perusahaan" class="w-full border border-gray-500 rounded px-3 py-2 text-sm outline-none bg-amber-50">
-                    </label>
+            <div class="card p-5 md:p-6 fade-up">
+                <h2 class="section-title">Proses Lamaran Pekerjaan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 bg-slate-800/60 p-4 rounded-xl border border-slate-600 h-full flex flex-col justify-between"> 
+                            <span class="mb-2 block">Berapa perusahaan/instansi yang sudah anda lamar sebelum memperoleh pekerjaan pertama?</span>
+                            <input type="number" name="f6_jumlah_lamaran" value="{{ old('f6_jumlah_lamaran') }}" required placeholder="... perusahaan" class="inp text-sm">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 bg-slate-800/60 p-4 rounded-xl border border-slate-600 h-full flex flex-col justify-between"> 
+                            <span class="mb-2 block">Berapa banyak perusahaan/instansi yang merespons lamaran anda selama ini?</span>
+                            <input type="number" name="f7_jumlah_respons" value="{{ old('f7_jumlah_respons') }}" required placeholder="... perusahaan" class="inp text-sm">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 bg-slate-800/60 p-4 rounded-xl border border-slate-600 h-full flex flex-col justify-between"> 
+                            <span class="mb-2 block">Berapa banyak perusahaan/instansi yang mengundang anda untuk wawancara?</span>
+                            <input type="number" name="f17a_jumlah_wawancara" value="{{ old('f17a_jumlah_wawancara') }}" required placeholder="... perusahaan" class="inp text-sm">
+                        </label>
+                    </div>
                 </div>
             </div>
 
             <!-- SECTION F10 & F16: KEAKTIFAN & ALASAN (BARU) -->
-            <div class="border border-gray-500 space-y-6 bg-blue-100 p-4 rounded-lg shadow-sm">
-                <h2 class="text-xl font-bold text-blue-800 mb-2 border-l-4 border-blue-800 pl-3">Keaktifan Mencari Pekerjaan & Alasan Pekerjaan</h2>
+            <div class="card p-5 md:p-6 fade-up">
+                <h2 class="section-title">Keaktifan Mencari Pekerjaan & Alasan Pekerjaan</h2>
                 
-                <div class="border border-gray-500 bg-blue-200 p-4 rounded-lg">
-                    <span class="block text-sm font-semibold text-gray-800">Apakah anda aktif mencari pekerjaan dalam 4 minggu terakhir?</span>
+                <div class="space-y-6 mt-4">
+                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
+                    <span class="block text-sm font-semibold text-gray-300">Apakah anda aktif mencari pekerjaan dalam 4 minggu terakhir?</span>
                     <p class="text-xs text-gray-500 mb-3">(pilih 1 jawaban)</p>
                     <div class="space-y-1.5 text-sm font-normal">
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="1" {{ old('f10_aktif') == '1' ? 'checked' : '' }} required class="w-4 h-4 text-blue-600"><span>Tidak</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="2" {{ old('f10_aktif') == '2' ? 'checked' : '' }} required class="w-4 h-4 text-blue-600"><span>Tidak, tapi saya sedang menunggu hasil lamaran kerja</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="3" {{ old('f10_aktif') == '3' ? 'checked' : '' }} required class="w-4 h-4 text-blue-600"><span>Ya, saya akan mulai bekerja dalam 2 minggu ke depan</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="4" {{ old('f10_aktif') == '4' ? 'checked' : '' }} required class="w-4 h-4 text-blue-600"><span>Ya, tapi saya belum pasti akan bekerja dalam 2 minggu ke depan</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="5" {{ old('f10_aktif') == '5' ? 'checked' : '' }} required class="w-4 h-4 text-blue-600"><span>Lainnya</span></label>
+                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="1" {{ old('f10_aktif') == '1' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">Tidak</span></label>
+                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="2" {{ old('f10_aktif') == '2' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">Tidak, tapi saya sedang menunggu hasil lamaran kerja</span></label>
+                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="3" {{ old('f10_aktif') == '3' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">Ya, saya akan mulai bekerja dalam 2 minggu ke depan</span></label>
+                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="4" {{ old('f10_aktif') == '4' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">Ya, tapi saya belum pasti akan bekerja dalam 2 minggu ke depan</span></label>
+                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="5" {{ old('f10_aktif') == '5' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">Lainnya</span></label>
                     </div>
-                    <input type="text" name="f10_lainnya" value="{{ old('f10_lainnya') }}" placeholder="Lainnya:" class="w-full border border-gray-500 rounded px-3 py-1.5 text-sm mt-3 outline-none bg-amber-50" oninput="this.value = this.value.toUpperCase()">
+                    <input type="text" name="f10_lainnya" value="{{ old('f10_lainnya') }}" placeholder="Lainnya:" class="inp text-sm mt-3" oninput="this.value = this.value.toUpperCase()">
                 </div>
 
-                <div class="border border-gray-500 bg-blue-200 p-4 rounded-lg">
-                    <span class="block text-sm font-semibold text-gray-800">Jika menurut anda pekerjaan anda saat ini tidak sesuai dengan pendidikan anda, mengapa anda mengambilnya?</span>
+                <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
+                    <span class="block text-sm font-semibold text-gray-300">Jika menurut anda pekerjaan anda saat ini tidak sesuai dengan pendidikan anda, mengapa anda mengambilnya?</span>
                     <p class="text-xs text-gray-500 mb-3">(Jawaban bisa lebih dari satu)</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs md:text-sm font-normal">
                         @php
@@ -551,22 +675,27 @@
                         @endphp
                         @foreach($alasan_f16 as $code => $text)
                         <label class="flex items-start space-x-2 cursor-pointer">
-                            <input type="checkbox" name="{{ $code }}" value="1" {{ old($code) == '1' ? 'checked' : '' }} class="mt-1 rounded text-blue-600">
-                            <span>{{ $text }}</span>
+                            <input type="checkbox" name="{{ $code }}" value="1" {{ old($code) == '1' ? 'checked' : '' }} class="mt-1 rounded text-amber-400 bg-slate-800 border-slate-600">
+                            <span class="text-gray-300">{{ $text }}</span>
                         </label>
                         @endforeach
                     </div>
-                    <input type="text" name="f1614" value="{{ old('f1614') }}" placeholder="Tuliskan:" class="w-full border border-gray-500 rounded px-3 py-2 text-sm mt-3 outline-none bg-amber-50" oninput="this.value = this.value.toUpperCase()">
+                    <input type="text" name="f1614" value="{{ old('f1614') }}" placeholder="Tuliskan:" class="inp text-sm mt-3" oninput="this.value = this.value.toUpperCase()">
+                </div>
                 </div>
             </div>
 
             <!-- BUTTON SUBMIT -->
-            <div class="pt-4">
-                <button type="submit" class="w-full bg-blue-800 border border-black hover:bg-blue-900 text-white font-bold py-3.5 px-4 rounded-lg shadow-lg transition duration-200 cursor-pointer tracking-wide uppercase text-sm md:text-base">
+            <div class="pt-2 fade-up">
+                <button type="submit" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 font-bold py-3.5 px-4 rounded-xl shadow-xl transition duration-200 cursor-pointer tracking-wide uppercase text-sm md:text-base hover:-translate-y-0.5 hover:shadow-amber-500/30">
                     SIMPAN DAN KIRIM DATA KUESIONER
                 </button>
             </div>
         </form>
+
+        <div class="mt-8 text-center text-xs text-gray-600">
+            © {{ date('Y') }} Tracer Study LPKM UMMY Solok
+        </div>
     </div>
 
 </body>
@@ -587,6 +716,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const inputHP = document.getElementById('no_hp');
 
+    const inputEmail = document.getElementById('email');
+
 
 
     if (inputNIK) {
@@ -606,6 +737,36 @@ document.addEventListener("DOMContentLoaded", function () {
         inputHP.addEventListener('input', function() {
 
             validasiNoHP(this);
+
+        });
+
+    }
+
+    if (inputEmail) {
+
+        inputEmail.addEventListener('input', function() {
+
+            validasiEmailGmail(this);
+
+        });
+
+    }
+
+    const formKuesioner = document.querySelector('form[method="POST"]');
+
+    if (formKuesioner) {
+
+        formKuesioner.addEventListener('submit', function(e) {
+
+            if (inputEmail && !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(inputEmail.value.trim().toLowerCase())) {
+
+                e.preventDefault();
+
+                validasiEmailGmail(inputEmail);
+
+                inputEmail.focus();
+
+            }
 
         });
 
@@ -693,6 +854,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+    function validasiEmailGmail(input) {
+
+        const errorLabel = document.getElementById('email_error');
+
+        const value = input.value.trim().toLowerCase();
+
+        const valid = /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(value);
+
+        if (value.length > 0 && !valid) {
+
+            if(errorLabel) errorLabel.classList.remove('hidden');
+
+            input.classList.add('border-red-500');
+
+        } else {
+
+            if(errorLabel) errorLabel.classList.add('hidden');
+
+            input.classList.remove('border-red-500');
+
+        }
+
+    }
+
 
 
     // ========================================================
@@ -701,7 +886,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ========================================================
 
-    const radioStatus = document.querySelectorAll('.status-saat-ini');
+    const radioStatus = document.querySelectorAll('input[name="f8_status_saat_ini"]');
 
     const radioYa = document.getElementById('kerja_ya');
 
@@ -717,37 +902,291 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    function evaluasiStatusUtama() {
+    const sectionTempatKerja = document.getElementById('detailTempatBekerja');
 
-        let statusTerpilih = "";
+    const sectionStudiLanjut = document.getElementById('riwayatStudiLanjut');
 
-        radioStatus.forEach(radio => {
+    const sectionKeselarasanKerja = document.getElementById('keselarasanKerja');
 
-            if(radio.checked) statusTerpilih = radio.value;
+    function matikanBagianTempatKerja(nonaktif) {
+
+        if (!sectionTempatKerja) return;
+
+        sectionTempatKerja.classList.toggle('opacity-50', nonaktif);
+
+        sectionTempatKerja.querySelectorAll('input, select, textarea').forEach(function (e) {
+
+            if (nonaktif) {
+
+                e.disabled = true;
+
+                if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
+
+                else if (e.tagName === 'SELECT') { e.selectedIndex = 0; }
+
+                else { e.value = ''; }
+
+            } else {
+
+                if (e.id === 'kab_kota') {
+
+                    e.disabled = e.options.length <= 1;
+
+                } else {
+
+                    e.disabled = false;
+
+                }
+
+            }
 
         });
 
+    }
 
+    function getStatusTerpilih() {
 
-        // Jika memilih Melanjutkan Pendidikan (3) atau Tidak Kerja (4)
+        let status = "";
 
-        if (statusTerpilih === "3" || statusTerpilih === "4") {
+        radioStatus.forEach(radio => {
 
-            if(radioYa) { radioYa.disabled = true; radioYa.checked = false; }
+            if(radio.checked) status = radio.value;
 
-            if(radioTidak) { radioTidak.disabled = true; radioTidak.checked = false; }
+        });
 
-            matikanSemuaInputWaktu();
+        return status;
+
+    }
+
+    function evaluasiStatusUtama() {
+
+        const statusTerpilih = getStatusTerpilih();
+
+        // F504 ("Apakah anda telah mendapatkan pekerjaan <= 6 bulan")
+
+        // tetap aktif dan WAJIB diisi untuk semua status, termasuk
+
+        // Tidak Kerja/Cari Kerja (5) dan Belum Memungkinkan Bekerja (2).
+
+        if(radioYa) radioYa.disabled = false;
+
+        if(radioTidak) radioTidak.disabled = false;
+
+        logikaKunciWaktuTunggu();
+
+        // Detail Tempat Bekerja hanya dinonaktifkan untuk status
+
+        // Tidak Kerja/Cari Kerja (5) atau Belum Memungkinkan Bekerja (2).
+
+        // Melanjutkan Pendidikan (4) tetap bisa diisi.
+
+        matikanBagianTempatKerja(statusTerpilih === "5" || statusTerpilih === "2");
+
+        // Riwayat Studi Lanjut & Pembiayaan Kuliah wajib diisi jika status
+
+        // Melanjutkan Pendidikan (4) dipilih; selain itu tidak bisa diisi
+
+        if (sectionStudiLanjut) {
+
+            const wajib = statusTerpilih === "4";
+
+            sectionStudiLanjut.classList.toggle('opacity-50', !wajib);
+
+            sectionStudiLanjut.querySelectorAll('input, select').forEach(function (e) {
+
+                if (wajib) {
+
+                    e.disabled = false;
+
+                    e.required = (e.name !== 'f12_02');
+
+                } else {
+
+                    e.disabled = true;
+
+                    e.required = false;
+
+                    if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
+
+                    else if (e.tagName === 'SELECT') { e.selectedIndex = 0; }
+
+                    else { e.value = ''; }
+
+                }
+
+            });
+
+        }
+
+        // Kompetensi (F17): atur status wajib/disabled kolom A & B
+
+        aturKompetensi();
+
+        // Keselarasan Kerja (F14 & F15)
+
+        aturKeselarasanKerja();
+
+    }
+
+    // Keselarasan Kerja (F14 & F15) wajib diisi untuk Bekerja (1) / Wiraswasta (3),
+
+    // dan jika Melanjutkan Pendidikan (4) alumni mengisi wilayah kerja.
+
+    // Tidak bisa diisi untuk Tidak Kerja (5) / Belum Memungkinkan (2); opsional lainnya.
+
+    function aturKeselarasanKerja() {
+
+        if (!sectionKeselarasanKerja) return;
+
+        const status = getStatusTerpilih();
+
+        const nonaktif = status === "5" || status === "2";
+
+        const wajib = status === "1" || status === "3"
+
+                   || (status === "4" && detailTempatKerjaTerisi());
+
+        sectionKeselarasanKerja.classList.toggle('opacity-50', nonaktif);
+
+        sectionKeselarasanKerja.querySelectorAll('input').forEach(function (e) {
+
+            if (nonaktif) {
+
+                e.disabled = true;
+
+                e.required = false;
+
+                if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
+
+            } else {
+
+                e.disabled = false;
+
+                e.required = wajib;
+
+            }
+
+        });
+
+    }
+
+    // Kolom B (Kebutuhan di Pekerjaan) wajib & aktif untuk Bekerja (1) / Wiraswasta (3),
+
+    // dan jika Melanjutkan Pendidikan (4) alumni mengisi wilayah kerja.
+
+    // Untuk Tidak Kerja (5) / Belum Memungkinkan (2), hanya kolom A yang wajib;
+
+    // kolom B dinonaktifkan.
+
+    function aturKompetensi() {
+
+        const status = getStatusTerpilih();
+
+        const compA = document.querySelectorAll('input[name^="comp_a_"]');
+
+        const compB = document.querySelectorAll('input[name^="comp_b_"]');
+
+        if (status === "5" || status === "2") {
+
+            compA.forEach(function (e) { e.disabled = false; e.required = true; });
+
+            compB.forEach(function (e) { e.disabled = true; e.checked = false; e.required = false; });
+
+            return;
+
+        }
+
+        if (status === "1" || status === "3") {
+
+            compA.forEach(function (e) { e.disabled = false; e.required = true; });
+
+            compB.forEach(function (e) { e.disabled = false; e.required = true; });
+
+            return;
+
+        }
+
+        if (status === "4") {
+
+            const terisi = detailTempatKerjaTerisi();
+
+            compA.forEach(function (e) { e.disabled = false; e.required = terisi; });
+
+            compB.forEach(function (e) { e.disabled = false; e.required = terisi; });
+
+            return;
+
+        }
+
+        compA.forEach(function (e) { e.disabled = false; e.required = false; });
+
+        compB.forEach(function (e) { e.disabled = false; e.required = false; });
+
+    }
+
+    function detailTempatKerjaTerisi() {
+
+        if (!sectionTempatKerja) return false;
+
+        let terisi = false;
+
+        sectionTempatKerja.querySelectorAll('input, select, textarea').forEach(function (e) {
+
+            if (e.type === 'radio' || e.type === 'checkbox') {
+
+                if (e.checked) terisi = true;
+
+            } else if (e.tagName === 'SELECT') {
+
+                if (e.value && e.value !== 'Belum Bekerja') terisi = true;
+
+            } else if (e.value && e.value.trim() !== '') {
+
+                terisi = true;
+
+            }
+
+        });
+
+        return terisi;
+
+    }
+
+    // F3: Kapan Mulai Mencari Pekerjaan. Jika memilih "bulan sebelum lulus" (f301=1)
+
+    // maka f302 wajib & f303 tidak bisa diisi; sebaliknya untuk "bulan sesudah lulus" (f301=2).
+
+    // Jika "Saya tidak mencari kerja" (f301=3) keduanya dinonaktifkan.
+
+    function aturMulaiCariKerja() {
+
+        const f302 = document.querySelector('input[name="f302"]');
+
+        const f303 = document.querySelector('input[name="f303"]');
+
+        if (!f302 || !f303) return;
+
+        const radioSebelum = document.getElementById('f301_1');
+
+        const radioSesudah = document.getElementById('f301_2');
+
+        if (radioSebelum && radioSebelum.checked) {
+
+            f302.disabled = false; f302.required = true;
+
+            f303.disabled = true; f303.required = false; f303.value = "";
+
+        } else if (radioSesudah && radioSesudah.checked) {
+
+            f302.disabled = true; f302.required = false; f302.value = "";
+
+            f303.disabled = false; f303.required = true;
 
         } else {
 
-            // Jika memilih Bekerja (1) or Wiraswasta (2)
+            f302.disabled = true; f302.required = false; f302.value = "";
 
-            if(radioYa) radioYa.disabled = false;
-
-            if(radioTidak) radioTidak.disabled = false;
-
-            logikaKunciWaktuTunggu();
+            f303.disabled = true; f303.required = false; f303.value = "";
 
         }
 
@@ -760,8 +1199,6 @@ document.addEventListener("DOMContentLoaded", function () {
         let statusTerpilih = "";
 
         radioStatus.forEach(radio => { if(radio.checked) statusTerpilih = radio.value; });
-
-        if (statusTerpilih === "3" || statusTerpilih === "4") return;
 
 
 
@@ -811,11 +1248,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if(radioTidak) radioTidak.addEventListener('change', logikaKunciWaktuTunggu);
 
+    document.querySelectorAll('input[name="f301"]').forEach(radio => {
+
+        radio.addEventListener('change', aturMulaiCariKerja);
+
+    });
+
+    if (sectionTempatKerja) {
+
+        sectionTempatKerja.addEventListener('change', function () {
+
+            aturKompetensi();
+
+            aturKeselarasanKerja();
+
+        });
+
+        sectionTempatKerja.addEventListener('input', function () {
+
+            aturKompetensi();
+
+            aturKeselarasanKerja();
+
+        });
+
+    }
+
    
 
     // Jalankan inisialisasi awal F8
 
     evaluasiStatusUtama();
+
+    aturMulaiCariKerja();
 
 
 
@@ -1061,4 +1526,3 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
-
