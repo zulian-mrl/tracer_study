@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('master_alumnis', function (Blueprint $table) {
+            $table->id();
+            $table->string('no_mahasiswa', 20)->unique(); // Sebagai NIM/Key utama pencarian
+            $table->string('kode_prodi', 10)->nullable();
+            $table->string('nama', 150);
+            $table->string('nik', 20)->unique();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('master_alumnis');
+    }
+};
