@@ -1349,7 +1349,7 @@ class KuesionerController extends Controller
             $mapDana = $labelMap('dana', ['Biaya Sendiri', 'Beasiswa ADIK', 'Beasiswa BIDIKMISI', 'Beasiswa PPA', 'Beasiswa AFIRMASI', 'Beasiswa Swasta', 'Lainnya']);
             $mapKurva = $labelMap('kurva', ['1-3 Bulan', '4-6 Bulan', '7-12 Bulan', '> 12 Bulan']);
             $mapKeaktifan = $labelMap('keaktifan', ['Aktif', 'Tidak Aktif']);
-            $mapCara = $labelMap('cara', ['Iklan Koran', 'Melamar Langsung', 'Bursa Kerja', 'Internet', 'Dihubungi Perusahaan', 'Kemenakertrans', 'Agen', 'CDC Kampus', 'Kantor Kemanusiaan', 'Kuliah', 'Relasi', 'Bisnis Sendiri', 'Tempat Magang', 'Kerja Saat Kuliah', 'Lainnya']);
+            $mapCaraItem = $labelMap('cara', ['Iklan Koran', 'Melamar Langsung', 'Bursa Kerja', 'Internet', 'Dihubungi Perusahaan', 'Kemenakertrans', 'Agen', 'CDC Kampus', 'Kantor Kemanusiaan', 'Kuliah', 'Relasi', 'Bisnis Sendiri', 'Tempat Magang', 'Kerja Saat Kuliah', 'Lainnya']);
 
             $namaPerGrafik = [];
             foreach ($dataAlumni as $d) {
@@ -1413,7 +1413,7 @@ class KuesionerController extends Controller
                     'f415_lainnya' => 'Lainnya',
                 ];
                 foreach ($mapCara as $field => $label) {
-                    if ((string)($d->$field ?? '') === '1') $namaPerGrafik['chartCaraCariKerja'][$mapCara[$label]][] = $nama;
+                    if ((string)($d->$field ?? '') === '1') $namaPerGrafik['chartCaraCariKerja'][$mapCaraItem[$label] ?? $label][] = $nama;
                 }
 
                 // chartKeaktifan
