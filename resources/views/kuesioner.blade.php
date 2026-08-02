@@ -119,9 +119,9 @@
                 <div class="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-slate-800/30 to-fuchsia-900/30 pointer-events-none"></div>
                 <div class="relative">
                     <div class="text-5xl md:text-6xl mb-3 float-3d" style="filter: drop-shadow(0 12px 16px rgba(0,0,0,0.45));">🎓</div>
-                    <h1 class="text-xl md:text-3xl font-extrabold tracking-wide uppercase grad-text">Kuesioner Tracer Study</h1>
-                    <p class="text-sm mt-2 text-blue-300">Universitas Mahaputra Muhammad Yamin</p>
-                    <p class="text-xs text-gray-400 mt-1">Lembaga Pengembangan Karir dan Mahasiswa (LPKM)</p>
+                    <h1 class="text-xl md:text-3xl font-extrabold tracking-wide uppercase grad-text">{{ \App\Models\Setting::get('kuesioner_judul') }}</h1>
+                    <p class="text-sm mt-2 text-blue-300">{{ \App\Models\Setting::get('kuesioner_univ') }}</p>
+                    <p class="text-xs text-gray-400 mt-1">{{ \App\Models\Setting::get('kuesioner_subjudul') }}</p>
                 </div>
             </div>
         </div>
@@ -133,7 +133,7 @@
         @endif
 
         <div class="mt-6 text-center text-xs text-gray-500 fade-up">
-            Bidang bertanda <span class="text-amber-400 font-semibold">*</span> wajib diisi. Silakan isi dengan jujur dan teliti.
+            {!! \App\Models\Setting::get('kuesioner_instruksi') !!}
         </div>
 
         <form action="{{ route('kuesioner.store') }}" method="POST" class="space-y-6 mt-4">
@@ -147,7 +147,7 @@
 
             <!-- F1: IDENTITAS UTAMA ALUMNI -->
             <div class="card p-5 md:p-6 fade-up">
-                <h2 class="section-title">Identitas Alumni</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_identitas') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">Nomor Induk Mahasiswa (NIM) <span class="text-amber-400">*</span></label>
@@ -216,7 +216,7 @@
 
             <!-- SECTION F8: STATUS SAAT INI -->
              <div class="card p-5 md:p-6 fade-up">
-                <h2 class="section-title">Jelaskan status Anda saat ini?</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_status') }}</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     @foreach([
                         '1' => 'Bekerja (full time/part time)',
@@ -234,7 +234,7 @@
             </div>
             <!-- SECTION F504: MENDAPAT PEKERJAAN 6 BULAN SETELAH LULUS -->
     <div class="card p-5 md:p-6 fade-up">
-        <h2 class="section-title">Apakah anda telah mendapatkan pekerjaan &le; 6 bulan / termasuk bekerja sebelum lulus ?</h2>
+        <h2 class="section-title">{!! \App\Models\Setting::get('judul_kerja6bulan') !!}</h2>
         <div class="space-y-4 mt-3">
             
             <!-- PILIHAN: YA -->
@@ -295,7 +295,7 @@
     </div>
             <!-- SECTION F10 & F5b/c/d: SEPUTAR TEMPAT BEKERJA -->
             <div id="detailTempatBekerja" class="card p-5 md:p-6 fade-up">
-                <h2 class="section-title">Detail Tempat Bekerja</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_tempat_bekerja') }}</h2>
                 <div class="space-y-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-2">Dimana lokasi tempat Anda bekerja?</label>
@@ -394,7 +394,7 @@
 
             <!-- SECTION F18 & F12: KULIAH LANJUT & PEMBIAYAAN -->
             <div id="riwayatStudiLanjut" class="card p-5 md:p-6 fade-up">
-                <h2 class="section-title">Riwayat Studi Lanjut & Pembiayaan Kuliah</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_studi_lanjut') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600 space-y-3">
                         <span class="block font-semibold text-sm text-gray-300">Pertanyaan Studi Lanjut</span>
@@ -429,7 +429,7 @@
 
             <!-- SECTION F14 & F15: KESELARASAN KERJA -->
             <div id="keselarasanKerja" class="card p-5 md:p-6 fade-up">
-                <h2 class="section-title">Keselarasan Bidang Studi dengan Pekerjaan</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_keselarasan') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
                         <span class="block text-sm font-semibold text-gray-300 mb-2">Seberapa erat hubungan antara bidang studi dengan pekerjaan anda?</span>
@@ -456,7 +456,7 @@
 
             <!-- SECTION F17: MATRIKS KOMPETENSI (A & B) -->
             <div id="kompetensiSection" class="card p-5 md:p-6 fade-up overflow-x-auto">
-                <h2 class="section-title">Kompetensi dikuasai dan diperlukan saat bekerja</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_kompetensi') }}</h2>
                 <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400 mb-4 font-medium">
                     <span>(1: Sangat Rendah)</span>
                     <span>(2: Rendah)</span>
@@ -515,7 +515,7 @@
 
             <!-- SECTION F2: PENEKANAN METODE PEMBELAJARAN -->
             <div class="card p-5 md:p-6 fade-up">
-                <h2 class="section-title">Penekanan Metode Pembelajaran</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_metode') }}</h2>
                 <p class="text-xs text-gray-500 mb-4">Menurut anda seberapa besar penekanan pada metode pembelajaran di bawah ini dilaksanakan di program studi anda?</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
@@ -543,7 +543,7 @@
 
             <!-- SECTION F3: KAPAN MULAI MENCARI PEKERJAAN -->
             <div class="card p-5 md:p-6 fade-up">
-                <h2 class="section-title">Kapan Anda Mulai Mencari Pekerjaan?</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_mulai_cari') }}</h2>
                 <p class="text-xs text-gray-500 mb-4">(Tidak termasuk pekerjaan sambilan)</p>
                 
                 <div class="space-y-4 text-sm">
@@ -575,7 +575,7 @@
 
             <!-- SECTION F4: BAGAIMANA CARA MENCARI PEKERJAAN -->
             <div class="card p-5 md:p-6 fade-up">
-                <h2 class="section-title">Bagaimana cara anda mencari pekerjaan tersebut?</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_cara_cari') }}</h2>
                 <p class="text-xs text-gray-500 mb-3">(Jawaban bisa lebih dari satu)</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                     @php
@@ -611,7 +611,7 @@
 
             <!-- SECTION F6, F7, F17a: JUMLAH LAMARAN -->
             <div class="card p-5 md:p-6 fade-up">
-                <h2 class="section-title">Proses Lamaran Pekerjaan</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_lamaran') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 bg-slate-800/60 p-4 rounded-xl border border-slate-600 h-full flex flex-col justify-between"> 
@@ -636,7 +636,7 @@
 
             <!-- SECTION F10 & F16: KEAKTIFAN & ALASAN (BARU) -->
             <div class="card p-5 md:p-6 fade-up">
-                <h2 class="section-title">Keaktifan Mencari Pekerjaan & Alasan Pekerjaan</h2>
+                <h2 class="section-title">{{ \App\Models\Setting::get('judul_keaktifan') }}</h2>
                 
                 <div class="space-y-6 mt-4">
                 <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">

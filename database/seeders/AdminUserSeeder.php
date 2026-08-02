@@ -4,17 +4,24 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
+        $email = env('ADMIN_EMAIL', 'admin@umm.ac.id');
+        $password = env('ADMIN_PASSWORD', 'admin12345');
+
         User::updateOrCreate(
-            ['email' => 'admin@umm.ac.id'],
+            ['email' => $email],
             [
-                'name' => 'Admin Tracer Study',
-                'password' => env('ADMIN_PASSWORD'),
+                'name' => 'Super Admin',
+                'password' => Hash::make($password),
+                'is_super' => true,
             ]
         );
+
+        $this->command?->info("Super admin siap: {$email}");
     }
 }

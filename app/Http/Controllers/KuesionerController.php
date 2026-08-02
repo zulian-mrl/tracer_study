@@ -8,14 +8,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Exports\KuesionerAlumniExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\MasterAlumni;
+use App\Models\Setting;
 use App\Imports\AlumniImport;
 
 class KuesionerController extends Controller
 {
     public function import(Request $request)
-{
-    // 1. Validasi pastikan berkas wajib diisi dan bertipe excel
-    $request->validate([
+    {
+        // 1. Validasi pastikan berkas wajib diisi dan bertipe excel
+        $request->validate([
             'file_excel' => 'required|mimes:xlsx,xls,csv|max:10240',
         ], [
             'file_excel.required' => 'Silakan pilih berkas Excel terlebih dahulu.',
@@ -24,15 +25,10 @@ class KuesionerController extends Controller
         ]);
 
         try {
-            // 2. Proses pembacaan atau import berkas Excel Anda di sini
-            // Contoh jika menggunakan library Maatwebsite\Excel:
-             Excel::import(new AlumniImport, $request->file('file_excel'));
-            
-            // SEMENTARA: Jika logic import Anda belum siap, gunakan ini untuk tes upload berhasil:
-            // $file = $request->file('file_excel');
+            // 2. Proses pembacaan atau import berkas Excel di sini
+            Excel::import(new AlumniImport, $request->file('file_excel'));
 
             return redirect()->back()->with('success', '⚡ Data master acuan alumni berhasil diperbarui!');
-
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['file_excel' => 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage()]);
         }
@@ -954,7 +950,7 @@ class KuesionerController extends Controller
                 'f1614_tuliskan'                    => $request->input('f1614'),
             ]);
 
-        return redirect()->back()->with('success', 'Kuesioner Anda berhasil dikirim! Terima kasih atas partisipasinya.');
+        return redirect()->back()->with('success', \App\Models\Setting::get('kuesioner_sukses', 'Kuesioner Anda berhasil dikirim! Terima kasih atas partisipasinya.'));
         }
 
         public function dashboard(Request $request)
@@ -1133,6 +1129,14 @@ class KuesionerController extends Controller
                 }
             }
 
+            // D1. Program Studi Tujuan Studi Lanjut (f18c_program_studi)
+            $programStudiLanjut = [];
+            foreach ($dataAlumni as $d) {
+                if (!empty($d->f18c_program_studi) && $d->f18c_program_studi != '?') {
+                    $programStudiLanjut[$d->f18c_program_studi] = ($programStudiLanjut[$d->f18c_program_studi] ?? 0) + 1;
+                }
+            }
+
             // E. Kompetensi Dikuasai vs Diperlukan (f1701_A sampai f1707_B)
             $kompetensiDikuasai = [0, 0, 0, 0, 0, 0, 0]; // f1701_A sd f1707_A
             $kompetensiDiperlukan = [0, 0, 0, 0, 0, 0, 0]; // f1701_B sd f1707_B
@@ -1308,14 +1312,175 @@ class KuesionerController extends Controller
                 if (($d->f1613_lainnya ?? '') == '1') $alasanTidakSesuai['Lainnya']++;
             }
 
+            // L. Nama Alumni per Kategori (untuk kartu ringkasan yang bisa diklik)
+            $daftarNama = [
+                'total'   => [],
+                'bekerja' => [],
+                'aktif'   => [],
+                'lanjut'  => [],
+            ];
+            foreach ($dataAlumni as $d) {
+                $namaAlumni = trim((string)($d->nama ?? ''));
+                if ($namaAlumni === '') continue;
+                $daftarNama['total'][] = $namaAlumni;
+
+                $statusNama = strtolower((string)($d->f8_status_saat_ini ?? ''));
+                if ($statusNama === '1')     $daftarNama['bekerja'][] = $namaAlumni;
+                elseif ($statusNama === '4') $daftarNama['lanjut'][]  = $namaAlumni;
+
+                $aktifVal = (string) trim($d->f10_aktif_mencari_kerja ?? '');
+                if ($aktifVal === '3' || $aktifVal === '4') $daftarNama['aktif'][] = $namaAlumni;
+            }
+
+            // M. Nama Alumni per irisan/bar tiap grafik (untuk klik pada grafik)
+            // Label yang ditampilkan grafik bisa diubah admin (nama item di Pengaturan),
+            // jadi grupkan berdasarkan nama item aktif agar klik pada irisan tetap cocok.
+            $labelMap = function (string $slug, array $fixed): array {
+                $namaItem = array_column(Setting::items($slug), 'nama');
+                $map = [];
+                foreach ($fixed as $i => $label) {
+                    $map[$label] = $namaItem[$i] ?? $label;
+                }
+                return $map;
+            };
+            $mapStatus = $labelMap('status', ['Bekerja', 'Wiraswasta', 'Lanjut Kuliah', 'Cari Kerja', 'Belum Bekerja']);
+            $mapPendapatan = $labelMap('pendapatan', ['< 2 Juta', '2 - 5 Juta', '> 5 Juta']);
+            $mapPerusahaan = $labelMap('perusahaan', ['Instansi Pemerintah', 'BUMN/BUMD', 'Institusi', 'Lembaga Swadaya', 'Swasta', 'Wiraswasta', 'Lainnya']);
+            $mapDana = $labelMap('dana', ['Biaya Sendiri', 'Beasiswa ADIK', 'Beasiswa BIDIKMISI', 'Beasiswa PPA', 'Beasiswa AFIRMASI', 'Beasiswa Swasta', 'Lainnya']);
+            $mapKurva = $labelMap('kurva', ['1-3 Bulan', '4-6 Bulan', '7-12 Bulan', '> 12 Bulan']);
+            $mapKeaktifan = $labelMap('keaktifan', ['Aktif', 'Tidak Aktif']);
+            $mapCara = $labelMap('cara', ['Iklan Koran', 'Melamar Langsung', 'Bursa Kerja', 'Internet', 'Dihubungi Perusahaan', 'Kemenakertrans', 'Agen', 'CDC Kampus', 'Kantor Kemanusiaan', 'Kuliah', 'Relasi', 'Bisnis Sendiri', 'Tempat Magang', 'Kerja Saat Kuliah', 'Lainnya']);
+
+            $namaPerGrafik = [];
+            foreach ($dataAlumni as $d) {
+                $nama = trim((string)($d->nama ?? ''));
+                if ($nama === '') continue;
+
+                // chartStatusKerja
+                $st = strtolower((string)($d->f8_status_saat_ini ?? ''));
+                if ($st === '1')      $namaPerGrafik['chartStatusKerja'][$mapStatus['Bekerja']][] = $nama;
+                elseif ($st === '3')  $namaPerGrafik['chartStatusKerja'][$mapStatus['Wiraswasta']][] = $nama;
+                elseif ($st === '4')  $namaPerGrafik['chartStatusKerja'][$mapStatus['Lanjut Kuliah']][] = $nama;
+                elseif ($st === '5')  $namaPerGrafik['chartStatusKerja'][$mapStatus['Cari Kerja']][] = $nama;
+                elseif ($st === '2')  $namaPerGrafik['chartStatusKerja'][$mapStatus['Belum Bekerja']][] = $nama;
+                else                  $namaPerGrafik['chartStatusKerja'][$mapStatus['Cari Kerja']][] = $nama;
+
+                // chartPendapatan
+                $gaji = (int)($d->f505_pendapatan_per_bulan ?? 0);
+                if ($gaji > 0 && $gaji < 2000000)      $namaPerGrafik['chartPendapatan'][$mapPendapatan['< 2 Juta']][] = $nama;
+                elseif ($gaji >= 2000000 && $gaji <= 5000000) $namaPerGrafik['chartPendapatan'][$mapPendapatan['2 - 5 Juta']][] = $nama;
+                elseif ($gaji > 5000000)               $namaPerGrafik['chartPendapatan'][$mapPendapatan['> 5 Juta']][] = $nama;
+
+                // chartPerusahaanKerja
+                $f11 = strtolower((string)($d->f11_jenis_instansi ?? ''));
+                $map11 = ['1'=>'Instansi Pemerintah', '6'=>'BUMN/BUMD', '7'=>'Institusi', '2'=>'Lembaga Swadaya', '3'=>'Swasta', '4'=>'Wiraswasta', '5'=>'Lainnya'];
+                if (isset($map11[$f11])) $namaPerGrafik['chartPerusahaanKerja'][$mapPerusahaan[$map11[$f11]]][] = $nama;
+
+                // chartSumberDana
+                $f12 = strtolower((string)($d->f12_sumber_biaya_kuliah ?? ''));
+                $map12 = ['1'=>'Biaya Sendiri', '2'=>'Beasiswa ADIK', '3'=>'Beasiswa BIDIKMISI', '4'=>'Beasiswa PPA', '5'=>'Beasiswa AFIRMASI', '6'=>'Beasiswa Swasta', '7'=>'Lainnya'];
+                if ($f12 !== '') $namaPerGrafik['chartSumberDana'][$mapDana[$map12[$f12] ?? 'Lainnya']][] = $nama;
+
+                // chartPosisiJabatan / chartPilihTingkat / chartLokasi / chartLokasiKota
+                if (!empty($d->f5c_posisi_wiraswasta) && $d->f5c_posisi_wiraswasta != '?') $namaPerGrafik['chartPosisiJabatan'][$d->f5c_posisi_wiraswasta][] = $nama;
+                if (!empty($d->f5d_tingkat_tempat_kerja) && $d->f5d_tingkat_tempat_kerja != '?') $namaPerGrafik['chartPilihTingkat'][$d->f5d_tingkat_tempat_kerja][] = $nama;
+                if (!empty($d->f510_provinsi) && $d->f510_provinsi != '?') $namaPerGrafik['chartLokasi'][$d->f510_provinsi][] = $nama;
+                if (!empty($d->f510_kab_kota) && $d->f510_kab_kota != '?') $namaPerGrafik['chartLokasiKota'][$d->f510_kab_kota][] = $nama;
+
+                // chartTempatKuliah & chartPerguruanTinggiStudi (f18b) / chartProgramStudiStudi (f18c)
+                if (!empty($d->f18b_perguruan_tinggi_studi) && $d->f18b_perguruan_tinggi_studi != '?') {
+                    $namaPerGrafik['chartTempatKuliah'][$d->f18b_perguruan_tinggi_studi][] = $nama;
+                    $namaPerGrafik['chartPerguruanTinggiStudi'][$d->f18b_perguruan_tinggi_studi][] = $nama;
+                }
+                if (!empty($d->f18c_program_studi) && $d->f18c_program_studi != '?') $namaPerGrafik['chartProgramStudiStudi'][$d->f18c_program_studi][] = $nama;
+
+                // chartWaktuCariKerja
+                $bulan = (int)($d->f302_bulan_sebelum_lulus ?? $d->f303_bulan_setelah_lulus ?? 0);
+                if ($bulan >= 1 && $bulan <= 3)      $namaPerGrafik['chartWaktuCariKerja'][$mapKurva['1-3 Bulan']][] = $nama;
+                elseif ($bulan >= 4 && $bulan <= 6)  $namaPerGrafik['chartWaktuCariKerja'][$mapKurva['4-6 Bulan']][] = $nama;
+                elseif ($bulan >= 7 && $bulan <= 12) $namaPerGrafik['chartWaktuCariKerja'][$mapKurva['7-12 Bulan']][] = $nama;
+                elseif ($bulan > 12)                 $namaPerGrafik['chartWaktuCariKerja'][$mapKurva['> 12 Bulan']][] = $nama;
+
+                // chartCaraCariKerja
+                $mapCara = [
+                    'f401_iklan_koran_brosur' => 'Iklan Koran', 'f402_melamar_tanpa_lowongan' => 'Melamar Langsung',
+                    'f403_bursa_pameran_online' => 'Bursa Kerja', 'f404_internet_iklan_online' => 'Internet',
+                    'f405_dihubungi_perusahaan' => 'Dihubungi Perusahaan', 'f406_menghubungi_kemenakertrans' => 'Kemenakertrans',
+                    'f407_agen_tenaga_kerja' => 'Agen', 'f408_karir_fakultas_universitas' => 'CDC Kampus',
+                    'f409_kantor_kemanusiaan_alumni' => 'Kantor Kemanusiaan', 'f410_membangun_jejaring_kuliah' => 'Kuliah',
+                    'f411_melalui_relasi' => 'Relasi', 'f412_membangun_bisnis_sendiri' => 'Bisnis Sendiri',
+                    'f413_penempatan_kerja_magang' => 'Tempat Magang', 'f414_tempat_kerja_sama_kuliah' => 'Kerja Saat Kuliah',
+                    'f415_lainnya' => 'Lainnya',
+                ];
+                foreach ($mapCara as $field => $label) {
+                    if ((string)($d->$field ?? '') === '1') $namaPerGrafik['chartCaraCariKerja'][$mapCara[$label]][] = $nama;
+                }
+
+                // chartKeaktifan
+                $aktifVal2 = (string) trim($d->f10_aktif_mencari_kerja ?? '');
+                $namaPerGrafik['chartKeaktifan'][($aktifVal2 === '3' || $aktifVal2 === '4') ? $mapKeaktifan['Aktif'] : $mapKeaktifan['Tidak Aktif']][] = $nama;
+
+                // chartAlasanTidakSesuai
+                $mapAlasan = [
+                    'f1601_pertanyaan_tidak_sesuai' => 'Pekerjaan Sesuai Pendidikan', 'f1602_belum_dapat_kerja_sesuai' => 'Belum Dapat Yang Sesuai',
+                    'f1603_prospek_karir_baik' => 'Prospek Karir', 'f1604_suka_area_kerja_tersebut' => 'Suka Bidang Ini',
+                    'f1605_dipromosikan_posisi_lain' => 'Promosi Kurang Tepat', 'f1606_pendapatan_lebih_tinggi' => 'Gaji Lebih Tinggi',
+                    'f1607_pekerjaan_lebih_aman' => 'Pekerjaan Lebih Aman', 'f1608_pekerjaan_lebih_menarik' => 'Pekerjaan Lebih Menarik',
+                    'f1609_mungkinkan_kerja_tambahan' => 'Bisa Tambah Kerja', 'f1610_lokasi_dekat_rumah' => 'Lokasi Dekat',
+                    'f1611_menjamin_kebutuhan_keluarga' => 'Menjamin kebutuhan Keluarga', 'f1612_awal_menitip_karir' => 'Awal Karir',
+                    'f1613_lainnya' => 'Lainnya',
+                ];
+                foreach ($mapAlasan as $field => $label) {
+                    if ((string)($d->$field ?? '') === '1') $namaPerGrafik['chartAlasanTidakSesuai'][$label][] = $nama;
+                }
+
+                // chartMetodeBelajar
+                $mapMetode = [
+                    'Perkuliahan' => 'f21_perkuliahan', 'Demonstrasi' => 'f22_demonstrasi', 'Riset' => 'f23_riset',
+                    'Magang' => 'f24_magang', 'Praktikum' => 'f25_praktikum', 'Kerja Lapangan' => 'f26_kerja_lapangan',
+                    'Diskusi' => 'f27_diskusi',
+                ];
+                foreach ($mapMetode as $label => $field) {
+                    $mv = (string)($d->$field ?? '');
+                    if ($mv !== '' && $mv !== '0') $namaPerGrafik['chartMetodeBelajar'][$label][] = $nama;
+                }
+
+                // chartKompetensi
+                $mapKompetensi = [
+                    'Etika' => ['f1701_A','f1701_B'], 'Keahlian Inti' => ['f1702_A','f1702_B'],
+                    'Bahasa Inggris' => ['f1703_A','f1703_B'], 'TIK' => ['f1704_A','f1704_B'],
+                    'Komunikasi' => ['f1705_A','f1705_B'], 'Kerjasama Tim' => ['f1706_A','f1706_B'],
+                    'Pengembangan Diri' => ['f1707_A','f1707_B'],
+                ];
+                foreach ($mapKompetensi as $label => $fields) {
+                    foreach ($fields as $f) {
+                        if (isset($d->$f) && $d->$f !== null && $d->$f !== '') {
+                            $namaPerGrafik['chartKompetensi'][$label][] = $nama;
+                            break;
+                        }
+                    }
+                }
+
+                // chartRasioLamaran
+                $mapRasio = ['f6_perusahaan_dilamar' => 'Perusahaan Dilamar', 'f7_perusahaan_merespon' => 'Mendapat Respons', 'f7a_mengundang_wawancara' => 'Diundang Wawancara'];
+                foreach ($mapRasio as $field => $label) {
+                    if ((int)($d->$field ?? 0) > 0) $namaPerGrafik['chartRasioLamaran'][$label][] = $nama;
+                }
+            }
+            foreach ($namaPerGrafik as $cid => $labels) {
+                foreach ($labels as $l => $names) {
+                    $namaPerGrafik[$cid][$l] = array_values(array_unique($names));
+                }
+            }
+
             return view('dashboard_kurva', compact(
                 'listTahun', 'prodiLabels', 'tahunTerpilih', 'prodiTerpilih', 'totalAlumni',
-                'statusKerja', 'statusPerusahaanKerja', 'SumberDana', 'pendapatan', 'PilihTingkat', 'PosisiJabatan', 'lokasiKerja', 'lokasiKota', 'tempatKuliah', 'kompetensiDikuasai', 
-                'kompetensiDiperlukan', 'waktuCariKerja', 'caraCariKerja', 'avgLamaran', 'keaktifan', 'alasanTidakSesuai',
+                'statusKerja', 'statusPerusahaanKerja', 'SumberDana', 'pendapatan', 'PilihTingkat', 'PosisiJabatan', 'lokasiKerja', 'lokasiKota', 'tempatKuliah', 'programStudiLanjut', 'kompetensiDikuasai', 
+                'kompetensiDiperlukan', 'waktuCariKerja', 'caraCariKerja', 'avgLamaran', 'keaktifan', 'alasanTidakSesuai', 'daftarNama', 'namaPerGrafik',
                 'metodeSangatBesar', 'metodeBesar', 'metodeCukupBesar', 'metodeKurang', 'metodeTidakSama'
             ));
     }
-    
+
     public function exportExcel(Request $request) {
         
         $tahunLulus = $request->input('tahun_lulus');
@@ -1395,33 +1560,5 @@ class KuesionerController extends Controller
         $namaFile .= '.xlsx';
 
         return Excel::download(new KuesionerAlumniExport($dataDashboard), $namaFile);
-    }
-
-    // 2. Fungsi untuk memvalidasi input NIM, NIK, dan Nama alumni
-    public function validasiAlumni(Request $request)
-    {
-        // Validasi inputan form dari alumni wajib diisi
-        $request->validate([
-            'no_mahasiswa' => 'required',
-            'nik'          => 'required',
-            'nama'         => 'required',
-            'kode_prodi'   => 'required',
-        ]);
-
-        // Proses Pencocokan: Mencari di database yang NIM dan NIK-nya COCOK SAMA
-        $alumni = MasterAlumni::where('no_mahasiswa', $request->no_mahasiswa)
-                              ->where('nik', $request->nik)
-                              ->first();
-
-        // Jika data TIDAK ditemukan atau nama tidak mirip
-        if (!$alumni || strtolower($alumni->nama) != strtolower($request->nama)) {
-            return redirect()->back()->withErrors([
-                'pesan_error' => 'Maaf, data identitas (NIM/NIK/Nama/Kode Prodi) Anda tidak cocok dengan data kelulusan LPKM.'
-            ])->withInput();
-        }
-
-        // Jika data COCOK, simpan data alumni ke session dan loloskan ke halaman pertanyaan kuesioner
-        session(['alumni_sah' => $alumni]);
-        return redirect()->route('kuesioner.pertanyaan');
     }
 }
