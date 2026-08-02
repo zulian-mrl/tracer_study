@@ -83,15 +83,9 @@
                         <span id="avatarNavbar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                     @endif
                 </button>
-                <h1 class="text-base sm:text-lg lg:text-xl font-extrabold tracking-wider grad-text uppercase leading-tight">📊 {{ \App\Models\Setting::get('dashboard_judul', 'Analitik Tracer Study UMMY Solok') }}</h1>
+                <h1 class="text-base sm:text-lg lg:text-xl font-extrabold tracking-wider grad-text uppercase leading-tight whitespace-nowrap">📊 {{ \App\Models\Setting::get('dashboard_judul', 'Analitik Tracer Study UMMY Solok') }}</h1>
             </div>
-            <div class="flex flex-wrap items-center gap-2 text-white">
-                @if(auth()->check() && auth()->user()->is_super)
-                    <a href="{{ route('akun.index') }}"
-                       class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 inline-flex items-center gap-1.5">
-                        👥 Akun Admin
-                    </a>
-                @endif
+            <div class="flex flex-wrap justify-end items-center gap-2 text-white">
                 <a href="{{ route('pengaturan.index') }}"
                    class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 inline-flex items-center gap-1.5">
                     ⚙️ Pengaturan
@@ -102,11 +96,19 @@
                     + Kelola Data Alumni
                 </button>
                 <a href="{{ route('kuesioner.index') }}" class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50">Lihat Form Kuesioner</a>
-                <button type="button"
-                        onclick="bukaGantiPassword()"
-                        class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50">
-                    🔑 Ganti Password
-                </button>
+                <div class="inline-flex items-center gap-2">
+                    @if(auth()->check() && auth()->user()->is_super)
+                        <a href="{{ route('akun.index') }}"
+                           class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 inline-flex items-center gap-1.5">
+                            👥 Akun Admin
+                        </a>
+                    @endif
+                    <button type="button"
+                            onclick="bukaGantiPassword()"
+                            class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50">
+                        🔑 Ganti Password
+                    </button>
+                </div>
                 <form action="{{ route('logout') }}" method="POST" class="inline">
                     @csrf
                     <button type="submit" class="text-sm bg-gradient-to-r from-rose-700 to-rose-600 hover:from-rose-600 hover:to-rose-500 px-4 py-2 rounded-lg border border-rose-500/50 shadow-lg">Keluar</button>
@@ -861,9 +863,9 @@
                         {{ session('password_sukses') }}
                     </div>
                 @endif
-                @if($errors->has('password_lama') || $errors->has('password'))
-                    <div class="bg-rose-950 border border-rose-800 text-rose-400 p-3 rounded text-sm mb-2">
-                        {{ $errors->first('password_lama') ?? $errors->first('password') }}
+                @if($errors->has('password_lama') || $errors->has('password') || $errors->has('password_confirmation'))
+                    <div class="bg-red-500/10 border border-red-500 text-red-300 p-3 rounded text-sm mb-2 font-medium">
+                        {{ $errors->first('password_lama') ?: $errors->first('password') ?: $errors->first('password_confirmation') }}
                     </div>
                 @endif
                 <form action="{{ route('akun.gantiPassword') }}" method="POST" class="space-y-3">
@@ -978,7 +980,7 @@
         @endif
 
         // Buka otomatis modal ganti password jika ada sukses/error dari form tersebut
-        @if(session('password_sukses') || $errors->has('password_lama') || $errors->has('password'))
+        @if(session('password_sukses') || $errors->has('password_lama') || $errors->has('password') || $errors->has('password_confirmation'))
             bukaGantiPassword();
         @endif
     </script>

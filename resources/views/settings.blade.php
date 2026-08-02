@@ -328,9 +328,9 @@
                         {{ session('password_sukses') }}
                     </div>
                 @endif
-                @if($errors->has('password_lama') || $errors->has('password'))
-                    <div class="bg-rose-950 border border-rose-800 text-rose-400 p-3 rounded text-sm mb-2">
-                        {{ $errors->first('password_lama') ?? $errors->first('password') }}
+                @if($errors->has('password_lama') || $errors->has('password') || $errors->has('password_confirmation'))
+                    <div class="bg-red-500/10 border border-red-500 text-red-300 p-3 rounded text-sm mb-2 font-medium">
+                        {{ $errors->first('password_lama') ?: $errors->first('password') ?: $errors->first('password_confirmation') }}
                     </div>
                 @endif
                 <form action="{{ route('akun.gantiPassword') }}" method="POST" class="space-y-3">
@@ -366,7 +366,7 @@
             const modal = document.getElementById('modalGantiPassword');
             if (modal) modal.classList.add('hidden');
         }
-        @if(session('password_sukses') || $errors->has('password_lama') || $errors->has('password'))
+        @if(session('password_sukses') || $errors->has('password_lama') || $errors->has('password') || $errors->has('password_confirmation'))
             bukaGantiPassword();
         @endif
     </script>

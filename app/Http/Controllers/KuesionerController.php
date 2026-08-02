@@ -950,7 +950,7 @@ class KuesionerController extends Controller
                 'f1614_tuliskan'                    => $request->input('f1614'),
             ]);
 
-        return redirect()->back()->with('success', \App\Models\Setting::get('kuesioner_sukses', 'Kuesioner Anda berhasil dikirim! Terima kasih atas partisipasinya.'));
+        return redirect()->back()->with('success', Setting::get('kuesioner_sukses', 'Kuesioner Anda berhasil dikirim! Terima kasih atas partisipasinya.'));
         }
 
         public function dashboard(Request $request)

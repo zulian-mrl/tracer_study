@@ -68,6 +68,11 @@ class AccountController extends Controller
         $data = $request->validate([
             'password_lama' => 'required|string',
             'password' => 'required|string|min:8|confirmed',
+        ], [
+            'password_lama.required' => 'Password lama wajib diisi.',
+            'password.required' => 'Password baru wajib diisi.',
+            'password.min' => 'Password baru minimal 8 karakter.',
+            'password.confirmed' => 'Ulangi password baru tidak sinkron.',
         ]);
 
         if (!Hash::check($data['password_lama'], Auth::user()->password)) {
