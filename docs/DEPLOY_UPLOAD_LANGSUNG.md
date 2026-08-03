@@ -220,6 +220,7 @@ terbuka.
 | Error `The stream or file ... could not be opened` | `storage/logs` tidak writable | Naikkan permission folder `storage` |
 | Error `Table 'xxx' already exists` saat migrate | Import SQL + migrate jalan bersamaan | Tidak masalah menjalankan `migrate --force` (guard sudah dibuat); atau lewati migrate |
 | Download Excel gagal / "zip" error | Ekstensi `zip` (dan `xml`) tidak aktif | Aktifkan di **Select PHP Version** → extension |
+| Import file Excel gagal / terpotong | `upload_max_filesize` / `post_max_size` hosting kecil (default 2–8MB) | Naikkan di cPanel → **Select PHP Version → Options**, atau buat `.user.ini` (`upload_max_filesize=20M`, `post_max_size=21M`) |
 | Upload foto gagal | Folder `public/uploads` tidak writable | Buat folder & naikkan permission |
 | Error 419 saat submit form | Token CSRF/`SESSION_DRIVER` masalah | Pastikan `SESSION_DRIVER=file` dan `storage/framework/sessions` writable |
 | Login berulang kehalaman login | `url.intended` tersimpan | Buka `/login?kembali=1` lalu login kembali |

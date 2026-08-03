@@ -7,9 +7,7 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\RecoveryController;
 
-Route::get('/', function () {
-    return redirect()->route('kuesioner.index');
-});
+Route::redirect('/', '/kuesioner');
 
 Route::get('/kuesioner', [KuesionerController::class, 'index'])->name('kuesioner.index');
 Route::post('/kuesioner', [KuesionerController::class, 'store'])->middleware('throttle:100,1')->name('kuesioner.store');
