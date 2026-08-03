@@ -3,20 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class SettingsController extends Controller
 {
-    private function cekSuper(): void
+    private function cekUtama(): void
     {
         abort_unless(Auth::check() && Auth::user()->is_super, 403);
+
+        $utamaId = User::where('is_super', true)->orderBy('id')->value('id');
+        abort_unless(Auth::id() === $utamaId, 403, 'Hanya super admin utama yang dapat mengakses pengaturan.');
     }
 
     public function index()
     {
-        $this->cekSuper();
+        $this->cekUtama();
 
         Setting::syncDefaults();
         $settings = Setting::allCached();
@@ -27,7 +31,7 @@ class SettingsController extends Controller
 
     public function update(Request $request)
     {
-        $this->cekSuper();
+        $this->cekUtama();
 
         $fields = Setting::defaults();
         unset($fields['kode_pemulihan']);
@@ -45,6 +49,10 @@ class SettingsController extends Controller
         $rules['chart_kurva_tension'] = ['nullable', 'numeric', 'between:0,1'];
 
         $request->validate($rules);
+
+        if (isset($data['kuesioner_email_domain'])) {
+            $data['kuesioner_email_domain'] = ltrim(trim((string) $data['kuesioner_email_domain']), '@');
+        }
 
         foreach ($data as $key => $value) {
             if ($value !== null) {

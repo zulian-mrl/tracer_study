@@ -122,11 +122,11 @@ class KuesionerAlumniExport extends DefaultValueBinder implements FromCollection
         return collect($rows);
     }
 
-    // Mengunci cell NIM (Kolom D) dan NIK (Kolom I) agar bernilai TEKS MURNI di Excel
+    // Mengunci cell yang berpotensi kehilangan angka 0 di depan / jadi notasi ilmiah
     public function bindValue(Cell $cell, $value)
     {
-        // Kolom D = Nomor Mhs (NIM), Kolom I = NIK
-        if ($cell->getColumn() == 'D' || $cell->getColumn() == 'I') {
+        // D = Nomor Mhs (NIM), F = Hp (08xxx), I = NIK, J = NPWP (15 digit)
+        if (in_array($cell->getColumn(), ['D', 'F', 'I', 'J'], true)) {
             $cell->setValueExplicit($value, DataType::TYPE_STRING);
             return true;
         }
@@ -146,7 +146,7 @@ class KuesionerAlumniExport extends DefaultValueBinder implements FromCollection
             'f402', 'f403', 'f404', 'f405', 'f406', 'f407', 'f408', 'f409', 'f410', 'f411', 'f412', 
             'f413', 'f414', 'f415', 'f416', 'f6', 'f7', 'f7a', 'f1001', 'f1002', 'f1601', 'f1602', 
             'f1603', 'f1604', 'f1605', 'f1606', 'f1607', 'f1608', 'f1609', 'f1610', 'f1611', 'f1612', 
-            'f1613', 'f1614'
+            'f1613', 'f1614',
         ];
     }
 

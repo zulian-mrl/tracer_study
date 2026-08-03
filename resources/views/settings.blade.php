@@ -160,6 +160,137 @@
                         </div>
                         @endforeach
                     </div>
+            </div>
+        </div>
+
+            <!-- ================= STATUS & TAMPILAN FORM ================= -->
+            <div class="glass rounded-2xl p-6 shadow-xl fade-up">
+                <h2 class="sec-title">🔓 Status & Tampilan Form Kuesioner</h2>
+
+                <div class="bg-slate-900/50 border border-slate-700/60 rounded-xl p-4 mb-5">
+                    <div class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Buka / Tutup Kuesioner</div>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="hidden" name="kuesioner_terbuka" value="0">
+                        <input type="checkbox" name="kuesioner_terbuka" value="1" class="rounded text-amber-400 bg-slate-800 border-slate-600" {{ (old('kuesioner_terbuka', $settings['kuesioner_terbuka'] ?? '1') == '1') ? 'checked' : '' }}>
+                        <span class="text-sm text-gray-300">Kuesioner dibuka untuk umum</span>
+                    </label>
+                    <p class="text-xs text-gray-500 mt-2">Jika tidak dicentang, halaman kuesioner hanya menampilkan pesan di bawah ini dan formulir tidak bisa diisi.</p>
+                    <div class="mt-3">
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Pesan Saat Kuesioner Ditutup</label>
+                        <textarea name="kuesioner_pesan_tutup" rows="3" class="inp">{{ old('kuesioner_pesan_tutup', $settings['kuesioner_pesan_tutup'] ?? '') }}</textarea>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 border border-slate-700/60 rounded-xl p-4">
+                    <div class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Tampilan & Kontak</div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Kode Perguruan Tinggi (default di form)</label>
+                            <input type="text" name="kode_pt_default" value="{{ old('kode_pt_default', $settings['kode_pt_default'] ?? '') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Kontak Admin (ditampilkan saat ada masalah pengisian / kuesioner ditutup)</label>
+                            <textarea name="kuesioner_kontak" rows="2" class="inp">{{ old('kuesioner_kontak', $settings['kuesioner_kontak'] ?? '') }}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Teks Footer Form Kuesioner</label>
+                            <input type="text" name="kuesioner_footer" value="{{ old('kuesioner_footer', $settings['kuesioner_footer'] ?? '') }}" class="inp">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 border border-slate-700/60 rounded-xl p-4">
+                    <div class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Warna Tampilan Form Kuesioner</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Warna Aksen (judul, tombol, tanda *)</label>
+                            <input type="color" name="kuesioner_warna_aksen" value="{{ old('kuesioner_warna_aksen', $settings['kuesioner_warna_aksen'] ?? '#fbbf24') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Warna Latar 1 (atas)</label>
+                            <input type="color" name="kuesioner_warna_latar" value="{{ old('kuesioner_warna_latar', $settings['kuesioner_warna_latar'] ?? '#0f172a') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Warna Latar 2 (bawah)</label>
+                            <input type="color" name="kuesioner_warna_latar2" value="{{ old('kuesioner_warna_latar2', $settings['kuesioner_warna_latar2'] ?? '#1e1b4b') }}" class="inp">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 border border-slate-700/60 rounded-xl p-4">
+                    <div class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Warna Teks Kuesioner</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Nama Universitas</label>
+                            <input type="color" name="kuesioner_warna_univ" value="{{ old('kuesioner_warna_univ', $settings['kuesioner_warna_univ'] ?? '#7dd3fc') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Subjudul / Lembaga</label>
+                            <input type="color" name="kuesioner_warna_subjudul" value="{{ old('kuesioner_warna_subjudul', $settings['kuesioner_warna_subjudul'] ?? '#94a3b8') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Instruksi &amp; Teks Keterangan</label>
+                            <input type="color" name="kuesioner_warna_instruksi" value="{{ old('kuesioner_warna_instruksi', $settings['kuesioner_warna_instruksi'] ?? '#6b7280') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Label Pertanyaan</label>
+                            <input type="color" name="kuesioner_warna_label" value="{{ old('kuesioner_warna_label', $settings['kuesioner_warna_label'] ?? '#94a3b8') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Teks Pilihan Jawaban</label>
+                            <input type="color" name="kuesioner_warna_pilihan" value="{{ old('kuesioner_warna_pilihan', $settings['kuesioner_warna_pilihan'] ?? '#d1d5db') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Judul Bagian Pertanyaan</label>
+                            <input type="color" name="kuesioner_warna_judulbagian" value="{{ old('kuesioner_warna_judulbagian', $settings['kuesioner_warna_judulbagian'] ?? ($settings['kuesioner_warna_aksen'] ?? '#fbbf24')) }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Teks Tombol Kirim</label>
+                            <input type="color" name="kuesioner_warna_tombol" value="{{ old('kuesioner_warna_tombol', $settings['kuesioner_warna_tombol'] ?? '#0f172a') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Teks Footer</label>
+                            <input type="color" name="kuesioner_warna_footer" value="{{ old('kuesioner_warna_footer', $settings['kuesioner_warna_footer'] ?? '#4b5563') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Teks Pesan Sukses</label>
+                            <input type="color" name="kuesioner_warna_sukses" value="{{ old('kuesioner_warna_sukses', $settings['kuesioner_warna_sukses'] ?? '#6ee7b7') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Teks Pesan Error / Ditutup</label>
+                            <input type="color" name="kuesioner_warna_error" value="{{ old('kuesioner_warna_error', $settings['kuesioner_warna_error'] ?? '#fda4af') }}" class="inp">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 border border-slate-700/60 rounded-xl p-4">
+                    <div class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">Validasi Isian &amp; Pesan</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Domain Email yang Boleh Mengisi (tanpa @)</label>
+                            <input type="text" name="kuesioner_email_domain" value="{{ old('kuesioner_email_domain', $settings['kuesioner_email_domain'] ?? 'gmail.com') }}" class="inp" placeholder="gmail.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Tahun Lulus Awal (dropdown)</label>
+                            <input type="number" name="kuesioner_tahun_mulai" value="{{ old('kuesioner_tahun_mulai', $settings['kuesioner_tahun_mulai'] ?? '2020') }}" class="inp" placeholder="2020">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Teks Tombol Kirim</label>
+                            <input type="text" name="kuesioner_teks_tombol" value="{{ old('kuesioner_teks_tombol', $settings['kuesioner_teks_tombol'] ?? 'SIMPAN DAN KIRIM DATA KUESIONER') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Judul Tab Browser Kuesioner</label>
+                            <input type="text" name="kuesioner_judul_browser" value="{{ old('kuesioner_judul_browser', $settings['kuesioner_judul_browser'] ?? 'Tracer Study - LPKM UMMY') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Ikon Header (emoji / simbol pendek)</label>
+                            <input type="text" name="kuesioner_ikon" value="{{ old('kuesioner_ikon', $settings['kuesioner_ikon'] ?? '🎓') }}" class="inp" placeholder="🎓">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Pesan Saat Data Tidak Terdaftar</label>
+                            <textarea name="kuesioner_pesan_tidak_terdaftar" rows="3" class="inp">{{ old('kuesioner_pesan_tidak_terdaftar', $settings['kuesioner_pesan_tidak_terdaftar'] ?? '') }}</textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -177,6 +308,18 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-400 mb-1">Warna Aksen</label>
                             <input type="color" name="dashboard_aksen" value="{{ old('dashboard_aksen', $settings['dashboard_aksen'] ?? '#fbbf24') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Warna Latar 1 (atas)</label>
+                            <input type="color" name="dashboard_warna_latar" value="{{ old('dashboard_warna_latar', $settings['dashboard_warna_latar'] ?? '#0f172a') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Warna Latar 2 (bawah)</label>
+                            <input type="color" name="dashboard_warna_latar2" value="{{ old('dashboard_warna_latar2', $settings['dashboard_warna_latar2'] ?? '#1e1b4b') }}" class="inp">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">Teks Footer Dashboard</label>
+                            <input type="text" name="dashboard_footer" value="{{ old('dashboard_footer', $settings['dashboard_footer'] ?? '') }}" class="inp">
                         </div>
                     </div>
                 </div>

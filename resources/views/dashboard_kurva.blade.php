@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background: linear-gradient(135deg, var(--ak-latar1) 0%, var(--ak-latar2) 50%, var(--ak-latar1) 100%);
             background-attachment: fixed;
         }
         body::before {
@@ -17,7 +17,7 @@
             inset: 0;
             z-index: -1;
             background:
-                radial-gradient(circle at 15% 20%, rgba(251, 191, 36, 0.14), transparent 42%),
+                radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--ak-sen) 14%, transparent), transparent 42%),
                 radial-gradient(circle at 85% 8%, rgba(56, 189, 248, 0.16), transparent 42%),
                 radial-gradient(circle at 50% 92%, rgba(168, 85, 247, 0.13), transparent 48%);
         }
@@ -32,8 +32,8 @@
         }
         .glass-hover:hover {
             transform: translateY(-5px);
-            border-color: rgba(251, 191, 36, 0.5);
-            box-shadow: 0 20px 45px -14px rgba(0, 0, 0, 0.65), 0 0 28px -8px rgba(251, 191, 36, 0.28);
+            border-color: color-mix(in srgb, var(--ak-sen) 50%, transparent);
+            box-shadow: 0 20px 45px -14px rgba(0, 0, 0, 0.65), 0 0 28px -8px color-mix(in srgb, var(--ak-sen) 28%, transparent);
         }
 
         /* Efek 3D pada kanvas kurva tanpa tilt, sehingga teks tetap tajam/tidak blur */
@@ -65,7 +65,11 @@
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 6px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        :root { --ak-sen: {{ \App\Models\Setting::get('dashboard_aksen', '#fbbf24') }}; }
+        :root {
+            --ak-sen: {{ \App\Models\Setting::get('dashboard_aksen', '#fbbf24') }};
+            --ak-latar1: {{ \App\Models\Setting::get('dashboard_warna_latar', '#0f172a') }};
+            --ak-latar2: {{ \App\Models\Setting::get('dashboard_warna_latar2', '#1e1b4b') }};
+        }
         .ak-nav { border-bottom: 2px solid var(--ak-sen); }
     </style>
 </head>
@@ -86,7 +90,7 @@
                 <h1 class="text-base sm:text-lg lg:text-xl font-extrabold tracking-wider grad-text uppercase leading-tight whitespace-nowrap">📊 {{ \App\Models\Setting::get('dashboard_judul', 'Analitik Tracer Study UMMY Solok') }}</h1>
             </div>
             <div class="flex flex-wrap justify-end items-center gap-2 text-white">
-                @if(auth()->check() && auth()->user()->is_super)
+                @if(auth()->check() && auth()->user()->is_super && auth()->user()->id === $utamaId)
                     <a href="{{ route('pengaturan.index') }}"
                        class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 inline-flex items-center gap-1.5">
                         ⚙️ Pengaturan
@@ -363,9 +367,8 @@
             </div>
 
             <footer class="text-center text-xs text-slate-500 py-4">
-                © {{ date('Y') }} Tracer Study LPKM UMMY Solok — Dashboard Analitik Alumni
+                {{ \App\Models\Setting::get('dashboard_footer') }}
             </footer>
-
             <!-- SCRIPT INISIALISASI CHART (HANYA JIKA FILTER SUDAH DIPILIH) -->
             <script>
                 // Tangkap data dari Blade array
@@ -1030,7 +1033,9 @@
                 @if(auth()->user()->is_super)
                     <a href="{{ route('akun.index') }}" class="mt-4 w-full text-center text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 transition">👥 Kelola Akun Admin</a>
                 @endif
-                <a href="{{ route('pengaturan.index') }}" class="mt-2 w-full text-center text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 transition">⚙️ Pengaturan</a>
+                @if(auth()->user()->is_super && auth()->user()->id === $utamaId)
+                    <a href="{{ route('pengaturan.index') }}" class="mt-2 w-full text-center text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 transition">⚙️ Pengaturan</a>
+                @endif
             </div>
         </div>
     </div>

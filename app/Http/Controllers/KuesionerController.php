@@ -42,27 +42,45 @@ class KuesionerController extends Controller
     }
         public function index()
         {
+            if (Setting::get('kuesioner_terbuka', '1') !== '1') {
+                return view('kuesioner', [
+                    'kuesionerDitutup' => true,
+                    'kuesionerPesan' => Setting::get('kuesioner_pesan_tutup'),
+                ]);
+            }
+
             return view('kuesioner');
         }
         
         public function store(Request $request)
         {
+            if (Setting::get('kuesioner_terbuka', '1') !== '1') {
+                return redirect()->back()->withErrors(['autentikasi' => Setting::get('kuesioner_pesan_tutup')]);
+            }
+
             // 1. Validasi
+            $domainEmail = preg_quote(ltrim(trim(Setting::get('kuesioner_email_domain', 'gmail.com')), '@'), '/');
             $request->validate([
                 'no_mahasiswa' => 'required',
                 'nama' => 'required',
-                'email' => 'required|email|regex:/@gmail\.com$/i',
+                'email' => 'required|email|regex:/@' . $domainEmail . '$/i',
                 'f8_status_saat_ini' => 'required',
                 'f301' => 'required',
             ], [
                 'email.required' => 'Alamat email wajib diisi.',
                 'email.email' => 'Format alamat email tidak valid.',
-                'email.regex' => 'Email harus menggunakan @gmail.com.',
+                'email.regex' => 'Email harus menggunakan @' . ltrim(trim(Setting::get('kuesioner_email_domain', 'gmail.com')), '@') . '.',
             ]);
 
-            $nimInput  = $request->no_mahasiswa;
-            $nikInput  = $request->nik;
-            $namaInput = $request->nama;
+            $nimInput  = trim($request->no_mahasiswa);
+            $nikInput  = trim($request->nik);
+            $namaInput = trim($request->nama);
+
+            $emailInput = (string) $request->email;
+            $atPos = strrpos($emailInput, '@');
+            if ($atPos !== false) {
+                $emailInput = substr($emailInput, 0, $atPos) . '@' . strtolower(substr($emailInput, $atPos + 1));
+            }
             $tahunlulus = $request->tahun_lulus;
             $kodeprodi= $request->kode_prodi;
 
@@ -77,7 +95,7 @@ class KuesionerController extends Controller
             if (!$alumniValid) {
                 return redirect()->back()
                     ->withInput()
-                    ->withErrors(['autentikasi' => '❌ Maaf, No. Mahasiswa (NIM), NIK, Nama, Tahun Lulus, Kode Prodi Anda Salah Huruf/Angka atau tidak terdaftar sebagai data acuan alumni kelulusan Periksa Semua Pertanyaan Kembali. Ulangi Pengisian atau Hubungi Admin Tracer Study']);
+                    ->withErrors(['autentikasi' => Setting::get('kuesioner_pesan_tidak_terdaftar')]);
             }
 
             // Jika nama tidak sesuai (toleran terhadap perbedaan huruf besar/kecil)
@@ -90,15 +108,15 @@ class KuesionerController extends Controller
             // 2. Direct Insert ke phpMyAdmin
             try {
                 DB::table('kuesioner_alumnis')->updateOrInsert(
-                ['no_mahasiswa' => $request->no_mahasiswa],
+                ['no_mahasiswa' => $nimInput],
                 [
-                'kode_PT' => $request->kode_PT ?? '101004',
+                'kode_PT' => $request->filled('kode_PT') ? $request->kode_PT : Setting::get('kode_pt_default', '101004'),
                 'tahun_lulus' => $request->tahun_lulus,
                 'kode_prodi' => $request->kode_prodi,
-                'nama' => $request->nama,
+                'nama' => $namaInput,
                 'no_hp' => $request->no_hp,
-                'email' => $request->email,
-                'nik' => $request->nik,
+                'email' => $emailInput,
+                'nik' => $nikInput,
                 'npwp' => $request->npwp,
                 'f8_status_saat_ini' => match ($request->f8_status_saat_ini) {
                         '1' => '1',
@@ -979,6 +997,9 @@ class KuesionerController extends Controller
             $tahunTerpilih = $request->input('tahun_lulus');
             $prodiTerpilih = $request->input('kode_prodi');
 
+            // Super admin utama (akun is_super dengan id terkecil) untuk kunci menu Pengaturan
+            $utamaId = DB::table('users')->where('is_super', 1)->orderBy('id')->value('id');
+
             // Buat query dasar pencarian data kuesioner
             $query = DB::table('kuesioner_alumnis');
 
@@ -1487,7 +1508,8 @@ class KuesionerController extends Controller
                 'listTahun', 'prodiLabels', 'tahunTerpilih', 'prodiTerpilih', 'totalAlumni',
                 'statusKerja', 'statusPerusahaanKerja', 'SumberDana', 'pendapatan', 'PilihTingkat', 'PosisiJabatan', 'lokasiKerja', 'lokasiKota', 'tempatKuliah', 'programStudiLanjut', 'kompetensiDikuasai', 
                 'kompetensiDiperlukan', 'waktuCariKerja', 'caraCariKerja', 'avgLamaran', 'keaktifan', 'alasanTidakSesuai', 'daftarNama', 'namaPerGrafik',
-                'metodeSangatBesar', 'metodeBesar', 'metodeCukupBesar', 'metodeKurang', 'metodeTidakSama'
+                'metodeSangatBesar', 'metodeBesar', 'metodeCukupBesar', 'metodeKurang', 'metodeTidakSama',
+                'utamaId'
             ));
     }
 

@@ -3,11 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tracer Study - LPKM UMMY</title>
+    <title>{{ \App\Models\Setting::get('kuesioner_judul_browser', 'Tracer Study - LPKM UMMY') }}</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
+        :root {
+            --kac-aksen: {{ \App\Models\Setting::get('kuesioner_warna_aksen', '#fbbf24') }};
+            --kac-latar1: {{ \App\Models\Setting::get('kuesioner_warna_latar', '#0f172a') }};
+            --kac-latar2: {{ \App\Models\Setting::get('kuesioner_warna_latar2', '#1e1b4b') }};
+
+            --kac-univ: {{ \App\Models\Setting::get('kuesioner_warna_univ', '#7dd3fc') }};
+            --kac-subjudul: {{ \App\Models\Setting::get('kuesioner_warna_subjudul', '#94a3b8') }};
+            --kac-inst: {{ \App\Models\Setting::get('kuesioner_warna_instruksi', '#6b7280') }};
+            --kac-label: {{ \App\Models\Setting::get('kuesioner_warna_label', '#94a3b8') }};
+            --kac-pilih: {{ \App\Models\Setting::get('kuesioner_warna_pilihan', '#d1d5db') }};
+            --kac-judulbagian: {{ \App\Models\Setting::get('kuesioner_warna_judulbagian', '#fbbf24') }};
+            --kac-tombol: {{ \App\Models\Setting::get('kuesioner_warna_tombol', '#0f172a') }};
+            --kac-footer: {{ \App\Models\Setting::get('kuesioner_warna_footer', '#4b5563') }};
+            --kac-sukses: {{ \App\Models\Setting::get('kuesioner_warna_sukses', '#6ee7b7') }};
+            --kac-error: {{ \App\Models\Setting::get('kuesioner_warna_error', '#fda4af') }};
+
+            --color-amber-300: color-mix(in srgb, var(--kac-aksen) 80%, white);
+            --color-amber-400: var(--kac-aksen);
+            --color-amber-500: color-mix(in srgb, var(--kac-aksen) 78%, black);
+            --color-amber-600: color-mix(in srgb, var(--kac-aksen) 62%, black);
+            --color-amber-700: color-mix(in srgb, var(--kac-aksen) 48%, black);
+        }
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background: linear-gradient(135deg, var(--kac-latar1) 0%, var(--kac-latar2) 50%, var(--kac-latar1) 100%);
             background-attachment: fixed;
         }
         body::before {
@@ -16,7 +38,7 @@
             inset: 0;
             z-index: -1;
             background:
-                radial-gradient(circle at 20% 15%, rgba(251, 191, 36, 0.13), transparent 42%),
+                radial-gradient(circle at 20% 15%, color-mix(in srgb, var(--kac-aksen) 13%, transparent), transparent 42%),
                 radial-gradient(circle at 85% 10%, rgba(56, 189, 248, 0.15), transparent 42%),
                 radial-gradient(circle at 50% 95%, rgba(168, 85, 247, 0.12), transparent 48%);
         }
@@ -28,7 +50,7 @@
         }
 
         .grad-text {
-            background: linear-gradient(90deg, #fbbf24, #f472b6, #38bdf8, #fbbf24);
+            background: linear-gradient(90deg, var(--kac-aksen), #f472b6, #38bdf8, var(--kac-aksen));
             background-size: 300% 100%;
             -webkit-background-clip: text;
             background-clip: text;
@@ -61,8 +83,8 @@
             transition: box-shadow .2s ease, border-color .2s ease, transform .2s ease;
         }
         .inp:focus {
-            border-color: #fbbf24;
-            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.22), 0 10px 20px -10px rgba(0, 0, 0, 0.6);
+            border-color: var(--kac-aksen);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--kac-aksen) 22%, transparent), 0 10px 20px -10px rgba(0, 0, 0, 0.6);
             transform: translateY(-1px);
         }
         .inp::placeholder { color: #64748b; }
@@ -78,15 +100,15 @@
             transition: border-color .25s ease, transform .25s ease, box-shadow .25s ease;
         }
         .card:hover {
-            border-color: rgba(251, 191, 36, 0.35);
-            box-shadow: 0 22px 48px -18px rgba(0, 0, 0, 0.7), 0 0 24px -10px rgba(251, 191, 36, 0.2);
+            border-color: color-mix(in srgb, var(--kac-aksen) 35%, transparent);
+            box-shadow: 0 22px 48px -18px rgba(0, 0, 0, 0.7), 0 0 24px -10px color-mix(in srgb, var(--kac-aksen) 20%, transparent);
         }
 
         .section-title {
             font-size: 1.05rem;
             font-weight: 700;
-            color: #fbbf24;
-            border-left: 4px solid #fbbf24;
+            color: var(--kac-judulbagian);
+            border-left: 4px solid var(--kac-judulbagian);
             padding-left: 0.75rem;
             margin-bottom: 0.5rem;
         }
@@ -99,9 +121,19 @@
         }
         .choice:hover {
             background: rgba(51, 65, 85, 0.7);
-            border-color: rgba(251, 191, 36, 0.5);
+            border-color: color-mix(in srgb, var(--kac-aksen) 50%, transparent);
             transform: translateY(-1px);
         }
+
+        /* Warna teks kuesioner (bisa diatur dari Pengaturan) */
+        .text-blue-300 { color: var(--kac-univ); }
+        .text-gray-300 { color: var(--kac-pilih); }
+        .text-gray-400 { color: var(--kac-label); }
+        .text-gray-500 { color: var(--kac-inst); }
+        .text-gray-600 { color: var(--kac-footer); }
+        .text-slate-900 { color: var(--kac-tombol); }
+        .text-emerald-300 { color: var(--kac-sukses); }
+        .text-rose-300 { color: var(--kac-error); }
 
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
@@ -118,10 +150,10 @@
             <div class="relative p-6 md:p-9 text-center">
                 <div class="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-slate-800/30 to-fuchsia-900/30 pointer-events-none"></div>
                 <div class="relative">
-                    <div class="text-5xl md:text-6xl mb-3 float-3d" style="filter: drop-shadow(0 12px 16px rgba(0,0,0,0.45));">🎓</div>
+                    <div class="text-5xl md:text-6xl mb-3 float-3d" style="filter: drop-shadow(0 12px 16px rgba(0,0,0,0.45));">{{ \App\Models\Setting::get('kuesioner_ikon', '🎓') }}</div>
                     <h1 class="text-xl md:text-3xl font-extrabold tracking-wide uppercase grad-text">{{ \App\Models\Setting::get('kuesioner_judul') }}</h1>
                     <p class="text-sm mt-2 text-blue-300">{{ \App\Models\Setting::get('kuesioner_univ') }}</p>
-                    <p class="text-xs text-gray-400 mt-1">{{ \App\Models\Setting::get('kuesioner_subjudul') }}</p>
+                    <p class="text-xs text-gray-400 mt-1" style="color: var(--kac-subjudul)">{{ \App\Models\Setting::get('kuesioner_subjudul') }}</p>
                 </div>
             </div>
         </div>
@@ -136,6 +168,15 @@
             {{ \App\Models\Setting::get('kuesioner_instruksi') }}
         </div>
 
+        @if($kuesionerDitutup ?? false)
+            <div class="fade-up bg-rose-950/70 border border-rose-700/60 text-rose-300 px-4 py-6 rounded-xl shadow-lg text-center mt-4">
+                <div class="text-5xl mb-3">📋</div>
+                <p class="font-semibold text-base">{{ $kuesionerPesan ?? 'Kuesioner ditutup. Anda akan diberitahu ketika dibuka kembali.' }}</p>
+                @if(\App\Models\Setting::get('kuesioner_kontak'))
+                    <p class="text-sm mt-3 text-gray-400">📞 Hubungi admin: {{ \App\Models\Setting::get('kuesioner_kontak') }}</p>
+                @endif
+            </div>
+        @else
         <form action="{{ route('kuesioner.store') }}" method="POST" class="space-y-6 mt-4">
             @csrf
 
@@ -143,6 +184,11 @@
                 <div class="bg-rose-950/80 border border-rose-700/60 text-rose-300 px-4 py-3 rounded-xl shadow-lg font-semibold">
                     {{ $errors->first('autentikasi') }}
                 </div>
+                @if(\App\Models\Setting::get('kuesioner_kontak'))
+                    <div class="bg-slate-800/70 border border-slate-700/60 text-gray-300 px-4 py-3 rounded-xl shadow-lg text-sm mt-3">
+                        📞 Hubungi admin: {{ \App\Models\Setting::get('kuesioner_kontak') }}
+                    </div>
+                @endif
             @endif
 
             <!-- F1: IDENTITAS UTAMA ALUMNI -->
@@ -155,14 +201,14 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">Kode Perguruan Tinggi <span class="text-amber-400">*</span></label>
-                        <input type="text" name="kode_PT" value="{{ old('kode_PT', '101004') }}" required class="inp">
+                        <input type="text" name="kode_PT" value="{{ old('kode_PT', \App\Models\Setting::get('kode_pt_default', '101004')) }}" required class="inp">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">Tahun Lulus <span class="text-amber-400">*</span></label>
                         <select name="tahun_lulus" required class="inp">
                             <option value="" disabled selected>-- Pilih Tahun Lulus --</option>
                             @php
-                                $tahunMulai = 2020;
+                                $tahunMulai = (int) \App\Models\Setting::get('kuesioner_tahun_mulai', 2020);
                                 $tahunSekarang = date ('Y');
                             @endphp
                             @for ($tahun = $tahunMulai; $tahun <= $tahunSekarang; $tahun++)
@@ -199,8 +245,9 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">Alamat Email <span class="text-amber-400">*</span></label>
-                        <input type="email" name="email" id="email" value="{{ old('email') }}" pattern="[a-zA-Z0-9._%+-]+@gmail\.com" title="Email harus menggunakan @gmail.com" required class="inp">
-                        <span id="email_error" class="hidden text-rose-400 text-xs mt-1">Email harus menggunakan @gmail.com</span>
+                        @php $emailDomain = ltrim(trim(\App\Models\Setting::get('kuesioner_email_domain', 'gmail.com')), '@'); @endphp
+                        <input type="email" name="email" id="email" value="{{ old('email') }}" pattern="{{ '[a-zA-Z0-9._%+-]+@' . preg_quote($emailDomain, '/') }}" title="Email harus menggunakan {{ $emailDomain }}" required class="inp">
+                        <span id="email_error" class="hidden text-rose-400 text-xs mt-1">Email harus menggunakan {{ $emailDomain }}</span>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">NIK (Nomor Induk Kependudukan) <span class="text-amber-400">*</span></label>
@@ -688,13 +735,17 @@
             <!-- BUTTON SUBMIT -->
             <div class="pt-2 fade-up">
                 <button type="submit" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 font-bold py-3.5 px-4 rounded-xl shadow-xl transition duration-200 cursor-pointer tracking-wide uppercase text-sm md:text-base hover:-translate-y-0.5 hover:shadow-amber-500/30">
-                    SIMPAN DAN KIRIM DATA KUESIONER
+                    {{ \App\Models\Setting::get('kuesioner_teks_tombol', 'SIMPAN DAN KIRIM DATA KUESIONER') }}
                 </button>
             </div>
         </form>
+        @endif
 
         <div class="mt-8 text-center text-xs text-gray-600">
-            © {{ date('Y') }} Tracer Study LPKM UMMY Solok
+            {{ \App\Models\Setting::get('kuesioner_footer') }}
+            @if(\App\Models\Setting::get('kuesioner_kontak'))
+                · 📞 {{ \App\Models\Setting::get('kuesioner_kontak') }}
+            @endif
         </div>
     </div>
 
@@ -758,7 +809,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         formKuesioner.addEventListener('submit', function(e) {
 
-            if (inputEmail && !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(inputEmail.value.trim().toLowerCase())) {
+            if (inputEmail) {
+
+                normalisasiEmailGmail(inputEmail);
+
+            }
+
+            if (inputEmail && !regexEmail().test(inputEmail.value.trim().toLowerCase())) {
 
                 e.preventDefault();
 
@@ -854,13 +911,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+    const EMAIL_DOMAIN = @json(ltrim(trim(\App\Models\Setting::get('kuesioner_email_domain', 'gmail.com')), '@'));
+
+    function regexEmail() {
+        const d = EMAIL_DOMAIN.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return new RegExp('^[a-zA-Z0-9._%+-]+@' + d + '$', 'i');
+    }
+
+    function normalisasiEmailGmail(input) {
+
+        const value = input.value;
+
+        const atIndex = value.lastIndexOf('@');
+
+        if (atIndex !== -1) {
+
+            const local = value.substring(0, atIndex);
+
+            const domain = value.substring(atIndex + 1).toLowerCase();
+
+            const baru = local + '@' + domain;
+
+            if (baru !== value) {
+
+                input.value = baru;
+
+            }
+
+        }
+
+    }
+
     function validasiEmailGmail(input) {
 
         const errorLabel = document.getElementById('email_error');
 
+        normalisasiEmailGmail(input);
+
         const value = input.value.trim().toLowerCase();
 
-        const valid = /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(value);
+        const valid = regexEmail().test(value);
 
         if (value.length > 0 && !valid) {
 
