@@ -8,20 +8,36 @@ use Maatwebsite\Excel\Concerns\ToModel;
 class AlumniImport implements ToModel
 {
     /**
-     * Kode ini memetakan BARIS DI EXCEL (berdasarkan nama header-nya)
-     * ke dalam KOLOM DATABASE MySQL Anda secara otomatis.
+     * Memetakan kolom EXCEL (berurutan) ke kolom DATABASE:
+     *   0 = no_mahasiswa, 1 = kode_prodi, 2 = nama, 3 = nik, 4 = tahun_lulus
      */
     public function model(array $row)
     {
-        if (empty($row[0]) || in_array(strtolower($row[0]), ['no_mahasiswa', 'nim', 'no', 'no mahasiswa', 'tahun_lulus'])) {
+        // Lewati baris header (jika ikut terbaca sebagai data)
+        if (empty($row[0]) || in_array(strtolower(trim((string) $row[0])), ['no_mahasiswa', 'nim', 'no', 'no mahasiswa', 'tahun_lulus'])) {
             return null;
         }
+
+        $nim = trim((string) ($row[0] ?? ''));
+        $nik = trim((string) ($row[3] ?? ''));
+
+        // Baris tanpa NIM atau NIK dianggap tidak valid
+        if ($nim === '' || $nik === '') {
+            return null;
+        }
+
+        // Lewati NIM/NIK yang sudah terdaftar agar tidak menggagalkan seluruh import
+        if (MasterAlumni::where('no_mahasiswa', $nim)->exists()
+            || MasterAlumni::where('nik', $nik)->exists()) {
+            return null;
+        }
+
         return new MasterAlumni([
-            'no_mahasiswa' => $row['0'], // Membaca header 'no_mahasiswa' di Excel
-            'kode_prodi'   => $row['1'],   // Membaca header 'kode_prodi' di Excel
-            'nama'         => $row['2'],         // Membaca header 'nama' di Excel
-            'nik'          => $row['3'],          // Membaca header 'nik' di Excel
-            'tahun_lulus'  => $row['4'],
+            'no_mahasiswa' => $nim,
+            'kode_prodi'   => $row[1] ?? null,
+            'nama'         => $row[2] ?? null,
+            'nik'          => $nik,
+            'tahun_lulus'  => $row[4] ?? null,
         ]);
     }
 }

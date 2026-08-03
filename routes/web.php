@@ -8,11 +8,11 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\RecoveryController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('kuesioner.index');
 });
 
 Route::get('/kuesioner', [KuesionerController::class, 'index'])->name('kuesioner.index');
-Route::post('/kuesioner', [KuesionerController::class, 'store'])->name('kuesioner.store');
+Route::post('/kuesioner', [KuesionerController::class, 'store'])->middleware('throttle:100,1')->name('kuesioner.store');
 
 // --- AUTH LOGIN ADMIN ---
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -23,11 +23,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/pemulihan', [RecoveryController::class, 'index'])->name('pemulihan.index');
 Route::post('/pemulihan', [RecoveryController::class, 'reset'])->middleware('throttle:5,15')->name('pemulihan.reset');
 
-// --- EKSPOR EXCEL (PUBLIK, TANPA LOGIN) ---
-Route::get('/export-kuesioner-excel', [KuesionerController::class, 'exportExcel'])->name('kuesioner.export');
+// --- EKSPOR EXCEL (WAJIB LOGIN ADMIN) ---
+// (Route export dipindah ke bawah ke dalam grup auth)
 
 // --- ROUTE ADMIN (WAJIB LOGIN) ---
 Route::middleware('auth')->group(function () {
+    Route::get('/export-kuesioner-excel', [KuesionerController::class, 'exportExcel'])->name('kuesioner.export');
     Route::get('/dashboard-kurva', [KuesionerController::class, 'dashboard'])->name('kuesioner.dashboard');
     Route::post('/admin/alumni/import', [KuesionerController::class, 'import'])->name('alumni.import');
     Route::get('/admin/pengaturan', [SettingsController::class, 'index'])->name('pengaturan.index');
@@ -41,4 +42,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/akun/{user}/super', [AccountController::class, 'toggleSuper'])->name('akun.super');
     Route::post('/admin/akun/{user}/reset', [AccountController::class, 'reset'])->name('akun.reset');
     Route::post('/admin/akun/{user}/hapus', [AccountController::class, 'hapus'])->name('akun.hapus');
+    Route::get('/admin/riwayat', [AccountController::class, 'riwayat'])->name('akun.riwayat');
 });

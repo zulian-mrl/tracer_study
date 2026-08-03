@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -39,6 +40,8 @@ class RecoveryController extends Controller
         }
 
         $user->update(['password' => Hash::make($data['password'])]);
+
+        AuditLog::catat('reset_pemulihan', null, $user, 'Password direset via kode pemulihan');
 
         return redirect()->route('login')->with('success', 'Password super admin berhasil direset. Silakan login.');
     }

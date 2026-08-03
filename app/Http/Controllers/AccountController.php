@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -21,8 +23,9 @@ class AccountController extends Controller
         $this->cekSuper();
 
         $akun = User::orderByDesc('is_super')->orderBy('email')->get();
+        $utamaId = User::where('is_super', true)->orderBy('id')->value('id');
 
-        return view('accounts', compact('akun'));
+        return view('accounts', compact('akun', 'utamaId'));
     }
 
     public function store(Request $request)
@@ -36,12 +39,14 @@ class AccountController extends Controller
             'is_super' => 'nullable|boolean',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'is_super' => $request->boolean('is_super'),
         ]);
+
+        AuditLog::catat('buat_akun', Auth::user(), $user, "Akun {$data['name']} ({$data['email']}) dibuat" . ($user->is_super ? ' sebagai Super Admin' : ''));
 
         return redirect()->route('akun.index')->with('success', 'Akun admin berhasil ditambahkan.');
     }
@@ -83,12 +88,17 @@ class AccountController extends Controller
 
         Auth::user()->update(['password' => Hash::make($data['password'])]);
 
+        AuditLog::catat('ganti_password', Auth::user(), Auth::user(), 'Mengganti password sendiri');
+
         return back()->with('password_sukses', 'Password Anda berhasil diganti.');
     }
 
     public function simpanKodePemulihan(Request $request)
     {
         $this->cekSuper();
+
+        $utamaId = User::where('is_super', true)->orderBy('id')->value('id');
+        abort_unless(Auth::id() === $utamaId, 403, 'Hanya super admin utama yang dapat mengelola kode pemulihan.');
 
         if ($request->boolean('kode_pemulihan_hapus')) {
             Setting::forget('kode_pemulihan');
@@ -114,6 +124,8 @@ class AccountController extends Controller
         ]);
 
         $user->update(['password' => Hash::make($data['password'])]);
+
+        AuditLog::catat('reset_password', Auth::user(), $user, "Password {$user->name} ({$user->email}) direset oleh admin");
 
         return redirect()->route('akun.index')->with('success', 'Password berhasil direset.');
     }
@@ -176,5 +188,99 @@ class AccountController extends Controller
         }
 
         return redirect()->back()->with('success', 'Nama admin berhasil diubah.');
+    }
+
+    public function riwayat(Request $request)
+    {
+        $this->cekSuper();
+
+        $utamaId = User::where('is_super', true)->orderBy('id')->value('id');
+        abort_unless(Auth::id() === $utamaId, 403, 'Hanya super admin utama yang dapat membuka riwayat.');
+
+        $tanggal = $request->query('tanggal');
+        $cek = $tanggal ? \DateTime::createFromFormat('Y-m-d', $tanggal) : false;
+        if ($tanggal && (! $cek || $cek->format('Y-m-d') !== $tanggal)) {
+            $tanggal = null;
+        }
+
+        $logs = AuditLog::orderBy('created_at')->get();
+
+        $baris = [];
+        $menunggu = [];
+
+        foreach ($logs as $l) {
+            if ($l->jenis === 'login') {
+                $baris[] = (object) [
+                    'jenis' => 'sesi',
+                    'actor_id' => $l->actor_id,
+                    'actor_nama' => $l->actor_nama,
+                    'target_nama' => $l->target_nama,
+                    'keterangan' => 'Login berhasil',
+                    'device' => $l->device,
+                    'ip_address' => $l->ip_address,
+                    'masuk' => $l->created_at,
+                    'keluar' => null,
+                ];
+                $menunggu[$l->actor_id] = count($baris) - 1;
+            } elseif ($l->jenis === 'logout') {
+                $idx = $menunggu[$l->actor_id] ?? null;
+                if ($idx !== null) {
+                    $baris[$idx]->keluar = $l->created_at;
+                    $baris[$idx]->keterangan = 'Login berhasil, logout berhasil';
+                    unset($menunggu[$l->actor_id]);
+                } else {
+                    $baris[] = (object) [
+                        'jenis' => 'logout',
+                        'actor_id' => $l->actor_id,
+                        'actor_nama' => $l->actor_nama,
+                        'target_nama' => $l->target_nama,
+                        'keterangan' => 'Logout berhasil',
+                        'device' => $l->device,
+                        'ip_address' => $l->ip_address,
+                        'masuk' => null,
+                        'keluar' => $l->created_at,
+                    ];
+                }
+            } else {
+                $baris[] = (object) [
+                    'jenis' => $l->jenis,
+                    'actor_id' => $l->actor_id,
+                    'actor_nama' => $l->actor_nama,
+                    'target_nama' => $l->target_nama,
+                    'keterangan' => $l->keterangan,
+                    'device' => $l->device,
+                    'ip_address' => $l->ip_address,
+                    'masuk' => $l->created_at,
+                    'keluar' => null,
+                ];
+            }
+        }
+
+        if ($tanggal) {
+            $baris = array_values(array_filter(
+                $baris,
+                fn ($b) => (($b->masuk ?? $b->keluar)?->format('Y-m-d')) === $tanggal
+            ));
+        }
+
+        usort($baris, fn ($a, $b) => (($b->keluar ?? $b->masuk) ?? now()) <=> (($a->keluar ?? $a->masuk) ?? now()));
+
+        $perHalaman = 50;
+        $halaman = LengthAwarePaginator::resolveCurrentPage();
+        $items = array_slice($baris, ($halaman - 1) * $perHalaman, $perHalaman);
+
+        $log = new LengthAwarePaginator(
+            $items,
+            count($baris),
+            $perHalaman,
+            $halaman,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
+
+        if ($tanggal) {
+            $log->appends(['tanggal' => $tanggal]);
+        }
+
+        return view('riwayat', compact('log', 'tanggal'));
     }
 }

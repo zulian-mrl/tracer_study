@@ -123,6 +123,21 @@
                     🔑 Lupa Password Super Admin?
                 </a>
 
+                <a href="{{ route('akun.riwayat') }}" class="block text-center text-sm text-gray-400 hover:text-amber-400 transition">
+                    📜 Riwayat Login & Password
+                </a>
+
+                @php
+                    $intended = session('url.intended');
+                    $dariRiwayat = $intended && parse_url($intended, PHP_URL_PATH) === '/admin/riwayat';
+                @endphp
+                @if($dariRiwayat)
+                    <a href="{{ route('login', ['kembali' => 1]) }}"
+                       class="block text-center text-sm bg-slate-700/70 hover:bg-slate-600 border border-slate-500/50 px-4 py-2 rounded-lg text-gray-200 transition">
+                        ⬅️ Kembali ke Halaman Login
+                    </a>
+                @endif
+
                 <a href="{{ route('kuesioner.index') }}" class="block text-center text-sm text-gray-400 hover:text-amber-400 transition">
                     ← Kembali ke Form Kuesioner
                 </a>

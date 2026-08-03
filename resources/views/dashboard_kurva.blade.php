@@ -86,10 +86,12 @@
                 <h1 class="text-base sm:text-lg lg:text-xl font-extrabold tracking-wider grad-text uppercase leading-tight whitespace-nowrap">📊 {{ \App\Models\Setting::get('dashboard_judul', 'Analitik Tracer Study UMMY Solok') }}</h1>
             </div>
             <div class="flex flex-wrap justify-end items-center gap-2 text-white">
-                <a href="{{ route('pengaturan.index') }}"
-                   class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 inline-flex items-center gap-1.5">
-                    ⚙️ Pengaturan
-                </a>
+                @if(auth()->check() && auth()->user()->is_super)
+                    <a href="{{ route('pengaturan.index') }}"
+                       class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 inline-flex items-center gap-1.5">
+                        ⚙️ Pengaturan
+                    </a>
+                @endif
                 <button type="button"
                         onclick="openModalAlumni()"
                         class="text-sm bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 font-semibold px-4 py-2 rounded-lg shadow-lg transition duration-200">

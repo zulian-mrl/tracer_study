@@ -13,8 +13,15 @@ use App\Imports\AlumniImport;
 
 class KuesionerController extends Controller
 {
+    private function cekSuper(): void
+    {
+        abort_unless(Auth::check() && Auth::user()->is_super, 403);
+    }
+
     public function import(Request $request)
     {
+        $this->cekSuper();
+
         // 1. Validasi pastikan berkas wajib diisi dan bertipe excel
         $request->validate([
             'file_excel' => 'required|mimes:xlsx,xls,csv|max:10240',
@@ -81,10 +88,10 @@ class KuesionerController extends Controller
             }
 
             // 2. Direct Insert ke phpMyAdmin
-            DB::table('kuesioner_alumnis')->updateOrInsert(
+            try {
+                DB::table('kuesioner_alumnis')->updateOrInsert(
                 ['no_mahasiswa' => $request->no_mahasiswa],
                 [
-                'user_id' => 1,
                 'kode_PT' => $request->kode_PT ?? '101004',
                 'tahun_lulus' => $request->tahun_lulus,
                 'kode_prodi' => $request->kode_prodi,
@@ -106,9 +113,9 @@ class KuesionerController extends Controller
                         '2' => '2',
                         default => $request->f504_mendapat_pekerjaan_6_bulan,
                     },
-                'f502_bulan_dapat_kerja' => $request->f502_bulan_dapat_kerja_ya,
-                'f505_pendapatan_per_bulan' => $request->f505_pendapatan_per_bulan,
-                'f506_bulan_dapat_kerja_setelahnya' => $request->f502_bulan_dapat_kerja_tidak,
+                'f502_bulan_dapat_kerja' => $request->filled('f502_bulan_dapat_kerja_ya') ? $request->f502_bulan_dapat_kerja_ya : null,
+                'f505_pendapatan_per_bulan' => $request->filled('f505_pendapatan_per_bulan') ? $request->f505_pendapatan_per_bulan : null,
+                'f506_bulan_dapat_kerja_setelahnya' => $request->filled('f502_bulan_dapat_kerja_tidak') ? $request->f502_bulan_dapat_kerja_tidak : null,
                 'f510_provinsi' => match ($request->f510_provinsi) {
                         'Prov. D.K.I. Jakarta'=> '10000',
                         'Prov. Jambi'=> '100000',
@@ -705,7 +712,7 @@ class KuesionerController extends Controller
                 'f18a_sumber_biaya_studi'      => $request->f18a_sumber_biaya_studi,
                 'f18b_perguruan_tinggi_studi'  => $request->f18b_perguruan_tinggi_studi,
                 'f18c_program_studi'           => $request->f18c_program_studi,
-                'f18d_tanggal_masuk'           => $request->f18d_tanggal_masuk,
+                'f18d_tanggal_masuk'           => $request->filled('f18d_tanggal_masuk') ? $request->f18d_tanggal_masuk : null,
                 'f12_sumber_biaya_kuliah_lainnya' => $request->f12_02,
                 'f14_erat_hubungan_studi' => match ($request->f14) {
                         '1'=> '1',
@@ -728,7 +735,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1702_A' => match($request->f1763_f1764_A ?? $request->comp_a_f1763_f1764) {
                     '1' => '1', 
@@ -736,7 +743,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1703_A' => match($request->f1765_f1766_A ?? $request->comp_a_f1765_f1766) {
                     '1' => '1', 
@@ -744,7 +751,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1704_A' => match($request->f1767_f1768_A ?? $request->comp_a_f1767_f1768) {
                     '1' => '1', 
@@ -752,7 +759,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1705_A' => match($request->f1769_f1770_A ?? $request->comp_a_f1769_f1770) {
                     '1' => '1', 
@@ -760,7 +767,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1706_A' => match($request->f1771_f1772_A ?? $request->comp_a_f1771_f1772) {
                     '1' => '1', 
@@ -768,7 +775,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1707_A' => match($request->f1773_f1774_A ?? $request->comp_a_f1773_f1774) {
                     '1' => '1', 
@@ -776,7 +783,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
 
                 'f1701_B' => match($request->f1761_f1762_B ?? $request->comp_b_f1761_f1762) {
@@ -785,7 +792,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1702_B' => match($request->f1763_f1764_B ?? $request->comp_b_f1763_f1764) {
                     '1' => '1', 
@@ -793,7 +800,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5' 
+                    default => null 
                 },
                 'f1703_B' => match($request->f1765_f1766_B ?? $request->comp_b_f1765_f1766) {
                     '1' => '1', 
@@ -801,7 +808,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1704_B' => match($request->f1767_f1768_B ?? $request->comp_b_f1767_f1768) {
                     '1' => '1', 
@@ -809,7 +816,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1705_B' => match($request->f1769_f1770_B ?? $request->comp_b_f1769_f1770) {
                     '1' => '1', 
@@ -817,7 +824,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1706_B' => match($request->f1771_f1772_B ?? $request->comp_b_f1771_f1772) {
                     '1' => '1', 
@@ -825,7 +832,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
                 'f1707_B' => match($request->f1773_f1774_B ?? $request->comp_b_f1773_f1774) {
                     '1' => '1', 
@@ -833,7 +840,7 @@ class KuesionerController extends Controller
                     '3' => '3', 
                     '4' => '4', 
                     '5' => '5', 
-                    default => '5'
+                    default => null
                 },
 
                 'created_at' => now(),
@@ -845,7 +852,7 @@ class KuesionerController extends Controller
                     '3'=> '3',
                     '4'=> '4',
                     '5'=> '5',
-                    default => '3'
+                    default => null
                 },
                 'f22_demonstrasi' => match ($request->f22 ?? $request->f22_demonstrasi) {
                     '1'=> '1',
@@ -853,7 +860,7 @@ class KuesionerController extends Controller
                     '3'=> '3',
                     '4'=> '4',
                     '5'=> '5',
-                    default => '3'
+                    default => null
                 },
                 'f23_riset' => match ($request->f23 ?? $request->f23_riset) {
                     '1'=> '1',
@@ -861,7 +868,7 @@ class KuesionerController extends Controller
                     '3'=> '3',
                     '4'=> '4',
                     '5'=> '5',
-                    default => '3'
+                    default => null
                 },
                 'f24_magang' => match ($request->f24 ?? $request->f24_magang) {
                     '1'=> '1',
@@ -869,7 +876,7 @@ class KuesionerController extends Controller
                     '3'=> '3',
                     '4'=> '4',
                     '5'=> '5',
-                    default => '3'
+                    default => null
                 },
                 'f25_praktikum' => match ($request->f25 ?? $request->f25_praktikum) {
                     '1'=> '1',
@@ -877,7 +884,7 @@ class KuesionerController extends Controller
                     '3'=> '3',
                     '4'=> '4',
                     '5'=> '5',
-                    default => '3'
+                    default => null
                 },
                 'f26_kerja_lapangan' => match ($request->f26 ?? $request->f26_kerja_lapangan) {
                     '1'=> '1',
@@ -885,7 +892,7 @@ class KuesionerController extends Controller
                     '3'=> '3',
                     '4'=> '4',
                     '5'=> '5',
-                    default => '3'
+                    default => null
                 },
                 'f27_diskusi' => match ($request->f27 ?? $request->f27_diskusi) {
                     '1'=> '1',
@@ -893,7 +900,7 @@ class KuesionerController extends Controller
                     '3'=> '3',
                     '4'=> '4',
                     '5'=> '5',
-                    default => '3'
+                    default => null
                 },
                 'f301_kapan_mencari_pekerjaan' => match ($request->f301) {
                     '1'=> '1',
@@ -901,8 +908,8 @@ class KuesionerController extends Controller
                     '3'=> '3',
                     default => '3'
                 },
-                'f302_bulan_sebelum_lulus' => $request->f302,
-                'f303_bulan_setelah_lulus' => $request->f303,
+                'f302_bulan_sebelum_lulus' => $request->filled('f302') ? $request->f302 : null,
+                'f303_bulan_setelah_lulus' => $request->filled('f303') ? $request->f303 : null,
 
                 'f401_iklan_koran_brosur'           => $request->has('f401') ? '1' : '0',
                 'f402_melamar_tanpa_lowongan'       => $request->has('f402') ? '1' : '0',
@@ -949,6 +956,9 @@ class KuesionerController extends Controller
                 'f1613_lainnya'                       => $request->has('f1613') ? '1' : '0',
                 'f1614_tuliskan'                    => $request->input('f1614'),
             ]);
+            } catch (\Exception $e) {
+                return redirect()->back()->withInput()->withErrors(['autentikasi' => 'Terjadi kesalahan saat menyimpan data Anda. Silakan coba beberapa saat lagi.']);
+            }
 
         return redirect()->back()->with('success', Setting::get('kuesioner_sukses', 'Kuesioner Anda berhasil dikirim! Terima kasih atas partisipasinya.'));
         }
@@ -1535,15 +1545,16 @@ class KuesionerController extends Controller
         }
 
         // 4. Logika Hitung Penekanan Metode Belajar
+        // Data disimpan sebagai '1'='Sangat Besar' s.d. '5'='Tidak Sama Sekali'
         $metodeBelajar = ['Perkuliahan' => 0, 'Demonstrasi' => 0, 'Riset' => 0, 'Magang' => 0, 'Praktikum' => 0, 'Kerja Lapangan' => 0, 'Diskusi' => 0];
         foreach ($dataAlumni as $d) {
-            if (isset($d->f21) && str_contains(strtolower($d->f21), 'besar')) $metodeBelajar['Perkuliahan']++;
-            if (isset($d->f22) && str_contains(strtolower($d->f22), 'besar')) $metodeBelajar['Demonstrasi']++;
-            if (isset($d->f23) && str_contains(strtolower($d->f23), 'besar')) $metodeBelajar['Riset']++;
-            if (isset($d->f24) && str_contains(strtolower($d->f24), 'besar')) $metodeBelajar['Magang']++;
-            if (isset($d->f25) && str_contains(strtolower($d->f25), 'besar')) $metodeBelajar['Praktikum']++;
-            if (isset($d->f26) && str_contains(strtolower($d->f26), 'besar')) $metodeBelajar['Kerja Lapangan']++;
-            if (isset($d->f27) && str_contains(strtolower($d->f27), 'besar')) $metodeBelajar['Diskusi']++;
+            if (($d->f21_perkuliahan ?? '') == '1') $metodeBelajar['Perkuliahan']++;
+            if (($d->f22_demonstrasi ?? '') == '1') $metodeBelajar['Demonstrasi']++;
+            if (($d->f23_riset ?? '') == '1')       $metodeBelajar['Riset']++;
+            if (($d->f24_magang ?? '') == '1')      $metodeBelajar['Magang']++;
+            if (($d->f25_praktikum ?? '') == '1')   $metodeBelajar['Praktikum']++;
+            if (($d->f26_kerja_lapangan ?? '') == '1') $metodeBelajar['Kerja Lapangan']++;
+            if (($d->f27_diskusi ?? '') == '1')      $metodeBelajar['Diskusi']++;
         }
 
         // 5. Satukan data rekap + data mentah berurutan

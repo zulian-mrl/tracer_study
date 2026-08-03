@@ -246,6 +246,7 @@
         </div>
 
         <!-- ================= KODE PEMULIHAN SUPER ADMIN ================= -->
+        @if(auth()->user()->is_super && auth()->user()->id === $utamaId)
         <div class="glass rounded-2xl p-6 shadow-xl fade-up">
             <h2 class="sec-title">🔐 Kode Pemulihan Super Admin</h2>
             <p class="text-xs text-gray-500 mb-4">
@@ -279,6 +280,7 @@
                 </button>
             </form>
         </div>
+        @endif
 
         <footer class="text-center text-xs text-slate-500 py-4">
             © {{ date('Y') }} Tracer Study LPKM UMMY Solok — Kelola Akun Admin

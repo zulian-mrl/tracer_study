@@ -133,7 +133,7 @@
         @endif
 
         <div class="mt-6 text-center text-xs text-gray-500 fade-up">
-            {!! \App\Models\Setting::get('kuesioner_instruksi') !!}
+            {{ \App\Models\Setting::get('kuesioner_instruksi') }}
         </div>
 
         <form action="{{ route('kuesioner.store') }}" method="POST" class="space-y-6 mt-4">
@@ -234,7 +234,7 @@
             </div>
             <!-- SECTION F504: MENDAPAT PEKERJAAN 6 BULAN SETELAH LULUS -->
     <div class="card p-5 md:p-6 fade-up">
-        <h2 class="section-title">{!! \App\Models\Setting::get('judul_kerja6bulan') !!}</h2>
+        <h2 class="section-title">{{ \App\Models\Setting::get('judul_kerja6bulan') }}</h2>
         <div class="space-y-4 mt-3">
             
             <!-- PILIHAN: YA -->

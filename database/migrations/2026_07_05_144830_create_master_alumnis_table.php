@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('master_alumnis', function (Blueprint $table) {
-            $table->id();
-            $table->string('no_mahasiswa', 20)->unique(); // Sebagai NIM/Key utama pencarian
-            $table->string('kode_prodi', 10)->nullable();
-            $table->string('nama', 150);
-            $table->string('nik', 20)->unique();
-            $table->string('tahun_lulus', 10)->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('master_alumnis')) {
+            Schema::create('master_alumnis', function (Blueprint $table) {
+                $table->id();
+                $table->string('no_mahasiswa', 20)->unique(); // Sebagai NIM/Key utama pencarian
+                $table->string('kode_prodi', 10)->nullable();
+                $table->string('nama', 150);
+                $table->string('nik', 20)->unique();
+                $table->string('tahun_lulus', 10)->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
