@@ -32,5 +32,8 @@ class DatabaseSeeder extends Seeder
         // 2. Panggil Seeder Kuesioner Alumni
         $this->call(QuestionnaireSeeder::class);
         */
+
+        // Buat/mutakhirkan akun super admin (baca env ADMIN_EMAIL & ADMIN_PASSWORD)
+        $this->call(AdminUserSeeder::class);
     }
 }

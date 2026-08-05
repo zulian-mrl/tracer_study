@@ -109,6 +109,26 @@ class Setting extends Model
             'chart_prodi_tipe' => 'bar',
             'chart_prodi_warna' => '#34d399',
 
+            // --- Tampilkan/sembunyikan tiap grafik di dashboard (1=tampil, 0=sembunyi) ---
+            'chart_status_tampil' => '1',
+            'chart_pendapatan_tampil' => '1',
+            'chart_perusahaan_tampil' => '1',
+            'chart_dana_tampil' => '1',
+            'chart_lokasi_tampil' => '1',
+            'chart_lokasi_kota_tampil' => '1',
+            'chart_jabatan_tampil' => '1',
+            'chart_tingkat_tampil' => '1',
+            'chart_kuliah_tampil' => '1',
+            'chart_kompetensi_tampil' => '1',
+            'chart_metode_tampil' => '1',
+            'chart_kurva_tampil' => '1',
+            'chart_cara_tampil' => '1',
+            'chart_rasio_tampil' => '1',
+            'chart_keaktifan_tampil' => '1',
+            'chart_alasan_tampil' => '1',
+            'chart_perguruan_tampil' => '1',
+            'chart_prodi_tampil' => '1',
+
             'judul_chart_status' => '💼 Status Kesibukan Alumni Saat Ini',
             'judul_chart_pendapatan' => '💰 Distribusi Pendapatan Per Bulan',
             'judul_chart_perusahaan' => '💼 Jenis Perusahaan Tempat Bekerja',
@@ -255,6 +275,11 @@ class Setting extends Model
     public static function forget(string $key): void
     {
         static::where('key', $key)->delete();
+        static::$cache = null;
+    }
+
+    public static function flushCache(): void
+    {
         static::$cache = null;
     }
 

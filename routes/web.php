@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KuesionerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AccountController;
@@ -26,9 +27,9 @@ Route::post('/pemulihan', [RecoveryController::class, 'reset'])->middleware('thr
 
 // --- ROUTE ADMIN (WAJIB LOGIN) ---
 Route::middleware('auth')->group(function () {
-    Route::get('/export-kuesioner-excel', [KuesionerController::class, 'exportExcel'])->name('kuesioner.export');
-    Route::get('/dashboard-kurva', [KuesionerController::class, 'dashboard'])->name('kuesioner.dashboard');
-    Route::post('/admin/alumni/import', [KuesionerController::class, 'import'])->name('alumni.import');
+    Route::get('/export-kuesioner-excel', [DashboardController::class, 'exportExcel'])->name('kuesioner.export');
+    Route::get('/dashboard-kurva', [DashboardController::class, 'dashboard'])->name('kuesioner.dashboard');
+    Route::post('/admin/alumni/import', [DashboardController::class, 'import'])->name('alumni.import');
     Route::get('/admin/pengaturan', [SettingsController::class, 'index'])->name('pengaturan.index');
     Route::post('/admin/pengaturan', [SettingsController::class, 'update'])->name('pengaturan.update');
     Route::get('/admin/akun', [AccountController::class, 'index'])->name('akun.index');

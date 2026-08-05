@@ -1,59 +1,131 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tracer Study LPKM UMMY Solok
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi **Tracer Study** berbasis web untuk melacak kondisi kerja/lanjutan studi alumni
+Lembaga Penelitian dan Pengabdian Masyarakat (LPKM) Universitas Muhammadiyah Muara Bungo (UMMY) Solok.
+Dibangun dengan **Laravel 12** (PHP 8.2), **Tailwind CSS v4**, **Chart.js**, dan **Maatwebsite/Excel**.
 
-## About Laravel
+## Fitur
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Form kuesioner alumni** (`/kuesioner`)
+  - Autentikasi data otomatis terhadap tabel master alumni (NIM + NIK + tahun lulus + kode prodi).
+  - Dropdown provinsi → kabupaten/kota dinamis (data bersumber dari `config/wilayah.php`).
+  - Validasi lengkap di sisi server (tidak bergantung JavaScript), termasuk NIK 16 digit & email sesuai domain kampus.
+  - Kuesioner dapat ditutup/dibuka dan pesan disesuaikan dari menu Pengaturan.
+- **Dashboard analitik admin** (`/dashboard-kurva`)
+  - Grafik status bekerja, pendapatan, jenis instansi, sumber dana, posisi jabatan, lokasi kerja,
+    kompetensi, metode belajar, waktu cari kerja, cara cari kerja, rata-rata lamaran, keaktifan, dan alasan tidak sesuai.
+  - Filter tahun lulus & kode prodi; kartu & grafik bisa diklik untuk melihat daftar nama alumni.
+- **Impor & ekspor Excel**
+  - Impor data master alumni (`.xlsx`/`.xls`/`.csv`) dengan deteksi duplikat NIM/NIK dan batch insert.
+  - Ekspor laporan kuesioner (`.xlsx`) dengan filter tahun/prodi, diurutkan Tahun → Prodi → Nama.
+- **Manajemen akun admin** (`/admin/akun`)
+  - Hanya super admin yang dapat membuka. Kelola akun admin biasa, jadikan super, reset/hapus password.
+  - Fitur kode pemulihan super admin & riwayat login/password (`/admin/riwayat`).
+- **Pengaturan aplikasi** (`/admin/pengaturan`)
+  - Nama item grafik, pesan sukses/tutup, domain email, kode PT default, dll. (disimpan di tabel `settings`).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Kebutuhan
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP >= 8.2 (disarankan pakai XAMPP PHP 8.2)
+- Composer
+- MySQL/MariaDB
+- Node.js & npm (opsional, hanya untuk build asset Vite)
 
-## Learning Laravel
+## Instalasi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+# 1. Pindahkan/clone proyek ke htdocs (mis. C:\xampp\htdocs\tracer-lpkm)
+cd tracer-lpkm
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# 2. Install dependency PHP
+composer install
 
-## Laravel Sponsors
+# 3. Siapkan konfigurasi
+copy .env.example .env        # Windows
+cp .env.example .env          # Linux
+php artisan key:generate
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# 4. Buat database MySQL lalu sesuaikan .env
+#    DB_DATABASE, DB_USERNAME, DB_PASSWORD (default: db_tracer_lpkm / root / kosong)
 
-### Premium Partners
+# 5. Jalankan migrasi
+php artisan migrate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# 6. Buat akun super admin awal (opsional, lihat bagian "Akun Awal")
+php artisan db:seed
 
-## Contributing
+# 7. (Opsional) build asset Vite
+npm install
+npm run build
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Akses aplikasi: `http://localhost/tracer-lpkm/public` (atau konfigurasi virtual host),
+halaman kuesioner: `http://localhost/tracer-lpkm/public/kuesioner`,
+halaman login admin: `http://localhost/tracer-lpkm/public/login`.
 
-## Code of Conduct
+> Catatan: seluruh tampilan memakai Tailwind CSS v4 lewat CDN, sehingga build Vite tidak
+> diperlukan untuk menjalankan aplikasi.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Akun Awal
 
-## Security Vulnerabilities
+`AdminUserSeeder` membuat super admin dari variabel env:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```env
+ADMIN_EMAIL=admin@umm.ac.id
+ADMIN_PASSWORD=ganti-password-minimal-8-karakter
+```
 
-## License
+```bash
+php artisan db:seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+> UBAH `ADMIN_PASSWORD` sebelum dipakai di lingkungan nyata. Kode pemulihan super admin
+> bisa diatur dari menu `Pengaturan` → halaman `Kelola Akun Admin`.
+
+## Route Utama
+
+| Method | URL | Nama | Fungsi |
+|---|---|---|---|
+| GET | `/kuesioner` | `kuesioner.index` | Form kuesioner publik |
+| POST | `/kuesioner` | `kuesioner.store` | Simpan jawaban kuesioner |
+| GET | `/login` | `login` | Login admin |
+| POST | `/logout` | `logout` | Logout admin |
+| GET | `/dashboard-kurva` | `kuesioner.dashboard` | Dashboard analitik |
+| GET | `/export-kuesioner-excel` | `kuesioner.export` | Ekspor Excel |
+| POST | `/admin/alumni/import` | `alumni.import` | Impor master alumni |
+| GET | `/admin/pengaturan` | `pengaturan.index` | Pengaturan aplikasi |
+| GET | `/admin/akun` | `akun.index` | Kelola akun admin |
+| GET | `/admin/riwayat` | `akun.riwayat` | Riwayat login & password |
+| GET | `/pemulihan` | `pemulihan.index` | Pemulihan password super admin |
+
+## Struktur Penting
+
+```
+app/Http/Controllers/
+├── KuesionerController.php   # index + store (form kuesioner publik)
+├── DashboardController.php   # dashboard + export + import (admin)
+├── AuthController.php        # login/logout
+├── AccountController.php     # kelola akun & riwayat
+├── SettingsController.php    # pengaturan
+└── RecoveryController.php    # pemulihan password
+
+config/wilayah.php            # data provinsi/kab-kota (kode & daftar untuk dropdown)
+resources/views/
+├── layouts/admin.blade.php   # layout halaman admin
+├── layouts/auth.blade.php    # layout halaman login/pemulihan
+├── kuesioner.blade.php       # form kuesioner
+└── dashboard_kurva.blade.php # dashboard analitik
+```
+
+## Pengujian
+
+```bash
+php artisan test
+```
+
+Terdapat 12 test (45 assertions) yang mencakup penyimpanan kuesioner, validasi,
+autentikasi alumni, impor Excel, dan pengaturan visibilitas grafik dashboard.
+
+## Lisensi
+
+Proyek internal LPKM UMMY Solok.

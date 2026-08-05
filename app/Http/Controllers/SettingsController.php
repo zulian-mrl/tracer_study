@@ -43,6 +43,8 @@ class SettingsController extends Controller
                 $rules[$key] = ['nullable', 'regex:/^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/'];
             } elseif (str_ends_with($key, '_tipe')) {
                 $rules[$key] = ['nullable', Rule::in(['pie', 'bar', 'doughnut', 'line', 'radar'])];
+            } elseif (str_ends_with($key, '_tampil')) {
+                $rules[$key] = ['nullable', Rule::in(['0', '1'])];
             }
         }
         $rules['chart_kurva_fill'] = ['nullable', Rule::in(['0', '1'])];

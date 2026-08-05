@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Analitik Admin - Tracer Study</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -228,143 +228,179 @@
 
             <!-- GRAFIK / CHART SECTION -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                @if (\App\Models\Setting::get('chart_status_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_status') }}</h3>
                     <div class="relative h-64 flex justify-center chart-3d">
                         <canvas id="chartStatusKerja"></canvas>
                     </div>
                 </div>
+                @endif
 
+                @if (\App\Models\Setting::get('chart_pendapatan_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_pendapatan') }}</h3>
                     <div class="relative h-64 flex justify-center chart-3d">
                         <canvas id="chartPendapatan"></canvas>
                     </div>
                 </div>
+                @endif
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                @if (\App\Models\Setting::get('chart_perusahaan_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_perusahaan') }}</h3>
                     <div class="relative h-64 flex justify-center chart-3d">
                         <canvas id="chartPerusahaanKerja"></canvas>
                     </div>
                 </div>
+                @endif
 
+                @if (\App\Models\Setting::get('chart_dana_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_dana') }}</h3>
                     <div class="relative h-64 flex justify-center chart-3d">
                         <canvas id="chartSumberDana"></canvas>
                     </div>
                 </div>
+                @endif
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                @if (\App\Models\Setting::get('chart_jabatan_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_jabatan') }}</h3>
                     <div class="relative h-64 flex justify-center chart-3d">
                         <canvas id="chartPosisiJabatan"></canvas>
                     </div>
                 </div>
+                @endif
 
+                @if (\App\Models\Setting::get('chart_tingkat_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_tingkat') }}</h3>
                     <div class="relative h-64 flex justify-center chart-3d">
                         <canvas id="chartPilihTingkat"></canvas>
                     </div>
                 </div>
+                @endif
             </div>
 
             <div class="grid grid-cols-1 gap-6">
+                @if (\App\Models\Setting::get('chart_lokasi_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_lokasi') }}</h3>
                     <div class="relative h-64 chart-3d">
                         <canvas id="chartLokasi"></canvas>
                     </div>
                 </div>
+                @endif
 
+                @if (\App\Models\Setting::get('chart_lokasi_kota_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_lokasi_kota') }}</h3>
                     <div class="relative h-64 chart-3d">
                         <canvas id="chartLokasiKota"></canvas>
                     </div>
                 </div>
+                @endif
 
+                @if (\App\Models\Setting::get('chart_kuliah_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_kuliah') }}</h3>
                     <div class="relative h-64 chart-3d">
                         <canvas id="chartTempatKuliah"></canvas>
                     </div>
                 </div>
+                @endif
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                @if (\App\Models\Setting::get('chart_perguruan_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_perguruan') }}</h3>
                     <div class="relative h-64 chart-3d">
                         <canvas id="chartPerguruanTinggiStudi"></canvas>
                     </div>
                 </div>
+                @endif
 
+                @if (\App\Models\Setting::get('chart_prodi_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_prodi') }}</h3>
                     <div class="relative h-64 chart-3d">
                         <canvas id="chartProgramStudiStudi"></canvas>
                     </div>
                 </div>
+                @endif
             </div>
 
+            @if (\App\Models\Setting::get('chart_kompetensi_tampil', '1') === '1')
             <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                 <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_kompetensi') }}</h3>
                 <div class="relative h-80 flex justify-center chart-3d">
                     <canvas id="chartKompetensi"></canvas>
                 </div>
             </div>
+            @endif
 
+            @if (\App\Models\Setting::get('chart_metode_tampil', '1') === '1')
             <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                 <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_metode') }}</h3>
                 <div class="relative h-72 chart-3d">
                     <canvas id="chartMetodeBelajar"></canvas>
                 </div>
             </div>
+            @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                @if (\App\Models\Setting::get('chart_kurva_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_waktu') }}</h3>
                     <div class="relative h-64 chart-3d">
                         <canvas id="chartWaktuCariKerja"></canvas>
                     </div>
                 </div>
+                @endif
 
+                @if (\App\Models\Setting::get('chart_cara_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_cara') }}</h3>
                     <div class="relative h-64 flex justify-center chart-3d">
                         <canvas id="chartCaraCariKerja"></canvas>
                     </div>
                 </div>
+                @endif
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                @if (\App\Models\Setting::get('chart_rasio_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl col-span-1 lg:col-span-2 fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_rasio') }}</h3>
                     <div class="relative h-64 chart-3d">
                         <canvas id="chartRasioLamaran"></canvas>
                     </div>
                 </div>
+                @endif
+                @if (\App\Models\Setting::get('chart_keaktifan_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                     <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_keaktifan') }}</h3>
                     <div class="relative h-64 flex justify-center chart-3d chart-sharp">
                         <canvas id="chartKeaktifan"></canvas>
                     </div>
                 </div>
+                @endif
             </div>
 
+            @if (\App\Models\Setting::get('chart_alasan_tampil', '1') === '1')
             <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
                 <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_alasan') }}</h3>
                 <div class="relative h-72 chart-3d">
                     <canvas id="chartAlasanTidakSesuai"></canvas>
                 </div>
             </div>
+            @endif
 
             <footer class="text-center text-xs text-slate-500 py-4">
                 {{ \App\Models\Setting::get('dashboard_footer') }}
@@ -902,6 +938,19 @@
         const daftarNamaAlumni = @js($daftarNama);
         const daftarNamaGrafik = @js($namaPerGrafik);
 
+        function buatLiNama(nomor, nama) {
+            const li = document.createElement('li');
+            li.className = 'flex items-center gap-2 bg-slate-800/60 border border-slate-700/60 rounded-lg px-3 py-2';
+            const nomorSpan = document.createElement('span');
+            nomorSpan.className = 'w-5 text-xs text-slate-500 shrink-0';
+            nomorSpan.textContent = nomor + '.';
+            const namaSpan = document.createElement('span');
+            namaSpan.textContent = nama;
+            li.appendChild(nomorSpan);
+            li.appendChild(namaSpan);
+            return li;
+        }
+
         function tampilkanModalNama(judul, nama) {
             const modal = document.getElementById('modalNamaAlumni');
             if (!modal) return;
@@ -909,14 +958,12 @@
             const list = document.getElementById('listNamaAlumni');
             list.innerHTML = '';
             if (nama.length === 0) {
-                list.innerHTML = '<li class="text-gray-500 italic">Tidak ada data alumni.</li>';
+                const li = document.createElement('li');
+                li.className = 'text-gray-500 italic';
+                li.textContent = 'Tidak ada data alumni.';
+                list.appendChild(li);
             } else {
-                nama.forEach((n, i) => {
-                    const li = document.createElement('li');
-                    li.className = 'flex items-center gap-2 bg-slate-800/60 border border-slate-700/60 rounded-lg px-3 py-2';
-                    li.innerHTML = '<span class="w-5 text-xs text-slate-500 shrink-0">' + (i + 1) + '.</span><span>' + n + '</span>';
-                    list.appendChild(li);
-                });
+                nama.forEach((n, i) => list.appendChild(buatLiNama(i + 1, n)));
             }
             document.getElementById('totalNamaAlumni').textContent = 'Total: ' + nama.length + ' alumni';
             modal.classList.remove('hidden');
@@ -941,14 +988,12 @@
             const nama = daftarNamaAlumni[kategori] || [];
             list.innerHTML = '';
             if (nama.length === 0) {
-                list.innerHTML = '<li class="text-gray-500 italic">Tidak ada data alumni.</li>';
+                const li = document.createElement('li');
+                li.className = 'text-gray-500 italic';
+                li.textContent = 'Tidak ada data alumni.';
+                list.appendChild(li);
             } else {
-                nama.forEach((n, i) => {
-                    const li = document.createElement('li');
-                    li.className = 'flex items-center gap-2 bg-slate-800/60 border border-slate-700/60 rounded-lg px-3 py-2';
-                    li.innerHTML = '<span class="w-5 text-xs text-slate-500 shrink-0">' + (i + 1) + '.</span><span>' + n + '</span>';
-                    list.appendChild(li);
-                });
+                nama.forEach((n, i) => list.appendChild(buatLiNama(i + 1, n)));
             }
             document.getElementById('totalNamaAlumni').textContent = 'Total: ' + nama.length + ' alumni';
             modal.classList.remove('hidden');
