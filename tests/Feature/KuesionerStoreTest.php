@@ -43,6 +43,7 @@ class KuesionerStoreTest extends TestCase
             'f510_kab_kota' => 'Kota Solok',
             'f11_jenis_instansi' => '5',
             'f5d_tingkat' => 'Nasional',
+            'f12_01' => '1',
             'f14' => '1',
             'f15' => '1',
             'f301' => '1',
@@ -108,6 +109,30 @@ class KuesionerStoreTest extends TestCase
         ]))->assertSessionHasErrors(['f18a_sumber_biaya_studi', 'f18b_perguruan_tinggi_studi', 'f18c_program_studi', 'f12_01']);
 
         $this->assertDatabaseCount('kuesioner_alumnis', 0);
+    }
+
+    public function test_status_bekerja_wajib_isi_sumber_dana_kuliah(): void
+    {
+        $this->post(route('kuesioner.store'), $this->payload([
+            'f12_01' => '',
+        ]))->assertSessionHasErrors(['f12_01']);
+
+        $this->assertDatabaseCount('kuesioner_alumnis', 0);
+    }
+
+    public function test_status_bekerja_tidak_mewajibkan_data_studi_lanjut(): void
+    {
+        $this->post(route('kuesioner.store'), $this->payload([
+            'f18a_sumber_biaya_studi' => '',
+            'f18b_perguruan_tinggi_studi' => '',
+            'f18c_program_studi' => '',
+            'f18d_tanggal_masuk' => '',
+        ]))->assertSessionHas('success');
+
+        $this->assertDatabaseHas('kuesioner_alumnis', [
+            'no_mahasiswa' => '2210015111001',
+            'f8_status_saat_ini' => '1',
+        ]);
     }
 
     public function test_alumni_tidak_terdaftar_ditolak(): void

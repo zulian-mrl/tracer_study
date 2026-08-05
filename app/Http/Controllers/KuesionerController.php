@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use App\Models\MasterAlumni;
 use App\Models\Setting;
+use App\Models\Wilayah;
 
 class KuesionerController extends Controller
 {
@@ -85,7 +86,7 @@ class KuesionerController extends Controller
                 'f18b_perguruan_tinggi_studi' => [Rule::requiredIf($statusLanjut), 'nullable', 'string', 'max:255'],
                 'f18c_program_studi' => [Rule::requiredIf($statusLanjut), 'nullable', 'string', 'max:255'],
                 'f18d_tanggal_masuk' => [Rule::requiredIf($statusLanjut), 'nullable', 'date'],
-                'f12_01' => [Rule::requiredIf($statusLanjut), 'nullable', Rule::in(['1', '2', '3', '4', '5', '6', '7'])],
+                'f12_01' => ['required', Rule::in(['1', '2', '3', '4', '5', '6', '7'])],
                 'f12_02' => ['nullable', 'string', 'max:255'],
                 'f14' => [Rule::requiredIf($keselarasanWajib), 'nullable', Rule::in(['1', '2', '3', '4', '5'])],
                 'f15' => [Rule::requiredIf($keselarasanWajib), 'nullable', Rule::in(['1', '2', '3', '4'])],
@@ -117,26 +118,26 @@ class KuesionerController extends Controller
             }
 
             $request->validate($rules, [
-                'email.required' => 'Alamat email wajib diisi.',
-                'email.email' => 'Format alamat email tidak valid.',
-                'email.regex' => 'Email harus menggunakan @' . ltrim(trim(Setting::get('kuesioner_email_domain', 'gmail.com')), '@') . '.',
-                'nik.digits' => 'NIK harus berjumlah tepat 16 digit angka.',
-                'no_hp.regex' => 'Nomor HP harus diawali 08 dan minimal 10 digit.',
-                'f502_bulan_dapat_kerja_ya.required' => 'Isi dalam berapa bulan Anda mendapatkan pekerjaan.',
-                'f505_pendapatan_per_bulan.required' => 'Isi rata-rata pendapatan per bulan.',
-                'f502_bulan_dapat_kerja_tidak.required' => 'Isi berapa bulan Anda belum mendapatkan pekerjaan.',
-                'f510_provinsi.required' => 'Pilih lokasi provinsi tempat Anda bekerja.',
-                'f510_kab_kota.required' => 'Pilih kabupaten/kota tempat Anda bekerja.',
-                'f11_jenis_instansi.required' => 'Pilih jenis perusahaan/instansi tempat Anda bekerja.',
-                'f18a_sumber_biaya_studi.required' => 'Pilih sumber biaya studi lanjut.',
-                'f18b_perguruan_tinggi_studi.required' => 'Isi perguruan tinggi tujuan studi lanjut.',
-                'f18c_program_studi.required' => 'Isi program studi tujuan studi lanjut.',
-                'f18d_tanggal_masuk.required' => 'Isi tanggal masuk studi lanjut.',
-                'f12_01.required' => 'Pilih sumber dana pembiayaan kuliah.',
-                'f14.required' => 'Pilih erat hubungan bidang studi dengan pekerjaan.',
-                'f15.required' => 'Pilih tingkat pendidikan yang paling tepat.',
-                'f302.required' => 'Isi berapa bulan sebelum lulus Anda mulai mencari kerja.',
-                'f303.required' => 'Isi berapa bulan setelah lulus Anda mulai mencari kerja.',
+                'email.required' => Setting::get('pesan_email_required', 'Alamat email wajib diisi.'),
+                'email.email' => Setting::get('pesan_email_format', 'Format alamat email tidak valid.'),
+                'email.regex' => Setting::get('pesan_email_domain', 'Email harus menggunakan @') . ltrim(trim(Setting::get('kuesioner_email_domain', 'gmail.com')), '@') . '.',
+                'nik.digits' => Setting::get('pesan_nik_digits', 'NIK harus berjumlah tepat 16 digit angka.'),
+                'no_hp.regex' => Setting::get('pesan_no_hp_regex', 'Nomor HP harus diawali 08 dan minimal 10 digit.'),
+                'f502_bulan_dapat_kerja_ya.required' => Setting::get('pesan_bulan_ya', 'Isi dalam berapa bulan Anda mendapatkan pekerjaan.'),
+                'f505_pendapatan_per_bulan.required' => Setting::get('pesan_pendapatan', 'Isi rata-rata pendapatan per bulan.'),
+                'f502_bulan_dapat_kerja_tidak.required' => Setting::get('pesan_bulan_tidak', 'Isi berapa bulan Anda belum mendapatkan pekerjaan.'),
+                'f510_provinsi.required' => Setting::get('pesan_provinsi', 'Pilih lokasi provinsi tempat Anda bekerja.'),
+                'f510_kab_kota.required' => Setting::get('pesan_kab_kota', 'Pilih kabupaten/kota tempat Anda bekerja.'),
+                'f11_jenis_instansi.required' => Setting::get('pesan_instansi', 'Pilih jenis perusahaan/instansi tempat Anda bekerja.'),
+                'f18a_sumber_biaya_studi.required' => Setting::get('pesan_sumber_biaya', 'Pilih sumber biaya studi lanjut.'),
+                'f18b_perguruan_tinggi_studi.required' => Setting::get('pesan_perguruan_tinggi', 'Isi perguruan tinggi tujuan studi lanjut.'),
+                'f18c_program_studi.required' => Setting::get('pesan_program_studi', 'Isi program studi tujuan studi lanjut.'),
+                'f18d_tanggal_masuk.required' => Setting::get('pesan_tanggal_masuk', 'Isi tanggal masuk studi lanjut.'),
+                'f12_01.required' => Setting::get('pesan_sumber_dana', 'Pilih sumber dana pembiayaan kuliah.'),
+                'f14.required' => Setting::get('pesan_f14', 'Pilih erat hubungan bidang studi dengan pekerjaan.'),
+                'f15.required' => Setting::get('pesan_f15', 'Pilih tingkat pendidikan yang paling tepat.'),
+                'f302.required' => Setting::get('pesan_f302', 'Isi berapa bulan sebelum lulus Anda mulai mencari kerja.'),
+                'f303.required' => Setting::get('pesan_f303', 'Isi berapa bulan setelah lulus Anda mulai mencari kerja.'),
             ]);
 
             $nimInput  = trim($request->no_mahasiswa);
@@ -201,9 +202,9 @@ class KuesionerController extends Controller
                 'f502_bulan_dapat_kerja' => $request->filled('f502_bulan_dapat_kerja_ya') ? $request->f502_bulan_dapat_kerja_ya : null,
                 'f505_pendapatan_per_bulan' => $request->filled('f505_pendapatan_per_bulan') ? $request->f505_pendapatan_per_bulan : null,
                 'f506_bulan_dapat_kerja_setelahnya' => $request->filled('f502_bulan_dapat_kerja_tidak') ? $request->f502_bulan_dapat_kerja_tidak : null,
-                'f510_provinsi' => config('wilayah.provinsi')[$request->f510_provinsi] ?? '0',
+                'f510_provinsi' => Wilayah::provinsiKode((string) $request->f510_provinsi) ?? '0',
 
-                'f510_kab_kota' => config('wilayah.kab_kota')[$request->f510_kab_kota] ?? '0',
+                'f510_kab_kota' => Wilayah::kabKotaKode((string) $request->f510_kab_kota) ?? '0',
                 'f11_jenis_instansi' => match ($request->f11_jenis_instansi) {
                         '1'=> '1',
                         '2'=> '6',

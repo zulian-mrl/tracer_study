@@ -32,6 +32,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/alumni/import', [DashboardController::class, 'import'])->name('alumni.import');
     Route::get('/admin/pengaturan', [SettingsController::class, 'index'])->name('pengaturan.index');
     Route::post('/admin/pengaturan', [SettingsController::class, 'update'])->name('pengaturan.update');
+    Route::post('/admin/pengaturan/wilayah/provinsi', [SettingsController::class, 'wilayahProvinsiStore'])->name('wilayah.provinsi.store');
+    Route::post('/admin/pengaturan/wilayah/provinsi/{wilayah}/update', [SettingsController::class, 'wilayahProvinsiUpdate'])->name('wilayah.provinsi.update');
+    Route::post('/admin/pengaturan/wilayah/provinsi/{wilayah}/hapus', [SettingsController::class, 'wilayahProvinsiDestroy'])->name('wilayah.provinsi.destroy');
+    Route::post('/admin/pengaturan/wilayah/kabkota', [SettingsController::class, 'wilayahKabKotaStore'])->name('wilayah.kabkota.store');
+    Route::post('/admin/pengaturan/wilayah/kabkota/{wilayah}/update', [SettingsController::class, 'wilayahKabKotaUpdate'])->name('wilayah.kabkota.update');
+    Route::post('/admin/pengaturan/wilayah/kabkota/{wilayah}/hapus', [SettingsController::class, 'wilayahKabKotaDestroy'])->name('wilayah.kabkota.destroy');
     Route::get('/admin/akun', [AccountController::class, 'index'])->name('akun.index');
     Route::post('/admin/akun', [AccountController::class, 'store'])->name('akun.store');
     Route::post('/admin/foto', [AccountController::class, 'uploadFoto'])->name('foto.upload');

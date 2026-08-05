@@ -173,7 +173,7 @@
                 <div class="text-5xl mb-3">📋</div>
                 <p class="font-semibold text-base">{{ $kuesionerPesan ?? 'Kuesioner ditutup. Anda akan diberitahu ketika dibuka kembali.' }}</p>
                 @if(\App\Models\Setting::get('kuesioner_kontak'))
-                    <p class="text-sm mt-3 text-gray-400">📞 Hubungi admin: {{ \App\Models\Setting::get('kuesioner_kontak') }}</p>
+                    <p class="text-sm mt-3 text-gray-400">{{ \App\Models\Setting::get('label_hubungi_admin', '📞 Hubungi admin:') }} {{ \App\Models\Setting::get('kuesioner_kontak') }}</p>
                 @endif
             </div>
         @else
@@ -186,7 +186,7 @@
                 </div>
                 @if(\App\Models\Setting::get('kuesioner_kontak'))
                     <div class="bg-slate-800/70 border border-slate-700/60 text-gray-300 px-4 py-3 rounded-xl shadow-lg text-sm mt-3">
-                        📞 Hubungi admin: {{ \App\Models\Setting::get('kuesioner_kontak') }}
+                        {{ \App\Models\Setting::get('label_hubungi_admin', '📞 Hubungi admin:') }} {{ \App\Models\Setting::get('kuesioner_kontak') }}
                     </div>
                 @endif
             @endif
@@ -196,17 +196,17 @@
                 <h2 class="section-title">{{ \App\Models\Setting::get('judul_identitas') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Nomor Induk Mahasiswa (NIM) <span class="text-amber-400">*</span></label>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_nim') }} <span class="text-amber-400">*</span></label>
                         <input type="text" name="no_mahasiswa" value="{{ old('no_mahasiswa') }}" required class="inp">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Kode Perguruan Tinggi <span class="text-amber-400">*</span></label>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_kode_pt') }} <span class="text-amber-400">*</span></label>
                         <input type="text" name="kode_PT" value="{{ old('kode_PT', \App\Models\Setting::get('kode_pt_default', '101004')) }}" required class="inp">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Tahun Lulus <span class="text-amber-400">*</span></label>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_tahun_lulus') }} <span class="text-amber-400">*</span></label>
                         <select name="tahun_lulus" required class="inp">
-                            <option value="" disabled selected>-- Pilih Tahun Lulus --</option>
+                            <option value="" disabled selected>{{ \App\Models\Setting::get('placeholder_tahun_lulus', '-- Pilih Tahun Lulus --') }}</option>
                             @php
                                 $tahunMulai = (int) \App\Models\Setting::get('kuesioner_tahun_mulai', 2020);
                                 $tahunSekarang = date ('Y');
@@ -217,45 +217,36 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Kode Program Studi <span class="text-amber-400">*</span></label>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_kode_prodi') }} <span class="text-amber-400">*</span></label>
                         <select name="kode_prodi" required class="inp">
-                            <option value="" disabled {{ old('kode_prodi') == '' ? 'selected' : '' }}>-- Pilih Prodi --</option>
-                            <option value="54211" {{ old('kode_prodi') == '54211' ? 'selected' : '' }}>54211 Agroteknologi</option>
-                            <option value="62201" {{ old('kode_prodi') == '62201' ? 'selected' : '' }}>62201 Akuntansi</option>
-                            <option value="74201" {{ old('kode_prodi') == '74201' ? 'selected' : '' }}>74201 Ilmu Hukum</option>
-                            <option value="61201" {{ old('kode_prodi') == '61201' ? 'selected' : '' }}>61201 Manajemen</option>
-                            <option value="88201" {{ old('kode_prodi') == '88201' ? 'selected' : '' }}>88201 Pendidikan Bahasa Indonesia</option>
-                            <option value="88203" {{ old('kode_prodi') == '88203' ? 'selected' : '' }}>88203 Pendidikan Bahasa Inggris</option>
-                            <option value="84205" {{ old('kode_prodi') == '84205' ? 'selected' : '' }}>84205 Pendidikan Biologi</option>
-                            <option value="87203" {{ old('kode_prodi') == '87203' ? 'selected' : '' }}>87203 Pendidikan Ekonomi</option>
-                            <option value="54231" {{ old('kode_prodi') == '54231' ? 'selected' : '' }}>54231 Peternakan</option>
-                            <option value="84202" {{ old('kode_prodi') == '84202' ? 'selected' : '' }}>84202 Pendidikan Matematika</option>
-                            <option value="57401" {{ old('kode_prodi') == '57401' ? 'selected' : '' }}>57401 Manajemen Informatika</option>
-                            <option value="54201" {{ old('kode_prodi') == '54201' ? 'selected' : '' }}>54201 Agribisnis</option>
+                            <option value="" disabled {{ old('kode_prodi') == '' ? 'selected' : '' }}>{{ \App\Models\Setting::get('placeholder_prodi', '-- Pilih Prodi --') }}</option>
+                            @foreach(\App\Models\Setting::optionList('prodi_list', '') as $kodeProdi => $namaProdi)
+                            <option value="{{ $kodeProdi }}" {{ old('kode_prodi') == $kodeProdi ? 'selected' : '' }}>{{ $kodeProdi }} {{ $namaProdi }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Nama Lengkap <span class="text-amber-400">*</span></label>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_nama') }} <span class="text-amber-400">*</span></label>
                         <input type="text" name="nama" value="{{ old('nama') }}" required class="inp">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Nomor Telepon / HP <span class="text-amber-400">*</span></label>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_no_hp') }} <span class="text-amber-400">*</span></label>
                         <input type="text" name="no_hp" id="no_hp" value="{{ old('no_hp') }}" minlength="10" maxlength="13" pattern="08[0-9]*" required class="inp">
                         <span id="hp_error" class="hidden text-rose-400 text-xs mt-1">Nomor HP harus diawali 08 dan minimal 10 digit.</span>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Alamat Email <span class="text-amber-400">*</span></label>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_email') }} <span class="text-amber-400">*</span></label>
                         @php $emailDomain = ltrim(trim(\App\Models\Setting::get('kuesioner_email_domain', 'gmail.com')), '@'); @endphp
                         <input type="email" name="email" id="email" value="{{ old('email') }}" pattern="{{ '[a-zA-Z0-9._%+-]+@' . preg_quote($emailDomain, '/') }}" title="Email harus menggunakan {{ $emailDomain }}" required class="inp">
                         <span id="email_error" class="hidden text-rose-400 text-xs mt-1">Email harus menggunakan {{ $emailDomain }}</span>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">NIK (Nomor Induk Kependudukan) <span class="text-amber-400">*</span></label>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_nik') }} <span class="text-amber-400">*</span></label>
                         <input type="text" name="nik" id="nik" value="{{ old('nik') }}" minlength="16" maxlength="16" required class="inp">
                         <span id="nik_error" class="hidden text-rose-400 text-xs mt-1">NIK harus berjumlah tepat 16 digit angka.</span>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">NPWP</label>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_npwp') }}</label>
                         <input type="text" name="npwp" value="{{ old('npwp') }}" class="inp">
                     </div>
                 </div>
@@ -265,13 +256,7 @@
              <div class="card p-5 md:p-6 fade-up">
                 <h2 class="section-title">{{ \App\Models\Setting::get('judul_status') }}</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    @foreach([
-                        '1' => 'Bekerja (full time/part time)',
-                        '3' => 'Wiraswasta',
-                        '4' => 'Melanjutkan Pendidikan',
-                        '5' => 'Tidak Kerja tetapi sedang mencari kerja',
-                        '2' => 'Belum memungkinkan bekerja'
-                    ] as $value => $label)
+                    @foreach(\App\Models\Setting::optionList('opsi_f8_status', "1|Bekerja (full time/part time)\n3|Wiraswasta\n4|Melanjutkan Pendidikan\n5|Tidak Kerja tetapi sedang mencari kerja\n2|Belum memungkinkan bekerja") as $value => $label)
                     <label class="choice flex items-center space-x-3 bg-slate-800/60 p-3 rounded-xl border border-slate-600">
                         <input type="radio" name="f8_status_saat_ini" value="{{ $value }}" {{ old('f8_status_saat_ini') == $value ? 'checked' : '' }} required class="w-4 h-4 text-amber-400 border-gray-500 focus:ring-amber-400">
                         <span class="text-sm font-medium text-gray-300">{{ $label }}</span>
@@ -289,14 +274,14 @@
                 <div class="flex items-start space-x-3">
                     <input type="radio" name="f504_mendapat_pekerjaan_6_bulan" id="kerja_ya" value="1" {{ old('f504_mendapat_pekerjaan_6_bulan') == '1' ? 'checked' : '' }} required class="mt-1 w-4 h-4 text-amber-400">
                     <label for="kerja_ya" class="font-medium cursor-pointer w-full text-gray-200">
-                        <span>Ya</span>
+                        <span>{{ \App\Models\Setting::get('label_kerja_ya', 'Ya') }}</span>
 
                         <div class="mt-2 flex flex-col md:flex-row md:space-x-4 space-y-3 md:space-y-0">
 
                             <div class="flex-1 bg-slate-800/60 p-3 rounded-xl border border-slate-600">
-                                <span class="block text-xs text-gray-400 mb-1">Dalam berapa bulan anda mendapatkan pekerjaan? (bagi yang sudah bekerja)</span>
+                                <span class="block text-xs text-gray-400 mb-1">{{ \App\Models\Setting::get('label_f502_bulan_ya', 'Dalam berapa bulan anda mendapatkan pekerjaan? (bagi yang sudah bekerja)') }}</span>
                                 <select name="f502_bulan_dapat_kerja_ya" id="input_bulan_ya" required class="inp text-sm">
-                                    <option value="" disabled selected>-- Pilih Bulan --</option>
+                                    <option value="" disabled selected>{{ \App\Models\Setting::get('placeholder_bulan', '-- Pilih Bulan --') }}</option>
                                     @for ($i = 0; $i <= 6; $i++)
                                         <option value="{{ $i }}" {{ old('f502_bulan_dapat_kerja_ya') !== null && old('f502_bulan_dapat_kerja_ya') == $i ? 'selected' : '' }}>
                                         {{ $i }} Bulan {{ $i == 0 ? '(Sebelum Lulus)' : '' }}
@@ -306,7 +291,7 @@
                             </div>
 
                             <div class="flex-1 bg-slate-800/60 p-3 rounded-xl border border-slate-600">
-                                <span class="block text-xs text-gray-400 mb-1">Berapa rata-rata pendapatan per bulan? (take home pay)</span>
+                                <span class="block text-xs text-gray-400 mb-1">{{ \App\Models\Setting::get('label_f505_pendapatan', 'Berapa rata-rata pendapatan per bulan? (take home pay)') }}</span>
                                 <input type="number" name="f505_pendapatan_per_bulan" id="input_gaji_ya" value="{{ old('f505_pendapatan_per_bulan') }}" required class="inp text-sm">
                             </div>
 
@@ -319,14 +304,14 @@
                 <div class="flex items-start space-x-3">
                     <input type="radio" name="f504_mendapat_pekerjaan_6_bulan" id="kerja_tidak" value="2" {{ old('f504_mendapat_pekerjaan_6_bulan') == '2' ? 'checked' : '' }} class="mt-1 w-4 h-4 text-amber-400">
                     <label for="kerja_tidak" class="font-medium cursor-pointer w-full text-gray-200">
-                        <span>Tidak</span>
+                        <span>{{ \App\Models\Setting::get('label_kerja_tidak', 'Tidak') }}</span>
                         
                         <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                             
                             <div class="flex-1 bg-slate-800/60 p-3 rounded-xl border border-slate-600">
-                                <span class="block text-xs text-gray-400 mb-1">Di isi jika lebih dari 6 bulan belum mendapatkan pekerjaan</span>
+                                <span class="block text-xs text-gray-400 mb-1">{{ \App\Models\Setting::get('label_f502_bulan_tidak', 'Di isi jika lebih dari 6 bulan belum mendapatkan pekerjaan') }}</span>
                                 <select name="f502_bulan_dapat_kerja_tidak" id="input_bulan_tidak" required class="inp text-sm">
-                                    <option value="" disabled selected>-- Pilih Bulan --</option>
+                                    <option value="" disabled selected>{{ \App\Models\Setting::get('placeholder_bulan', '-- Pilih Bulan --') }}</option>
                                     @for ($i = 6; $i <= 12; $i++)
                                         <option value="{{ $i }}" {{ old('f502_bulan_dapat_kerja_tidak') !== null && old('f502_bulan_dapat_kerja_tidak') == $i ? 'selected' : '' }}>
                                         {{ $i }} Bulan
@@ -345,94 +330,57 @@
                 <h2 class="section-title">{{ \App\Models\Setting::get('judul_tempat_bekerja') }}</h2>
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-2">Dimana lokasi tempat Anda bekerja?</label>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">{{ \App\Models\Setting::get('label_f510_lokasi', 'Dimana lokasi tempat Anda bekerja?') }}</label>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <select name="f510_provinsi" id="provinsi" required class="inp">
-                                <option value="" disabled {{ old('f510_provinsi') === null ? 'selected' : '' }}>-- Pilih Provinsi --</option>
-                                <option value="Belum Bekerja" {{ old('f510_provinsi') == 'Belum Bekerja' ? 'selected' : '' }}>Belum Bekerja</option>
-                                <option value="Prov. D.K.I. Jakarta" {{ old('f510_provinsi') == 'Prov. D.K.I. Jakarta' ? 'selected' : '' }}>Prov. D.K.I. Jakarta</option>
-                                <option value="Prov. Jawa Barat" {{ old('f510_provinsi') == 'Prov. Jawa Barat' ? 'selected' : '' }}>Prov. Jawa Barat</option>
-                                <option value="Prov. Jawa Tengah" {{ old('f510_provinsi') == 'Prov. Jawa Tengah' ? 'selected' : '' }}>Prov. Jawa Tengah</option>
-                                <option value="Prov. D.I. Yogyakarta" {{ old('f510_provinsi') == 'Prov. D.I. Yogyakarta' ? 'selected' : '' }}>Prov. D.I. Yogyakarta</option>
-                                <option value="Prov. Jawa Timur" {{ old('f510_provinsi') == 'Prov. Jawa Timur' ? 'selected' : '' }}>Prov. Jawa Timur</option>
-                                <option value="Prov. Aceh" {{ old('f510_provinsi') == 'Prov. Aceh' ? 'selected' : '' }}>Prov. Aceh</option>
-                                <option value="Prov. Sumatera Utara" {{ old('f510_provinsi') == 'Prov. Sumatera Utara' ? 'selected' : '' }}>Prov. Sumatera Utara</option>
-                                <option value="Prov. Sumatera Barat" {{ old('f510_provinsi') == 'Prov. Sumatera Barat' ? 'selected' : '' }}>Prov. Sumatera Barat</option>
-                                <option value="Prov. Sumatera Selatan" {{ old('f510_provinsi') == 'Prov. Sumatera Selatan' ? 'selected' : '' }}>Prov. Sumatera Selatan</option>
-                                <option value="Prov. Riau" {{ old('f510_provinsi') == 'Prov. Riau' ? 'selected' : '' }}>Prov. Riau</option>
-                                <option value="Prov. Jambi" {{ old('f510_provinsi') == 'Prov. Jambi' ? 'selected' : '' }}>Prov. Jambi</option>
-                                <option value="Prov. Lampung" {{ old('f510_provinsi') == 'Prov. Lampung' ? 'selected' : '' }}>Prov. Lampung</option>
-                                <option value="Prov. Kalimantan Barat" {{ old('f510_provinsi') == 'Prov. Kalimantan Barat' ? 'selected' : '' }}>Prov. Kalimantan Barat</option>
-                                <option value="Prov. Kalimantan Tengah" {{ old('f510_provinsi') == 'Prov. Kalimantan Tengah' ? 'selected' : '' }}>Prov. Kalimantan Tengah</option>
-                                <option value="Prov. Kalimantan Timur" {{ old('f510_provinsi') == 'Prov. Kalimantan Timur' ? 'selected' : '' }}>Prov. Kalimantan Timur</option>
-                                <option value="Prov. Kalimantan Selatan" {{ old('f510_provinsi') == 'Prov. Kalimantan Selatan' ? 'selected' : '' }}>Prov. Kalimantan Selatan</option>
-                                <option value="Prov. Kalimantan Utara" {{ old('f510_provinsi') == 'Prov. Kalimantan Utara' ? 'selected' : '' }}>Prov. Kalimantan Utara</option>
-                                <option value="Prov. Sulawesi Barat" {{ old('f510_provinsi') == 'Prov. Sulawesi Barat' ? 'selected' : '' }}>Prov. Sulawesi Barat</option>
-                                <option value="Prov. Sulawesi Tengah" {{ old('f510_provinsi') == 'Prov. Sulawesi Tengah' ? 'selected' : '' }}>Prov. Sulawesi Tengah</option>
-                                <option value="Prov. Sulawesi Utara" {{ old('f510_provinsi') == 'Prov. Sulawesi Utara' ? 'selected' : '' }}>Prov. Sulawesi Utara</option>
-                                <option value="Prov. Sulawesi Selatan" {{ old('f510_provinsi') == 'Prov. Sulawesi Selatan' ? 'selected' : '' }}>Prov. Sulawesi Selatan</option>
-                                <option value="Prov. Sulawesi Tenggara" {{ old('f510_provinsi') == 'Prov. Sulawesi Tenggara' ? 'selected' : '' }}>Prov. Sulawesi Tenggara</option>
-                                <option value="Prov. Maluku" {{ old('f510_provinsi') == 'Prov. Maluku' ? 'selected' : '' }}>Prov. Maluku</option>
-                                <option value="Prov. Maluku Utara" {{ old('f510_provinsi') == 'Prov. Maluku Utara' ? 'selected' : '' }}>Prov. Maluku Utara</option>
-                                <option value="Prov. Bali" {{ old('f510_provinsi') == 'Prov. Bali' ? 'selected' : '' }}>Prov. Bali</option>
-                                <option value="Prov. Nusa Tenggara Barat" {{ old('f510_provinsi') == 'Prov. Nusa Tenggara Barat' ? 'selected' : '' }}>Prov. NTB</option>
-                                <option value="Prov. Nusa Tenggara Timur" {{ old('f510_provinsi') == 'Prov. Nusa Tenggara Timur' ? 'selected' : '' }}>Prov. NTT</option>
-                                <option value="Prov. Papua" {{ old('f510_provinsi') == 'Prov. Papua' ? 'selected' : '' }}>Prov. Papua</option>
-                                <option value="Prov. Papua Barat" {{ old('f510_provinsi') == 'Prov. Papua Barat' ? 'selected' : '' }}>Prov. Papua Barat</option>
-                                <option value="Prov. Bengkulu" {{ old('f510_provinsi') == 'Prov. Bengkulu' ? 'selected' : '' }}>Prov. Bengkulu</option>
-                                <option value="Prov. Banten" {{ old('f510_provinsi') == 'Prov. Banten' ? 'selected' : '' }}>Prov. Banten</option>
-                                <option value="Prov. Kepulauan Bangka Belitung" {{ old('f510_provinsi') == 'Prov. Kepulauan Bangka Belitung' ? 'selected' : '' }}>Prov. Kepulauan Bangka Belitung</option>
-                                <option value="Prov. Gorontalo" {{ old('f510_provinsi') == 'Prov. Gorontalo' ? 'selected' : '' }}>Prov. Gorontalo</option>
-                                <option value="Prov. Kepulauan Riau" {{ old('f510_provinsi') == 'Prov. Kepulauan Riau' ? 'selected' : '' }}>Prov. Kepulauan Riau</option>
-                                <option value="Luar Negeri" {{ old('f510_provinsi') == 'Luar Negeri' ? 'selected' : '' }}>Luar Negeri</option>
+                                <option value="" disabled {{ old('f510_provinsi') === null ? 'selected' : '' }}>{{ \App\Models\Setting::get('placeholder_provinsi', '-- Pilih Provinsi --') }}</option>
+                                <option value="Belum Bekerja" {{ old('f510_provinsi') == 'Belum Bekerja' ? 'selected' : '' }}>{{ \App\Models\Setting::get('label_provinsi_belum_bekerja', 'Belum Bekerja') }}</option>
+                                @foreach (\App\Models\Wilayah::provinsiList() as $namaProvinsi => $kodeProvinsi)
+                                    <option value="{{ $namaProvinsi }}" {{ old('f510_provinsi') == $namaProvinsi ? 'selected' : '' }}>{{ $namaProvinsi }}</option>
+                                @endforeach
                             </select>
 
                             <select name="f510_kab_kota" id="kab_kota" required disabled data-old="{{ old('f510_kab_kota') }}" class="inp disabled:opacity-50 disabled:cursor-not-allowed">
-                                <option value="" disabled selected>-- Pilih Kabupaten / Kota --</option>
+                                <option value="" disabled selected>{{ \App\Models\Setting::get('placeholder_kab_kota', '-- Pilih Kabupaten / Kota --') }}</option>
                             </select>
                         </div>
                     </div>
 
                     <div>
                         <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
-                            <span class="block text-sm font-medium text-gray-400 mb-2">Apa jenis perusahaan/instansi/institusi tempat anda bekerja sekarang?</span>
+                            <span class="block text-sm font-medium text-gray-400 mb-2">{{ \App\Models\Setting::get('label_f11_jenis', 'Apa jenis perusahaan/instansi/institusi tempat anda bekerja sekarang?') }}</span>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="1" {{ old('f11_jenis_instansi') == '1' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Instansi pemerintah</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="2" {{ old('f11_jenis_instansi') == '2' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">BUMN/BUMD</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="3" {{ old('f11_jenis_instansi') == '3' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Institusi/Organisasi Multilateral</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="4" {{ old('f11_jenis_instansi') == '4' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Organisasi non-profit/Lembaga Swadaya Masyarakat</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="5" {{ old('f11_jenis_instansi') == '5' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Perusahaan swasta</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="6" {{ old('f11_jenis_instansi') == '6' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Wiraswasta/Perusahaan sendiri</span></label>
-                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="7" {{ old('f11_jenis_instansi') == '7' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Lainnya</span></label>
+                                @foreach(\App\Models\Setting::optionList('opsi_f11_instansi', "1|Instansi pemerintah\n2|BUMN/BUMD\n3|Institusi/Organisasi Multilateral\n4|Organisasi non-profit/Lembaga Swadaya Masyarakat\n5|Perusahaan swasta\n6|Wiraswasta/Perusahaan sendiri\n7|Lainnya") as $f11val => $f11label)
+                                <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f11_jenis_instansi" value="{{ $f11val }}" {{ old('f11_jenis_instansi') == $f11val ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">{{ $f11label }}</span></label>
+                                @endforeach
                             </div>
                         </div>
                         <div class="mt-2">
-                            <input type="text" name="f11_02" value="{{ old('f11_02') }}" placeholder="Lainnya:" class="inp text-sm" oninput="this.value = this.value.toUpperCase()">
+                            <input type="text" name="f11_02" value="{{ old('f11_02') }}" placeholder="{{ \App\Models\Setting::get('label_lainnya', 'Lainnya:') }}" class="inp text-sm" oninput="this.value = this.value.toUpperCase()">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-1">Nama perusahaan/kantor</label>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_f5b', 'Nama perusahaan/kantor') }}</label>
                             <input type="text" name="f5b_nama_perusahaan" value="{{ old('f5b_nama_perusahaan') }}" class="inp" oninput="this.value = this.value.toUpperCase()">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-1">Bila berwiraswasta, posisi/jabatan</label>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_f5c', 'Bila berwiraswasta, posisi/jabatan') }}</label>
                             <select name="f5c_posisi" class="inp">
-                                <option value="" disabled {{ old('f5c_posisi') === null ? 'selected' : '' }}>Pilih Posisi</option>
-                                <option value="Founder" {{ old('f5c_posisi') == 'Founder' ? 'selected' : '' }}>Founder</option>
-                                <option value="Co-Founder" {{ old('f5c_posisi') == 'Co-Founder' ? 'selected' : '' }}>Co-Founder</option>
-                                <option value="Staff" {{ old('f5c_posisi') == 'Staff' ? 'selected' : '' }}>Staff</option>
-                                <option value="Freelance" {{ old('f5c_posisi') == 'Freelance' ? 'selected' : '' }}>Freelance / Kerja Lepas</option>
+                                <option value="" disabled {{ old('f5c_posisi') === null ? 'selected' : '' }}>{{ \App\Models\Setting::get('placeholder_posisi', 'Pilih Posisi') }}</option>
+                                @foreach(\App\Models\Setting::optionList('opsi_f5c_posisi', "Founder|Founder\nCo-Founder|Co-Founder\nStaff|Staff\nFreelance|Freelance / Kerja Lepas") as $f5cval => $f5clabel)
+                                <option value="{{ $f5cval }}" {{ old('f5c_posisi') == $f5cval ? 'selected' : '' }}>{{ $f5clabel }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-400 mb-1">Tingkat tempat kerja anda</label>
+                            <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_f5d', 'Tingkat tempat kerja anda') }}</label>
                             <select name="f5d_tingkat" class="inp">
-                                <option value="" disabled {{ old('f5d_tingkat') === null ? 'selected' : '' }}>Pilih Tingkatan</option>
-                                <option value="Lokal" {{ old('f5d_tingkat') == 'Lokal' ? 'selected' : '' }}>Lokal/Wilayah/wiraswasta tidak berbadan hukum</option>
-                                <option value="Nasional" {{ old('f5d_tingkat') == 'Nasional' ? 'selected' : '' }}>Nasional/Wiraswasta berbadan hukum</option>
-                                <option value="Internasional" {{ old('f5d_tingkat') == 'Internasional' ? 'selected' : '' }}>Multinasional/internasional</option>
+                                <option value="" disabled {{ old('f5d_tingkat') === null ? 'selected' : '' }}>{{ \App\Models\Setting::get('placeholder_tingkat', 'Pilih Tingkatan') }}</option>
+                                @foreach(\App\Models\Setting::optionList('opsi_f5d_tingkat', "Lokal|Lokal/Wilayah/wiraswasta tidak berbadan hukum\nNasional|Nasional/Wiraswasta berbadan hukum\nInternasional|Multinasional/internasional") as $f5dval => $f5dlabel)
+                                <option value="{{ $f5dval }}" {{ old('f5d_tingkat') == $f5dval ? 'selected' : '' }}>{{ $f5dlabel }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -443,33 +391,30 @@
             <div id="riwayatStudiLanjut" class="card p-5 md:p-6 fade-up">
                 <h2 class="section-title">{{ \App\Models\Setting::get('judul_studi_lanjut') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600 space-y-3">
-                        <span class="block font-semibold text-sm text-gray-300">Pertanyaan Studi Lanjut</span>
+                    <div id="bagianStudiLanjut" class="bg-slate-800/60 p-4 rounded-xl border border-slate-600 space-y-3">
+                        <span class="block font-semibold text-sm text-gray-300">{{ \App\Models\Setting::get('label_f18_header', 'Pertanyaan Studi Lanjut') }}</span>
                             <select name="f18a_sumber_biaya_studi" placeholder="Sumber Biaya" class="inp text-sm">
-                                <option value="" disabled {{ old('f18a_sumber_biaya_studi') === null ? 'selected' : '' }}>-- Pilih sumber biaya --</option>
-                                <option value="Biaya Sendiri" {{ old('f18a_sumber_biaya_studi') == 'Biaya Sendiri' ? 'selected' : '' }}>Biaya Sendiri</option>
-                                <option value="Beasiswa" {{ old('f18a_sumber_biaya_studi') == 'Beasiswa' ? 'selected' : '' }}>Beasiswa</option>
+                                <option value="" disabled {{ old('f18a_sumber_biaya_studi') === null ? 'selected' : '' }}>{{ \App\Models\Setting::get('placeholder_sumber_biaya', '-- Pilih sumber biaya --') }}</option>
+                                @foreach(\App\Models\Setting::optionList('opsi_f18a_biaya', "Biaya Sendiri|Biaya Sendiri\nBeasiswa|Beasiswa") as $f18aval => $f18alabel)
+                                <option value="{{ $f18aval }}" {{ old('f18a_sumber_biaya_studi') == $f18aval ? 'selected' : '' }}>{{ $f18alabel }}</option>
+                                @endforeach
                             </select>
-                        <input type="text" name="f18b_perguruan_tinggi_studi" value="{{ old('f18b_perguruan_tinggi_studi') }}" placeholder="Perguruan Tinggi" class="inp text-sm" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
-                        <input type="text" name="f18c_program_studi" value="{{ old('f18c_program_studi') }}" placeholder="Program Studi" class="inp text-sm" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" name="f18b_perguruan_tinggi_studi" value="{{ old('f18b_perguruan_tinggi_studi') }}" placeholder="{{ \App\Models\Setting::get('label_f18b_placeholder', 'Perguruan Tinggi') }}" class="inp text-sm" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" name="f18c_program_studi" value="{{ old('f18c_program_studi') }}" placeholder="{{ \App\Models\Setting::get('label_f18c_placeholder', 'Program Studi') }}" class="inp text-sm" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
                         <div class="bg-slate-900/70 p-3 rounded-xl space-y-1 border border-slate-700">
-                            <label class="block font-semibold text-xs text-gray-400">Tanggal Masuk</label>
+                            <label class="block font-semibold text-xs text-gray-400">{{ \App\Models\Setting::get('label_f18d', 'Tanggal Masuk') }}</label>
                             <input type="date" name="f18d_tanggal_masuk" value="{{ old('f18d_tanggal_masuk') }}" class="inp text-sm">
                         </div>
                     </div>
 
                     <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600 space-y-3">
-                        <span class="block font-semibold text-sm text-gray-300 mb-2">Sebutkan sumberdana dalam pembiayaan kuliah?</span>
+                        <span class="block font-semibold text-sm text-gray-300 mb-2">{{ \App\Models\Setting::get('label_f12_01', 'Sebutkan sumberdana dalam pembiayaan kuliah?') }}</span>
                         <div class="space-y-2 text-sm">
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="1" {{ old('f12_01') == '1' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Biaya Sendiri / Keluarga</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="2" {{ old('f12_01') == '2' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Beasiswa ADIK</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="3" {{ old('f12_01') == '3' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Beasiswa BIDIKMISI</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="4" {{ old('f12_01') == '4' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Beasiswa PPA</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="5" {{ old('f12_01') == '5' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Beasiswa AFIRMASI</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="6" {{ old('f12_01') == '6' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Beasiswa Perusahaan/Swasta</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="7" {{ old('f12_01') == '7' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Lainnya</span></label>
+                            @foreach(\App\Models\Setting::optionList('opsi_f12_dana', "1|Biaya Sendiri / Keluarga\n2|Beasiswa ADIK\n3|Beasiswa BIDIKMISI\n4|Beasiswa PPA\n5|Beasiswa AFIRMASI\n6|Beasiswa Perusahaan/Swasta\n7|Lainnya") as $f12val => $f12label)
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f12_01" value="{{ $f12val }}" {{ old('f12_01') == $f12val ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">{{ $f12label }}</span></label>
+                            @endforeach
                         </div>
-                        <input type="text" name="f12_02" value="{{ old('f12_02') }}" placeholder="Lainnya, tuliskan:" class="inp text-sm mt-3" oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" name="f12_02" value="{{ old('f12_02') }}" placeholder="{{ \App\Models\Setting::get('label_lainnya_tuliskan', 'Lainnya, tuliskan:') }}" class="inp text-sm mt-3" oninput="this.value = this.value.toUpperCase()">
                     </div>
                 </div>
             </div>
@@ -479,23 +424,20 @@
                 <h2 class="section-title">{{ \App\Models\Setting::get('judul_keselarasan') }}</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
-                        <span class="block text-sm font-semibold text-gray-300 mb-2">Seberapa erat hubungan antara bidang studi dengan pekerjaan anda?</span>
+                        <span class="block text-sm font-semibold text-gray-300 mb-2">{{ \App\Models\Setting::get('label_f14', 'Seberapa erat hubungan antara bidang studi dengan pekerjaan anda?') }}</span>
                         <div class="space-y-2 text-sm">
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="1" {{ old('f14') == '1' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Sangat Erat</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="2" {{ old('f14') == '2' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Erat</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="3" {{ old('f14') == '3' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Cukup Erat</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="4" {{ old('f14') == '4' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Kurang Erat</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="5" {{ old('f14') == '5' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Tidak Sama Sekali</span></label>
+                            @foreach(\App\Models\Setting::optionList('opsi_f14', "1|Sangat Erat\n2|Erat\n3|Cukup Erat\n4|Kurang Erat\n5|Tidak Sama Sekali") as $f14val => $f14label)
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f14" value="{{ $f14val }}" {{ old('f14') == $f14val ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">{{ $f14label }}</span></label>
+                            @endforeach
                         </div>
                     </div>
 
                     <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
-                        <span class="block text-sm font-semibold text-gray-300 mb-2">Tingkat pendidikan apa yang paling tepat/sesuai untuk pekerjaan anda saat ini?</span>
+                        <span class="block text-sm font-semibold text-gray-300 mb-2">{{ \App\Models\Setting::get('label_f15', 'Tingkat pendidikan apa yang paling tepat/sesuai untuk pekerjaan anda saat ini?') }}</span>
                         <div class="space-y-2 text-sm">
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="1" {{ old('f15') == '1' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Setingkat Lebih Tinggi</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="2" {{ old('f15') == '2' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Tingkat yang Sama</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="3" {{ old('f15') == '3' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Setingkat Lebih Rendah</span></label>
-                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="4" {{ old('f15') == '4' ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">Tidak Perlu Pendidikan Tinggi</span></label>
+                            @foreach(\App\Models\Setting::optionList('opsi_f15', "1|Setingkat Lebih Tinggi\n2|Tingkat yang Sama\n3|Setingkat Lebih Rendah\n4|Tidak Perlu Pendidikan Tinggi") as $f15val => $f15label)
+                            <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f15" value="{{ $f15val }}" {{ old('f15') == $f15val ? 'checked' : '' }} class="w-4 h-4 text-amber-400"><span class="text-gray-300">{{ $f15label }}</span></label>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -505,19 +447,17 @@
             <div id="kompetensiSection" class="card p-5 md:p-6 fade-up overflow-x-auto">
                 <h2 class="section-title">{{ \App\Models\Setting::get('judul_kompetensi') }}</h2>
                 <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-400 mb-4 font-medium">
-                    <span>(1: Sangat Rendah)</span>
-                    <span>(2: Rendah)</span>
-                    <span>(3: Cukup Tinggi)</span>
-                    <span>(4: Tinggi)</span>
-                    <span>(5: Sangat Tinggi)</span>
+                    @foreach(\App\Models\Setting::optionList('opsi_skala_kompetensi', "1|1: Sangat Rendah\n2|2: Rendah\n3|3: Cukup Tinggi\n4|4: Tinggi\n5|5: Sangat Tinggi") as $skalaLabel)
+                    <span>({{ $skalaLabel }})</span>
+                    @endforeach
                 </div>
                 
                 <table class="w-full text-left border-collapse text-xs md:text-sm min-w-[600px]">
                     <thead>
                         <tr class="bg-slate-800 border-slate-600">
-                            <th class="p-3 text-center font-semibold text-gray-300 border border-slate-600" rowspan="2">Aspek Kompetensi</th>
-                            <th class="p-2 text-center font-semibold text-gray-300 border border-slate-600" colspan="5">A: Kompetensi Saat Lulus</th>
-                            <th class="p-2 text-center font-semibold text-gray-300 border border-slate-600" colspan="5">B: Kebutuhan di Pekerjaan</th>
+                            <th class="p-3 text-center font-semibold text-gray-300 border border-slate-600" rowspan="2">{{ \App\Models\Setting::get('label_kompetensi_aspek', 'Aspek Kompetensi') }}</th>
+                            <th class="p-2 text-center font-semibold text-gray-300 border border-slate-600" colspan="5">{{ \App\Models\Setting::get('label_kompetensi_a', 'A: Kompetensi Saat Lulus') }}</th>
+                            <th class="p-2 text-center font-semibold text-gray-300 border border-slate-600" colspan="5">{{ \App\Models\Setting::get('label_kompetensi_b', 'B: Kebutuhan di Pekerjaan') }}</th>
                         </tr>
                         <tr class="bg-slate-800/60 text-[11px] text-center">
                             @for($k = 0; $k < 2; $k++)
@@ -529,15 +469,12 @@
                     </thead>
                     <tbody class="border border-slate-600 bg-slate-800/40">
                         @php
-                            $kompetensi = [
-                                'f1761_f1762' => 'Etika',
-                                'f1763_f1764' => 'Keahlian berdasarkan bidang ilmu',
-                                'f1765_f1766' => 'Bahasa Inggris',
-                                'f1767_f1768' => 'Penggunaan Teknologi Informasi',
-                                'f1769_f1770' => 'Komunikasi',
-                                'f1771_f1772' => 'Kerja sama tim',
-                                'f1773_f1774' => 'Pengembangan Diri'
-                            ];
+                            $kompetensiFields = ['f1761_f1762', 'f1763_f1764', 'f1765_f1766', 'f1767_f1768', 'f1769_f1770', 'f1771_f1772', 'f1773_f1774'];
+                            $kompetensiLabels = array_values(\App\Models\Setting::optionList('opsi_f17_kompetensi', "Etika\nKeahlian berdasarkan bidang ilmu\nBahasa Inggris\nPenggunaan Teknologi Informasi\nKomunikasi\nKerja sama tim\nPengembangan Diri"));
+                            $kompetensi = [];
+                            foreach ($kompetensiFields as $kIdx => $kField) {
+                                $kompetensi[$kField] = $kompetensiLabels[$kIdx] ?? $kField;
+                            }
                         @endphp
                         @foreach($kompetensi as $key => $label)
                         <tr class="hover:bg-slate-700/40 border border-slate-600 transition">
@@ -563,20 +500,22 @@
             <!-- SECTION F2: PENEKANAN METODE PEMBELAJARAN -->
             <div class="card p-5 md:p-6 fade-up">
                 <h2 class="section-title">{{ \App\Models\Setting::get('judul_metode') }}</h2>
-                <p class="text-xs text-gray-500 mb-4">Menurut anda seberapa besar penekanan pada metode pembelajaran di bawah ini dilaksanakan di program studi anda?</p>
+                <p class="text-xs text-gray-500 mb-4">{{ \App\Models\Setting::get('label_metode_instruksi', 'Menurut anda seberapa besar penekanan pada metode pembelajaran di bawah ini dilaksanakan di program studi anda?') }}</p>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
                     @php
-                        $metode = [
-                            'f21' => 'Perkuliahan', 'f22' => 'Demonstrasi', 'f23' => 'Partisipasi dalam proyek riset',
-                            'f24' => 'Magang', 'f25' => 'Praktikum', 'f26' => 'Kerja Lapangan', 'f27' => 'Diskusi'
-                        ];
+                        $metodeFields = ['f21', 'f22', 'f23', 'f24', 'f25', 'f26', 'f27'];
+                        $metodeLabels = array_values(\App\Models\Setting::optionList('opsi_f21_metode', "Perkuliahan\nDemonstrasi\nPartisipasi dalam proyek riset\nMagang\nPraktikum\nKerja Lapangan\nDiskusi"));
+                        $metode = [];
+                        foreach ($metodeFields as $mIdx => $mCode) {
+                            $metode[$mCode] = $metodeLabels[$mIdx] ?? $mCode;
+                        }
                     @endphp
                     @foreach($metode as $code => $title)
                     <div class="p-3 bg-slate-800/60 rounded-xl border border-slate-600 transition hover:border-amber-400/40">
                         <span class="font-semibold block text-gray-300 mb-2">{{ $title }}</span>
                         <div class="flex flex-wrap gap-x-4 gap-y-1">
-                            @foreach([1=>'Sangat Besar', 2=>'Besar', 3=>'Cukup', 4=>'Kurang', 5=>'Tidak Sama Sekali'] as $v => $l)
+                            @foreach(\App\Models\Setting::optionList('opsi_metode_penekanan', "1|Sangat Besar\n2|Besar\n3|Cukup\n4|Kurang\n5|Tidak Sama Sekali") as $v => $l)
                             <label class="flex items-center space-x-1 cursor-pointer">
                                 <input type="radio" name="{{ $code }}" value="{{ $v }}" {{ old($code) == $v ? 'checked' : '' }} required class="text-amber-400 w-3.5 h-3.5">
                                 <span class="text-gray-500 text-[11px]">{{ $l }}</span>
@@ -591,14 +530,14 @@
             <!-- SECTION F3: KAPAN MULAI MENCARI PEKERJAAN -->
             <div class="card p-5 md:p-6 fade-up">
                 <h2 class="section-title">{{ \App\Models\Setting::get('judul_mulai_cari') }}</h2>
-                <p class="text-xs text-gray-500 mb-4">(Tidak termasuk pekerjaan sambilan)</p>
+                <p class="text-xs text-gray-500 mb-4">{{ \App\Models\Setting::get('label_mulai_cari_note', '(Tidak termasuk pekerjaan sambilan)') }}</p>
                 
                 <div class="space-y-4 text-sm">
                     <div class="flex items-center space-x-3">
                         <input type="radio" name="f301" id="f301_1" value="1" {{ old('f301') == '1' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400">
                         <label for="f301_1" class="flex items-center space-x-2 cursor-pointer text-gray-300">
                             <input type="number" name="f302" value="{{ old('f302') }}" class="w-20 bg-slate-800/80 border border-slate-600 rounded-lg px-2 py-1 text-center outline-none focus:border-amber-400 color-scheme-dark">
-                            <span class="text-xs text-gray-500">bulan sebelum lulus</span>
+                            <span class="text-xs text-gray-500">{{ \App\Models\Setting::get('label_f301_1', 'bulan sebelum lulus') }}</span>
                         </label>
                     </div>
 
@@ -606,15 +545,15 @@
                         <input type="radio" name="f301" id="f301_2" value="2" {{ old('f301') == '2' ? 'checked' : '' }} class="w-4 h-4 text-amber-400">
                         <label for="f301_2" class="flex items-center space-x-2 cursor-pointer text-gray-300">
                             <input type="number" name="f303" value="{{ old('f303') }}" class="w-20 bg-slate-800/80 border border-slate-600 rounded-lg px-2 py-1 text-center outline-none focus:border-amber-400 color-scheme-dark">
-                            <span class="text-xs text-gray-500">bulan sesudah lulus</span>
+                            <span class="text-xs text-gray-500">{{ \App\Models\Setting::get('label_f301_2', 'bulan sesudah lulus') }}</span>
                         </label>
                     </div>
 
                     <div class="flex items-center space-x-3">
                         <input type="radio" name="f301" id="f301_3" value="3" {{ old('f301') == '3' ? 'checked' : '' }} class="w-4 h-4 text-amber-400">
                         <label for="f301_3" class="font-medium text-gray-300 cursor-pointer">
-                            <span>Saya tidak mencari kerja</span> 
-                            <span class="text-xs text-gray-500 font-normal">(Langsung ke pertanyaan selanjutnya)</span>
+                            <span>{{ \App\Models\Setting::get('label_f301_3', 'Saya tidak mencari kerja') }}</span> 
+                            <span class="text-xs text-gray-500 font-normal">{{ \App\Models\Setting::get('label_f301_3_note', '(Langsung ke pertanyaan selanjutnya)') }}</span>
                         </label>
                     </div>
                 </div>
@@ -623,35 +562,16 @@
             <!-- SECTION F4: BAGAIMANA CARA MENCARI PEKERJAAN -->
             <div class="card p-5 md:p-6 fade-up">
                 <h2 class="section-title">{{ \App\Models\Setting::get('judul_cara_cari') }}</h2>
-                <p class="text-xs text-gray-500 mb-3">(Jawaban bisa lebih dari satu)</p>
+                <p class="text-xs text-gray-500 mb-3">{{ \App\Models\Setting::get('label_cara_cari_note', '(Jawaban bisa lebih dari satu)') }}</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                    @php
-                        $cara_cari = [
-                            'f401' => 'Melalui iklan di koran/majalah, brosur', 
-                            'f402' => 'Melamar ke perusahaan tanpa mengetahui lowongan yang ada',
-                            'f403' => 'Pergi ke bursa/pameran kerja', 
-                            'f404' => 'Mencari lewat internet/iklan online/milis',
-                            'f405' => 'Dihubungi oleh perusahaan', 
-                            'f406' => 'Menghubungi Kemenakertrans',
-                            'f407' => 'Menghubungi agen tenaga kerja komersial/swasta', 
-                            'f408' => 'Memperoleh informasi dari pusat/kantor pengembangan karir fakultas/universitas',
-                            'f409' => 'Menghubungi kantor kemahasiswaan/hubungan alumni', 
-                            'f410' => 'Membangun jejaring (network) sejak masih kuliah',
-                            'f411' => 'Melalui relasi (misalnya dosen, orang tua, saudara, teman, dll.)', 
-                            'f412' => 'Membangun bisnis sendiri',
-                            'f413' => 'Melalui penempatan kerja atau magang', 
-                            'f414' => 'Bekerja di tempat yang sama dengan tempat kerja semasa kuliah',
-                            'f415' => 'Lainnya'
-                        ];
-                    @endphp
-                    @foreach($cara_cari as $code => $text)
+                    @foreach(\App\Models\Setting::optionList('opsi_f401_cara', "f401|Melalui iklan di koran/majalah, brosur\nf402|Melamar ke perusahaan tanpa mengetahui lowongan yang ada\nf403|Pergi ke bursa/pameran kerja\nf404|Mencari lewat internet/iklan online/milis\nf405|Dihubungi oleh perusahaan\nf406|Menghubungi Kemenakertrans\nf407|Menghubungi agen tenaga kerja komersial/swasta\nf408|Memperoleh informasi dari pusat/kantor pengembangan karir fakultas/universitas\nf409|Menghubungi kantor kemahasiswaan/hubungan alumni\nf410|Membangun jejaring (network) sejak masih kuliah\nf411|Melalui relasi (misalnya dosen, orang tua, saudara, teman, dll.)\nf412|Membangun bisnis sendiri\nf413|Melalui penempatan kerja atau magang\nf414|Bekerja di tempat yang sama dengan tempat kerja semasa kuliah\nf415|Lainnya") as $code => $text)
                     <label class="flex items-start space-x-2 cursor-pointer">
                         <input type="checkbox" name="{{ $code }}" value="1" {{ old($code) == '1' ? 'checked' : '' }} class="mt-1 rounded text-amber-400 bg-slate-800 border-slate-600">
                         <span class="text-gray-300">{{ $text }}</span>
                     </label>
                     @endforeach
                     <div class="md:col-span-2 mt-1">
-                        <input type="text" name="f416_tuliskan" value="{{ old('f416_tuliskan') }}" placeholder="Lainnya:" class="inp text-sm" oninput="this.value = this.value.toUpperCase()">
+                        <input type="text" name="f416_tuliskan" value="{{ old('f416_tuliskan') }}" placeholder="{{ \App\Models\Setting::get('label_lainnya', 'Lainnya:') }}" class="inp text-sm" oninput="this.value = this.value.toUpperCase()">
                     </div>
                 </div>
             </div>
@@ -662,20 +582,20 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 bg-slate-800/60 p-4 rounded-xl border border-slate-600 h-full flex flex-col justify-between"> 
-                            <span class="mb-2 block">Berapa perusahaan/instansi yang sudah anda lamar sebelum memperoleh pekerjaan pertama?</span>
-                            <input type="number" name="f6_jumlah_lamaran" value="{{ old('f6_jumlah_lamaran') }}" required placeholder="... perusahaan" class="inp text-sm">
+                            <span class="mb-2 block">{{ \App\Models\Setting::get('label_f6', 'Berapa perusahaan/instansi yang sudah anda lamar sebelum memperoleh pekerjaan pertama?') }}</span>
+                            <input type="number" name="f6_jumlah_lamaran" value="{{ old('f6_jumlah_lamaran') }}" required placeholder="{{ \App\Models\Setting::get('placeholder_jumlah', '... perusahaan') }}" class="inp text-sm">
                         </label>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 bg-slate-800/60 p-4 rounded-xl border border-slate-600 h-full flex flex-col justify-between"> 
-                            <span class="mb-2 block">Berapa banyak perusahaan/instansi yang merespons lamaran anda selama ini?</span>
-                            <input type="number" name="f7_jumlah_respons" value="{{ old('f7_jumlah_respons') }}" required placeholder="... perusahaan" class="inp text-sm">
+                            <span class="mb-2 block">{{ \App\Models\Setting::get('label_f7', 'Berapa banyak perusahaan/instansi yang merespons lamaran anda selama ini?') }}</span>
+                            <input type="number" name="f7_jumlah_respons" value="{{ old('f7_jumlah_respons') }}" required placeholder="{{ \App\Models\Setting::get('placeholder_jumlah', '... perusahaan') }}" class="inp text-sm">
                         </label>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 bg-slate-800/60 p-4 rounded-xl border border-slate-600 h-full flex flex-col justify-between"> 
-                            <span class="mb-2 block">Berapa banyak perusahaan/instansi yang mengundang anda untuk wawancara?</span>
-                            <input type="number" name="f17a_jumlah_wawancara" value="{{ old('f17a_jumlah_wawancara') }}" required placeholder="... perusahaan" class="inp text-sm">
+                            <span class="mb-2 block">{{ \App\Models\Setting::get('label_f17a', 'Berapa banyak perusahaan/instansi yang mengundang anda untuk wawancara?') }}</span>
+                            <input type="number" name="f17a_jumlah_wawancara" value="{{ old('f17a_jumlah_wawancara') }}" required placeholder="{{ \App\Models\Setting::get('placeholder_jumlah', '... perusahaan') }}" class="inp text-sm">
                         </label>
                     </div>
                 </div>
@@ -687,47 +607,28 @@
                 
                 <div class="space-y-6 mt-4">
                 <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
-                    <span class="block text-sm font-semibold text-gray-300">Apakah anda aktif mencari pekerjaan dalam 4 minggu terakhir?</span>
-                    <p class="text-xs text-gray-500 mb-3">(pilih 1 jawaban)</p>
+                    <span class="block text-sm font-semibold text-gray-300">{{ \App\Models\Setting::get('label_f10', 'Apakah anda aktif mencari pekerjaan dalam 4 minggu terakhir?') }}</span>
+                    <p class="text-xs text-gray-500 mb-3">{{ \App\Models\Setting::get('label_f10_note', '(pilih 1 jawaban)') }}</p>
                     <div class="space-y-1.5 text-sm font-normal">
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="1" {{ old('f10_aktif') == '1' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">Tidak</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="2" {{ old('f10_aktif') == '2' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">Tidak, tapi saya sedang menunggu hasil lamaran kerja</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="3" {{ old('f10_aktif') == '3' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">Ya, saya akan mulai bekerja dalam 2 minggu ke depan</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="4" {{ old('f10_aktif') == '4' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">Ya, tapi saya belum pasti akan bekerja dalam 2 minggu ke depan</span></label>
-                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="5" {{ old('f10_aktif') == '5' ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">Lainnya</span></label>
+                        @foreach(\App\Models\Setting::optionList('opsi_f10_aktif', "1|Tidak\n2|Tidak, tapi saya sedang menunggu hasil lamaran kerja\n3|Ya, saya akan mulai bekerja dalam 2 minggu ke depan\n4|Ya, tapi saya belum pasti akan bekerja dalam 2 minggu ke depan\n5|Lainnya") as $f10val => $f10label)
+                        <label class="flex items-center space-x-2 cursor-pointer"><input type="radio" name="f10_aktif" value="{{ $f10val }}" {{ old('f10_aktif') == $f10val ? 'checked' : '' }} required class="w-4 h-4 text-amber-400"><span class="text-gray-300">{{ $f10label }}</span></label>
+                        @endforeach
                     </div>
-                    <input type="text" name="f10_lainnya" value="{{ old('f10_lainnya') }}" placeholder="Lainnya:" class="inp text-sm mt-3" oninput="this.value = this.value.toUpperCase()">
+                    <input type="text" name="f10_lainnya" value="{{ old('f10_lainnya') }}" placeholder="{{ \App\Models\Setting::get('label_lainnya', 'Lainnya:') }}" class="inp text-sm mt-3" oninput="this.value = this.value.toUpperCase()">
                 </div>
 
                 <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-600">
-                    <span class="block text-sm font-semibold text-gray-300">Jika menurut anda pekerjaan anda saat ini tidak sesuai dengan pendidikan anda, mengapa anda mengambilnya?</span>
-                    <p class="text-xs text-gray-500 mb-3">(Jawaban bisa lebih dari satu)</p>
+                    <span class="block text-sm font-semibold text-gray-300">{{ \App\Models\Setting::get('label_f16', 'Jika menurut anda pekerjaan anda saat ini tidak sesuai dengan pendidikan anda, mengapa anda mengambilnya?') }}</span>
+                    <p class="text-xs text-gray-500 mb-3">{{ \App\Models\Setting::get('label_f16_note', '(Jawaban bisa lebih dari satu)') }}</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs md:text-sm font-normal">
-                        @php
-                            $alasan_f16 = [
-                                'f1601' => 'Pertanyaan tidak sesuai; pekerjaan saya sekarang sudah sesuai dengan pendidikan saya.',
-                                'f1602' => 'Saya belum mendapatkan pekerjaan yang lebih sesuai.',
-                                'f1603' => 'Di pekerjaan ini saya memperoleh prospek karir yang baik.',
-                                'f1604' => 'Saya lebih suka bekerja di area pekerjaan yang tidak ada hubungannya dengan pendidikan saya.',
-                                'f1605' => 'Saya dipromosikan ke posisi yang kurang berhubungan dengan pendidikan saya dibanding posisi sebelumnya.',
-                                'f1606' => 'Saya dapat memeroleh pendapatan yang lebih tinggi di pekerjaan ini.',
-                                'f1607' => 'Pekerjaan saya saat ini lebih aman/terjamin/secure',
-                                'f1608' => 'Pekerjaan saya saat ini lebih menarik',
-                                'f1609' => 'Pekerjaan saya saat ini lebih memungkinkan saya mengambil pekerjaan tambahan/jadwal yang fleksibel, dll.',
-                                'f1610' => 'Pekerjaan saya saat ini lokasinya lebih dekat dari rumah saya.',
-                                'f1611' => 'Pekerjaan saya saat ini dapat lebih menjamin kebutuhan keluarga saya.',
-                                'f1612' => 'Pada awal meniti karir ini, saya harus menerima pekerjaan yang tidak berhubungan dengan pendidikan saya.',
-                                'f1613' => 'Lainnya'
-                            ];
-                        @endphp
-                        @foreach($alasan_f16 as $code => $text)
+                        @foreach(\App\Models\Setting::optionList('opsi_f1601_alasan', "f1601|Pertanyaan tidak sesuai; pekerjaan saya sekarang sudah sesuai dengan pendidikan saya.\nf1602|Saya belum mendapatkan pekerjaan yang lebih sesuai.\nf1603|Di pekerjaan ini saya memperoleh prospek karir yang baik.\nf1604|Saya lebih suka bekerja di area pekerjaan yang tidak ada hubungannya dengan pendidikan saya.\nf1605|Saya dipromosikan ke posisi yang kurang berhubungan dengan pendidikan saya dibanding posisi sebelumnya.\nf1606|Saya dapat memeroleh pendapatan yang lebih tinggi di pekerjaan ini.\nf1607|Pekerjaan saya saat ini lebih aman/terjamin/secure\nf1608|Pekerjaan saya saat ini lebih menarik\nf1609|Pekerjaan saya saat ini lebih memungkinkan saya mengambil pekerjaan tambahan/jadwal yang fleksibel, dll.\nf1610|Pekerjaan saya saat ini lokasinya lebih dekat dari rumah saya.\nf1611|Pekerjaan saya saat ini dapat lebih menjamin kebutuhan keluarga saya.\nf1612|Pada awal meniti karir ini, saya harus menerima pekerjaan yang tidak berhubungan dengan pendidikan saya.\nf1613|Lainnya") as $code => $text)
                         <label class="flex items-start space-x-2 cursor-pointer">
                             <input type="checkbox" name="{{ $code }}" value="1" {{ old($code) == '1' ? 'checked' : '' }} class="mt-1 rounded text-amber-400 bg-slate-800 border-slate-600">
                             <span class="text-gray-300">{{ $text }}</span>
                         </label>
                         @endforeach
                     </div>
-                    <input type="text" name="f1614" value="{{ old('f1614') }}" placeholder="Tuliskan:" class="inp text-sm mt-3" oninput="this.value = this.value.toUpperCase()">
+                    <input type="text" name="f1614" value="{{ old('f1614') }}" placeholder="{{ \App\Models\Setting::get('label_tuliskan', 'Tuliskan:') }}" class="inp text-sm mt-3" oninput="this.value = this.value.toUpperCase()">
                 </div>
                 </div>
             </div>
@@ -744,7 +645,7 @@
         <div class="mt-8 text-center text-xs text-gray-600">
             {{ \App\Models\Setting::get('kuesioner_footer') }}
             @if(\App\Models\Setting::get('kuesioner_kontak'))
-                · 📞 {{ \App\Models\Setting::get('kuesioner_kontak') }}
+                · {{ \App\Models\Setting::get('label_kontak_ikon', '📞') }} {{ \App\Models\Setting::get('kuesioner_kontak') }}
             @endif
         </div>
     </div>
@@ -1072,35 +973,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
         matikanBagianTempatKerja(statusTerpilih === "5" || statusTerpilih === "2");
 
-        // Riwayat Studi Lanjut & Pembiayaan Kuliah wajib diisi jika status
+        // Pertanyaan Studi Lanjut (F18) hanya bisa diisi & wajib jika status
 
-        // Melanjutkan Pendidikan (4) dipilih; selain itu tidak bisa diisi
+        // Melanjutkan Pendidikan (4) dipilih; selain itu tidak bisa diisi.
+
+        // Sumber dana pembiayaan kuliah (F12) tidak berkaitan dengan studi
+
+        // lanjut, sehingga selalu aktif dan wajib diisi untuk semua status.
 
         if (sectionStudiLanjut) {
 
-            const wajib = statusTerpilih === "4";
+            const wajibF18 = statusTerpilih === "4";
 
-            sectionStudiLanjut.classList.toggle('opacity-50', !wajib);
+            const bagianF18 = document.getElementById('bagianStudiLanjut');
+
+            if (bagianF18) bagianF18.classList.toggle('opacity-50', !wajibF18);
 
             sectionStudiLanjut.querySelectorAll('input, select').forEach(function (e) {
 
-                if (wajib) {
+                if (e.name.startsWith('f18')) {
+
+                    if (wajibF18) {
+
+                        e.disabled = false;
+
+                        e.required = true;
+
+                    } else {
+
+                        e.disabled = true;
+
+                        e.required = false;
+
+                        if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
+
+                        else if (e.tagName === 'SELECT') { e.selectedIndex = 0; }
+
+                        else { e.value = ''; }
+
+                    }
+
+                } else {
 
                     e.disabled = false;
 
                     e.required = (e.name !== 'f12_02');
-
-                } else {
-
-                    e.disabled = true;
-
-                    e.required = false;
-
-                    if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
-
-                    else if (e.tagName === 'SELECT') { e.selectedIndex = 0; }
-
-                    else { e.value = ''; }
 
                 }
 
@@ -1380,7 +1297,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ========================================================
 
-    const dataWilayah = @json(config('wilayah.provinsi_list'));
+    const dataWilayah = @json(\App\Models\Wilayah::provinsiKabKotaList());
 
 
 

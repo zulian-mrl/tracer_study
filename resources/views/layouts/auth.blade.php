@@ -5,9 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Tracer Study')</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    @php
+        $warnaLatar = \App\Models\Setting::get('login_warna_latar', '#0f172a');
+        $warnaLatar2 = \App\Models\Setting::get('login_warna_latar2', '#1e1b4b');
+        $warnaAksen = \App\Models\Setting::get('login_warna_aksen', '#fbbf24');
+        $hexToRgba = function ($hex, $alpha) {
+            $hex = ltrim((string) $hex, '#');
+            if (strlen($hex) === 3) $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+            $r = hexdec(substr($hex, 0, 2));
+            $g = hexdec(substr($hex, 2, 2));
+            $b = hexdec(substr($hex, 4, 2));
+            return "rgba($r, $g, $b, $alpha)";
+        };
+    @endphp
     <style>
+        :root {
+            --log-latar: {{ $warnaLatar }};
+            --log-latar2: {{ $warnaLatar2 }};
+            --log-aksen: {{ $warnaAksen }};
+        }
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            background: linear-gradient(135deg, var(--log-latar) 0%, var(--log-latar2) 50%, var(--log-latar) 100%);
             background-attachment: fixed;
         }
         body::before {
@@ -16,7 +34,7 @@
             inset: 0;
             z-index: -1;
             background:
-                radial-gradient(circle at 20% 25%, rgba(251, 191, 36, 0.16), transparent 42%),
+                radial-gradient(circle at 20% 25%, {{ $hexToRgba($warnaAksen, 0.16) }}, transparent 42%),
                 radial-gradient(circle at 80% 20%, rgba(56, 189, 248, 0.18), transparent 42%),
                 radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.15), transparent 48%);
         }
@@ -49,7 +67,7 @@
 
         .lock-3d {
             display: inline-block;
-            text-shadow: 0 8px 22px rgba(251, 191, 36, 0.55), 0 2px 6px rgba(0, 0, 0, 0.6);
+            text-shadow: 0 8px 22px {{ $hexToRgba($warnaAksen, 0.55) }}, 0 2px 6px rgba(0, 0, 0, 0.6);
             transform: perspective(600px) rotateX(8deg) rotateY(-8deg);
             filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.5));
         }
@@ -62,7 +80,8 @@
         }
         .input-3d:focus {
             transform: translateY(-1px);
-            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.25), 0 10px 20px -8px rgba(0, 0, 0, 0.6);
+            border-color: var(--log-aksen);
+            box-shadow: 0 0 0 3px {{ $hexToRgba($warnaAksen, 0.25) }}, 0 10px 20px -8px rgba(0, 0, 0, 0.6);
         }
 
         ::-webkit-scrollbar { width: 10px; }

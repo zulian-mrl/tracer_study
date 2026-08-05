@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Analitik Admin - Tracer Study</title>
+    <title>{{ \App\Models\Setting::get('dashboard_judul_browser', 'Dashboard Analitik Admin - Tracer Study') }}</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -87,37 +87,37 @@
                         <span id="avatarNavbar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                     @endif
                 </button>
-                <h1 class="text-base sm:text-lg lg:text-xl font-extrabold tracking-wider grad-text uppercase leading-tight whitespace-nowrap">📊 {{ \App\Models\Setting::get('dashboard_judul', 'Analitik Tracer Study UMMY Solok') }}</h1>
+                <h1 class="text-base sm:text-lg lg:text-xl font-extrabold tracking-wider grad-text uppercase leading-tight whitespace-nowrap">{{ \App\Models\Setting::get('dashboard_ikon', '📊') }} {{ \App\Models\Setting::get('dashboard_judul', 'Analitik Tracer Study UMMY Solok') }}</h1>
             </div>
             <div class="flex flex-wrap justify-end items-center gap-2 text-white">
                 @if(auth()->check() && auth()->user()->is_super && auth()->user()->id === $utamaId)
                     <a href="{{ route('pengaturan.index') }}"
                        class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 inline-flex items-center gap-1.5">
-                        ⚙️ Pengaturan
+                        {{ \App\Models\Setting::get('dashboard_nav_pengaturan', '⚙️ Pengaturan') }}
                     </a>
                 @endif
                 <button type="button"
                         onclick="openModalAlumni()"
                         class="text-sm bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 font-semibold px-4 py-2 rounded-lg shadow-lg transition duration-200">
-                    + Kelola Data Alumni
+                    {{ \App\Models\Setting::get('dashboard_nav_alumni', '+ Kelola Data Alumni') }}
                 </button>
-                <a href="{{ route('kuesioner.index') }}" class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50">Lihat Form Kuesioner</a>
+                <a href="{{ route('kuesioner.index') }}" class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50">{{ \App\Models\Setting::get('dashboard_nav_kuesioner', 'Lihat Form Kuesioner') }}</a>
                 <div class="inline-flex items-center gap-2">
                     @if(auth()->check() && auth()->user()->is_super)
                         <a href="{{ route('akun.index') }}"
                            class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 inline-flex items-center gap-1.5">
-                            👥 Akun Admin
+                            {{ \App\Models\Setting::get('dashboard_nav_akun', '👥 Akun Admin') }}
                         </a>
                     @endif
                     <button type="button"
                             onclick="bukaGantiPassword()"
                             class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50">
-                        🔑 Ganti Password
+                        {{ \App\Models\Setting::get('dashboard_nav_ganti_password', '🔑 Ganti Password') }}
                     </button>
                 </div>
                 <form action="{{ route('logout') }}" method="POST" class="inline">
                     @csrf
-                    <button type="submit" class="text-sm bg-gradient-to-r from-rose-700 to-rose-600 hover:from-rose-600 hover:to-rose-500 px-4 py-2 rounded-lg border border-rose-500/50 shadow-lg">Keluar</button>
+                    <button type="submit" class="text-sm bg-gradient-to-r from-rose-700 to-rose-600 hover:from-rose-600 hover:to-rose-500 px-4 py-2 rounded-lg border border-rose-500/50 shadow-lg">{{ \App\Models\Setting::get('dashboard_nav_keluar', 'Keluar') }}</button>
                 </form>
             </div>
         </div>
@@ -127,13 +127,13 @@
 
         <!-- FILTER FORM -->
         <div class="glass rounded-2xl p-4 sm:p-6 shadow-xl fade-up">
-            <h2 class="text-lg font-semibold mb-4 text-blue-400 flex items-center">🔍 Filter Analisis Responden</h2>
+            <h2 class="text-lg font-semibold mb-4 text-blue-400 flex items-center">{{ \App\Models\Setting::get('dashboard_filter_judul', '🔍 Filter Analisis Responden') }}</h2>
             <form action="{{ route('kuesioner.dashboard') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                 
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">1. Pilih Tahun Lulus</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">{{ \App\Models\Setting::get('dashboard_filter_tahun', '1. Pilih Tahun Lulus') }}</label>
                     <select name="tahun_lulus" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30">
-                        <option value="">-- Semua Tahun Lulus --</option>
+                        <option value="">{{ \App\Models\Setting::get('dashboard_filter_semua_tahun', '-- Semua Tahun Lulus --') }}</option>
                         @foreach($listTahun as $th)
                             <option value="{{ $th }}" {{ $tahunTerpilih == $th ? 'selected' : '' }}>Tahun Lulus {{ $th }}</option>
                         @endforeach
@@ -141,9 +141,9 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">2. Pilihan Program Studi</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">{{ \App\Models\Setting::get('dashboard_filter_prodi', '2. Pilihan Program Studi') }}</label>
                     <select name="kode_prodi" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/30">
-                        <option value="">-- Semua Program Studi --</option>
+                        <option value="">{{ \App\Models\Setting::get('dashboard_filter_semua_prodi', '-- Semua Program Studi --') }}</option>
                         @foreach($prodiLabels as $kode => $nama)
                             <option value="{{ $kode }}" {{ $prodiTerpilih == $kode ? 'selected' : '' }}>[{{ $kode }}] {{ $nama }}</option>
                         @endforeach
@@ -152,7 +152,7 @@
 
                 <div>
                     <button type="submit" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 font-bold py-2 px-4 rounded-lg shadow-lg transition duration-150 uppercase tracking-wide">
-                        ⚡ Cek & Buka Kurva Analitik
+                        {{ \App\Models\Setting::get('dashboard_tombol_kurva', '⚡ Cek & Buka Kurva Analitik') }}
                     </button>
                 </div>
             </form>
@@ -161,35 +161,35 @@
         <!-- JIKA DASHBOARD BELUM DIFILTER -->
         @if(!$tahunTerpilih && !$prodiTerpilih)
             <div class="bg-blue-950/60 border border-blue-800/60 text-blue-300 p-10 rounded-2xl text-center shadow-2xl fade-up">
-                <div class="text-5xl mb-3">📈</div>
-                <h3 class="text-xl font-bold mb-2">Silakan Gunakan Filter di Atas</h3>
-                <p class="text-sm text-gray-400">Pilih Tahun Lulus beserta Program Studi terlebih dahulu, kemudian klik tombol "Cek & Buka Kurva Analitik" untuk melihat grafik penelusuran alumni.</p>
+                <div class="text-5xl mb-3">{{ \App\Models\Setting::get('dashboard_kosong_ikon', '📈') }}</div>
+                <h3 class="text-xl font-bold mb-2">{{ \App\Models\Setting::get('dashboard_kosong_judul', 'Silakan Gunakan Filter di Atas') }}</h3>
+                <p class="text-sm text-gray-400">{{ \App\Models\Setting::get('dashboard_kosong_teks', 'Pilih Tahun Lulus beserta Program Studi terlebih dahulu, kemudian klik tombol "Cek & Buka Kurva Analitik" untuk melihat grafik penelusuran alumni.') }}</p>
             </div>
         @else
 
             <!-- INFO FILTER TERPILIH & DOWNLOAD EXCEL -->
             <div class="glass rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-xl fade-up">
                 <div class="text-sm text-gray-300">
-                    Menampilkan Analisis: <span class="text-amber-400 font-bold">{{ $tahunTerpilih ?? 'Semua Tahun' }}</span> | 
-                    Prodi: <span class="text-blue-400 font-bold">
+                    {{ \App\Models\Setting::get('dashboard_stat_menampilkan', 'Menampilkan Analisis:') }} <span class="text-amber-400 font-bold">{{ $tahunTerpilih ?? \App\Models\Setting::get('dashboard_stat_semua_tahun', 'Semua Tahun') }}</span> | 
+                    {{ \App\Models\Setting::get('dashboard_stat_prodi', 'Prodi:') }} <span class="text-blue-400 font-bold">
                         @if(isset($prodiTerpilih) && (is_string($prodiTerpilih) || is_numeric($prodiTerpilih)) && isset($prodiLabels[$prodiTerpilih]))
                             {{ $prodiLabels[$prodiTerpilih] }}
                         @else
-                            Semua Prodi
+                            {{ \App\Models\Setting::get('dashboard_stat_semua_prodi', 'Semua Prodi') }}
                         @endif
                     </span>
                 </div>
                 
                 <div class="flex flex-wrap items-center justify-center gap-3">
                     <div class="text-md font-bold bg-slate-900/80 px-4 py-1.5 border border-emerald-500/40 rounded-lg text-emerald-400 shadow-inner">
-                        Total Responden: {{ $totalAlumni }} Alumni
+                        {{ \App\Models\Setting::get('dashboard_stat_total', 'Total Responden:') }} {{ $totalAlumni }} {{ \App\Models\Setting::get('dashboard_stat_alumni', 'Alumni') }}
                     </div>
                     
                     <a href="{{ route('kuesioner.export', ['tahun_lulus' => $tahunTerpilih, 'kode_prodi' => $prodiTerpilih]) }}" class="inline-flex items-center gap-2 text-sm bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 font-bold px-4 py-2 rounded-lg border border-emerald-400/50 transition duration-150 shadow-lg">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
-                        Unduh Excel {{ $tahunTerpilih ? 'Tahun ' . $tahunTerpilih : '(Semua Tahun)' }}
+                        {{ \App\Models\Setting::get('dashboard_unduh_excel', 'Unduh Excel') }} {{ $tahunTerpilih ? \App\Models\Setting::get('dashboard_unduh_tahun', 'Tahun') . ' ' . $tahunTerpilih : \App\Models\Setting::get('dashboard_unduh_semua', '(Semua Tahun)') }}
                     </a>
                 </div>
             </div>
@@ -197,31 +197,31 @@
             <!-- STAT CARD RINGKASAN -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 fade-up">
                 <div class="glass glass-hover rounded-2xl p-3 sm:p-5 flex items-center gap-2 sm:gap-4 shadow-xl cursor-pointer" onclick="bukaNamaAlumni('total')" title="Lihat daftar nama alumni">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl shadow-lg">🧑‍🎓</div>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl shadow-lg">{{ \App\Models\Setting::get('dashboard_ikon_total', '🧑‍🎓') }}</div>
                     <div>
                         <div class="text-xl sm:text-2xl font-extrabold text-amber-400">{{ $totalAlumni }}</div>
-                        <div class="text-xs uppercase tracking-wider text-gray-400">Total Responden</div>
+                        <div class="text-xs uppercase tracking-wider text-gray-400">{{ \App\Models\Setting::get('dashboard_stat_total_kartu', 'Total Responden') }}</div>
                     </div>
                 </div>
                 <div class="glass glass-hover rounded-2xl p-3 sm:p-5 flex items-center gap-2 sm:gap-4 shadow-xl cursor-pointer" onclick="bukaNamaAlumni('bekerja')" title="Lihat daftar nama alumni bekerja">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-2xl shadow-lg">💼</div>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-2xl shadow-lg">{{ \App\Models\Setting::get('dashboard_ikon_bekerja', '💼') }}</div>
                     <div>
                         <div class="text-xl sm:text-2xl font-extrabold text-sky-400">{{ $statusKerja['Bekerja'] ?? 0 }}</div>
-                        <div class="text-xs uppercase tracking-wider text-gray-400">Bekerja</div>
+                        <div class="text-xs uppercase tracking-wider text-gray-400">{{ \App\Models\Setting::get('dashboard_stat_bekerja', 'Bekerja') }}</div>
                     </div>
                 </div>
                 <div class="glass glass-hover rounded-2xl p-3 sm:p-5 flex items-center gap-2 sm:gap-4 shadow-xl cursor-pointer" onclick="bukaNamaAlumni('aktif')" title="Lihat daftar nama alumni aktif mencari kerja">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center text-2xl shadow-lg">🔥</div>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center text-2xl shadow-lg">{{ \App\Models\Setting::get('dashboard_ikon_mencari', '🔥') }}</div>
                     <div>
                         <div class="text-xl sm:text-2xl font-extrabold text-emerald-400">{{ $keaktifan['Aktif'] ?? 0 }}</div>
-                        <div class="text-xs uppercase tracking-wider text-gray-400">Aktif Mencari Kerja</div>
+                        <div class="text-xs uppercase tracking-wider text-gray-400">{{ \App\Models\Setting::get('dashboard_stat_mencari', 'Aktif Mencari Kerja') }}</div>
                     </div>
                 </div>
                 <div class="glass glass-hover rounded-2xl p-3 sm:p-5 flex items-center gap-2 sm:gap-4 shadow-xl cursor-pointer" onclick="bukaNamaAlumni('lanjut')" title="Lihat daftar nama alumni lanjut kuliah">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-fuchsia-400 to-purple-600 flex items-center justify-center text-2xl shadow-lg">🏫</div>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-fuchsia-400 to-purple-600 flex items-center justify-center text-2xl shadow-lg">{{ \App\Models\Setting::get('dashboard_ikon_lanjut', '🏫') }}</div>
                     <div>
                         <div class="text-xl sm:text-2xl font-extrabold text-fuchsia-400">{{ $statusKerja['Lanjut Kuliah'] ?? 0 }}</div>
-                        <div class="text-xs uppercase tracking-wider text-gray-400">Lanjut Kuliah</div>
+                        <div class="text-xs uppercase tracking-wider text-gray-400">{{ \App\Models\Setting::get('dashboard_stat_lanjut', 'Lanjut Kuliah') }}</div>
                     </div>
                 </div>
             </div>
@@ -317,11 +317,11 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                @if (\App\Models\Setting::get('chart_perguruan_tampil', '1') === '1')
+                @if (\App\Models\Setting::get('chart_sumber_biaya_tampil', '1') === '1')
                 <div class="glass glass-hover rounded-2xl p-5 shadow-xl fade-up">
-                    <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_perguruan') }}</h3>
+                    <h3 class="text-md font-semibold text-gray-300 mb-4">{{ \App\Models\Setting::get('judul_chart_sumber_biaya') }}</h3>
                     <div class="relative h-64 chart-3d">
-                        <canvas id="chartPerguruanTinggiStudi"></canvas>
+                        <canvas id="chartSumberBiayaLanjut"></canvas>
                     </div>
                 </div>
                 @endif
@@ -418,10 +418,13 @@
                 const lokasiTingkat = @js(array_values($PilihTingkat));
 
                 const statusKerjaData = @js(array_values($statusKerja));
+                const statusLabels = @js(array_keys($statusKerja));
                 const pendapatanData = @js(array_values($pendapatan));
 
                 const statusPerusahaanKerja = @js(array_values($statusPerusahaanKerja));
+                const perusahaanLabels = @js(array_keys($statusPerusahaanKerja));
                 const SumberDana = @js(array_values($SumberDana));
+                const danaLabels = @js(array_keys($SumberDana));
                 
                 const lokasiLabels = @js(array_keys($lokasiKerja));
                 const lokasiData = @js(array_values($lokasiKerja));
@@ -431,6 +434,9 @@
 
                 const prodiLanjutLabels = @js(array_keys($programStudiLanjut));
                 const prodiLanjutData = @js(array_values($programStudiLanjut));
+
+                const sumberBiayaLanjutLabels = @js(array_keys($sumberBiayaLanjut));
+                const sumberBiayaLanjutData = @js(array_values($sumberBiayaLanjut));
 
                 const kDikuasai = @js($kompetensiDikuasai);
                 const kDiperlukan = @js($kompetensiDiperlukan);
@@ -475,7 +481,7 @@
                         'rasio' => ['chart_rasio_tipe', 'chart_rasio_warna'],
                         'keaktifan' => ['chart_keaktifan_tipe', 'chart_keaktifan_warna'],
                         'alasan' => ['chart_alasan_tipe', 'chart_alasan_warna'],
-                        'perguruan' => ['chart_perguruan_tipe', 'chart_perguruan_warna'],
+                        'sumber_biaya' => ['chart_sumber_biaya_tipe', 'chart_sumber_biaya_warna'],
                         'prodi' => ['chart_prodi_tipe', 'chart_prodi_warna'],
                     ];
                     $opsiGrafikJs = [];
@@ -485,7 +491,7 @@
                             'warna' => \App\Models\Setting::get($kunci[1], '#10b981'),
                         ];
                     }
-                    $daftarItemGrafik = ['status', 'pendapatan', 'perusahaan', 'dana', 'kurva', 'cara', 'keaktifan', 'kompetensi', 'metode'];
+                    $daftarItemGrafik = ['pendapatan', 'kurva', 'cara', 'keaktifan', 'kompetensi', 'metode'];
                     $itemGrafikJs = [];
                     foreach ($daftarItemGrafik as $slug) {
                         $itemGrafikJs[$slug] = \App\Models\Setting::items($slug);
@@ -677,8 +683,7 @@
                 // Render Seluruh Chart
                 renderChartSafe('chartStatusKerja', konfigGrafik({
                     id: 'chartStatusKerja', tipe: opsiGrafik.status.tipe, warna: opsiGrafik.status.warna,
-                    labels: ['Bekerja', 'Wiraswasta', 'Lanjut Kuliah', 'Cari Kerja', 'Belum Bekerja'],
-                    data: statusKerjaData, label: 'Jumlah Alumni', slug: 'status'
+                    labels: statusLabels, data: statusKerjaData, label: 'Jumlah Alumni', slug: null
                 }));
 
                 renderChartSafe('chartPendapatan', konfigGrafik({
@@ -689,14 +694,12 @@
 
                 renderChartSafe('chartPerusahaanKerja', konfigGrafik({
                     id: 'chartPerusahaanKerja', tipe: opsiGrafik.perusahaan.tipe, warna: opsiGrafik.perusahaan.warna,
-                    labels: ['Instansi Pemerintah', 'BUMN/BUMD', 'Institusi', 'Lembaga Swadaya', 'Swasta', 'Wiraswasta', 'Lainnya'],
-                    data: statusPerusahaanKerja, label: 'Jumlah Alumni', slug: 'perusahaan'
+                    labels: perusahaanLabels, data: statusPerusahaanKerja, label: 'Jumlah Alumni', slug: null
                 }));
 
                 renderChartSafe('chartSumberDana', konfigGrafik({
                     id: 'chartSumberDana', tipe: opsiGrafik.dana.tipe, warna: opsiGrafik.dana.warna,
-                    labels: ['Biaya Sendiri', 'Beasiswa ADIK', 'Beasiswa BIDIKMISI', 'Beasiswa PPA', 'Beasiswa AFIRMASI', 'Beasiswa Swasta', 'Lainnya'],
-                    data: SumberDana, label: 'Jumlah Alumni', slug: 'dana'
+                    labels: danaLabels, data: SumberDana, label: 'Jumlah Alumni', slug: null
                 }));
 
                 renderChartSafe('chartLokasi', konfigGrafik({
@@ -729,10 +732,10 @@
                     data: kuliahData.length ? kuliahData : [0], label: 'Alumni'
                 }));
 
-                renderChartSafe('chartPerguruanTinggiStudi', konfigGrafik({
-                    id: 'chartPerguruanTinggiStudi', tipe: opsiGrafik.perguruan.tipe, warna: opsiGrafik.perguruan.warna,
-                    labels: kuliahLabels.length ? kuliahLabels : ['Tidak Ada Data'],
-                    data: kuliahData.length ? kuliahData : [0], label: 'Jumlah Alumni'
+                renderChartSafe('chartSumberBiayaLanjut', konfigGrafik({
+                    id: 'chartSumberBiayaLanjut', tipe: opsiGrafik.sumber_biaya.tipe, warna: opsiGrafik.sumber_biaya.warna,
+                    labels: sumberBiayaLanjutLabels.length ? sumberBiayaLanjutLabels : ['Tidak Ada Data'],
+                    data: sumberBiayaLanjutData.length ? sumberBiayaLanjutData : [0], label: 'Jumlah Alumni'
                 }));
 
                 renderChartSafe('chartProgramStudiStudi', konfigGrafik({

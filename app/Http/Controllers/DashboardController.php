@@ -9,6 +9,7 @@ use App\Exports\KuesionerAlumniExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\AlumniImport;
 use App\Models\Setting;
+use App\Models\Wilayah;
 
 class DashboardController extends Controller
 {
@@ -90,16 +91,44 @@ class DashboardController extends Controller
             $totalAlumni = $dataAlumni->count();
 
             // --- PROSES DATA GRAFIK (HANYA DIHITUNG JIKA TOTAL DATA > 0) ---
-            
+
+            // Opsi pilihan tunggal yang bisa diubah admin; menambah/mengurangi opsi otomatis mengubah grafik.
+            $defaultStatus = "1|Bekerja (full time/part time)\n3|Wiraswasta\n4|Melanjutkan Pendidikan\n5|Tidak Kerja tetapi sedang mencari kerja\n2|Belum memungkinkan bekerja";
+            $defaultPerusahaan = "1|Instansi pemerintah\n2|BUMN/BUMD\n3|Institusi/Organisasi Multilateral\n4|Organisasi non-profit/Lembaga Swadaya Masyarakat\n5|Perusahaan swasta\n6|Wiraswasta/Perusahaan sendiri\n7|Lainnya";
+            $defaultDana = "1|Biaya Sendiri / Keluarga\n2|Beasiswa ADIK\n3|Beasiswa BIDIKMISI\n4|Beasiswa PPA\n5|Beasiswa AFIRMASI\n6|Beasiswa Perusahaan/Swasta\n7|Lainnya";
+
+            $opsiStatus = Setting::optionList('opsi_f8_status', $defaultStatus);
+            $opsiPerusahaan = Setting::optionList('opsi_f11_instansi', $defaultPerusahaan);
+            $opsiDana = Setting::optionList('opsi_f12_dana', $defaultDana);
+
+            // Peta nilai simpanan → label. f11 disimpan memakai kode lama (1,6,7,2,3,4,5),
+            // nilai baru di luar 1-7 disimpan apa adanya.
+            $konversiF11 = ['1' => '1', '2' => '6', '3' => '7', '4' => '2', '5' => '3', '6' => '4', '7' => '5'];
+            $labelStatus = $opsiStatus;
+            $labelDana = $opsiDana;
+            $labelPerusahaan = [];
+            foreach ($opsiPerusahaan as $nilaiOpsi => $label) {
+                $labelPerusahaan[$konversiF11[$nilaiOpsi] ?? $nilaiOpsi] = $label;
+            }
+
+            $bucketOpsi = function (array $opsi): array {
+                $out = [];
+                foreach ($opsi as $label) {
+                    $out[$label] = 0;
+                }
+                $out['Lainnya'] = 0;
+                return $out;
+            };
+
             // A. Status Bekerja (f8_status_saat_ini)
-            $statusKerja = ['Bekerja' => 0, 'Wiraswasta' => 0, 'Lanjut Kuliah' => 0, 'Cari Kerja' => 0, 'Belum Bekerja' => 0];
+            $statusKerja = $bucketOpsi($opsiStatus);
 
             // B. Pendapatan Per Bulan (f505_pendapatan_per_bulan)
             $pendapatan = ['< 2 Juta' => 0, '2 - 5 Juta' => 0, '> 5 Juta' => 0];
 
-            $statusPerusahaanKerja = ['Instansi Pemerintah' => 0, 'BUMN/BUMD' => 0, 'Institusi' => 0, 'Lembaga Swadaya' => 0, 'Swasta' => 0, 'Wiraswasta' => 0, 'Lainnya' => 0];
+            $statusPerusahaanKerja = $bucketOpsi($opsiPerusahaan);
 
-            $SumberDana = ['Biaya Sendiri' => 0, 'Beasiswa ADIK' => 0, 'Beasiswa BIDIKMISI' => 0, 'Beasiswa PPA' => 0, 'Beasiswa AFIRMASI' => 0, 'Beasiswa Swasta' => 0, 'Lainnya' => 0];
+            $SumberDana = $bucketOpsi($opsiDana);
 
             $PosisiJabatan = [];
             $PilihTingkat = [];
@@ -107,6 +136,7 @@ class DashboardController extends Controller
             $lokasiKota = [];
             $tempatKuliah = [];
             $programStudiLanjut = [];
+            $sumberBiayaLanjut = ['Biaya Sendiri' => 0, 'Beasiswa' => 0, 'Lainnya' => 0];
 
             // E. Kompetensi Dikuasai vs Diperlukan (f1701_A sampai f1707_B)
             $kompetensiDikuasai = [0, 0, 0, 0, 0, 0, 0]; // f1701_A sd f1707_A
@@ -183,10 +213,7 @@ class DashboardController extends Controller
                 }
                 return $map;
             };
-            $mapStatus = $labelMap('status', ['Bekerja', 'Wiraswasta', 'Lanjut Kuliah', 'Cari Kerja', 'Belum Bekerja']);
             $mapPendapatan = $labelMap('pendapatan', ['< 2 Juta', '2 - 5 Juta', '> 5 Juta']);
-            $mapPerusahaan = $labelMap('perusahaan', ['Instansi Pemerintah', 'BUMN/BUMD', 'Institusi', 'Lembaga Swadaya', 'Swasta', 'Wiraswasta', 'Lainnya']);
-            $mapDana = $labelMap('dana', ['Biaya Sendiri', 'Beasiswa ADIK', 'Beasiswa BIDIKMISI', 'Beasiswa PPA', 'Beasiswa AFIRMASI', 'Beasiswa Swasta', 'Lainnya']);
             $mapKurva = $labelMap('kurva', ['1-3 Bulan', '4-6 Bulan', '7-12 Bulan', '> 12 Bulan']);
             $mapKeaktifan = $labelMap('keaktifan', ['Aktif', 'Tidak Aktif']);
             $mapCaraItem = $labelMap('cara', ['Iklan Koran', 'Melamar Langsung', 'Bursa Kerja', 'Internet', 'Dihubungi Perusahaan', 'Kemenakertrans', 'Agen', 'CDC Kampus', 'Kantor Kemanusiaan', 'Kuliah', 'Relasi', 'Bisnis Sendiri', 'Tempat Magang', 'Kerja Saat Kuliah', 'Lainnya']);
@@ -195,15 +222,10 @@ class DashboardController extends Controller
 
             // Seluruh agregasi grafik dihitung dalam SATU pass (dulu 15x iterasi penuh).
             foreach ($dataAlumni as $d) {
-                // A. Status Bekerja (baris tanpa f8 tidak dihitung sama sekali)
+                // A. Status Bekerja (nilai tidak dikenal masuk 'Lainnya')
                 if (isset($d->f8_status_saat_ini)) {
                     $status_val = strtolower($d->f8_status_saat_ini);
-                    if ($status_val === '1')     $statusKerja['Bekerja']++;
-                    elseif ($status_val === '3') $statusKerja['Wiraswasta']++;
-                    elseif ($status_val === '4') $statusKerja['Lanjut Kuliah']++;
-                    elseif ($status_val === '5') $statusKerja['Cari Kerja']++;
-                    elseif ($status_val === '2') $statusKerja['Belum Bekerja']++;
-                    else                         $statusKerja['Cari Kerja']++;
+                    $statusKerja[$labelStatus[$status_val] ?? 'Lainnya']++;
                 }
 
                 // B. Pendapatan Per Bulan
@@ -212,28 +234,16 @@ class DashboardController extends Controller
                 elseif ($val >= 2000000 && $val <= 5000000) $pendapatan['2 - 5 Juta']++;
                 elseif ($val > 5000000) $pendapatan['> 5 Juta']++;
 
-                // C. Jenis Perusahaan / Instansi
+                // C. Jenis Perusahaan / Instansi (nilai tidak dikenal masuk 'Lainnya')
                 if (isset($d->f11_jenis_instansi)) {
                     $status_val = strtolower($d->f11_jenis_instansi);
-                    if ($status_val === '1')     $statusPerusahaanKerja['Instansi Pemerintah']++;
-                    elseif ($status_val === '6') $statusPerusahaanKerja['BUMN/BUMD']++;
-                    elseif ($status_val === '7') $statusPerusahaanKerja['Institusi']++;
-                    elseif ($status_val === '2') $statusPerusahaanKerja['Lembaga Swadaya']++;
-                    elseif ($status_val === '3') $statusPerusahaanKerja['Swasta']++;
-                    elseif ($status_val === '4') $statusPerusahaanKerja['Wiraswasta']++;
-                    elseif ($status_val === '5') $statusPerusahaanKerja['Lainnya']++;
+                    $statusPerusahaanKerja[$labelPerusahaan[$status_val] ?? 'Lainnya']++;
                 }
 
                 // D. Sumber Dana Kuliah (nilai tidak dikenal masuk 'Lainnya')
                 if (isset($d->f12_sumber_biaya_kuliah)) {
                     $status_val = strtolower($d->f12_sumber_biaya_kuliah);
-                    if ($status_val === '1')      $SumberDana['Biaya Sendiri']++;
-                    elseif ($status_val === '2')  $SumberDana['Beasiswa ADIK']++;
-                    elseif ($status_val === '3')  $SumberDana['Beasiswa BIDIKMISI']++;
-                    elseif ($status_val === '4')  $SumberDana['Beasiswa PPA']++;
-                    elseif ($status_val === '5')  $SumberDana['Beasiswa AFIRMASI']++;
-                    elseif ($status_val === '6')  $SumberDana['Beasiswa Swasta']++;
-                    else                          $SumberDana['Lainnya']++;
+                    $SumberDana[$labelDana[$status_val] ?? 'Lainnya']++;
                 }
 
                 // Posisi / Tingkat / Lokasi / Tempat Kuliah (teks bebas)
@@ -254,6 +264,10 @@ class DashboardController extends Controller
                 }
                 if (!empty($d->f18c_program_studi) && $d->f18c_program_studi != '?') {
                     $programStudiLanjut[$d->f18c_program_studi] = ($programStudiLanjut[$d->f18c_program_studi] ?? 0) + 1;
+                }
+                if (!empty($d->f18a_sumber_biaya_studi) && $d->f18a_sumber_biaya_studi != '?') {
+                    $kunciBiaya = in_array(strtolower(trim($d->f18a_sumber_biaya_studi)), ['biaya sendiri', 'beasiswa']) ? ucwords(strtolower(trim($d->f18a_sumber_biaya_studi))) : 'Lainnya';
+                    $sumberBiayaLanjut[$kunciBiaya]++;
                 }
 
                 // E. Kompetensi (kosong dianggap 3)
@@ -314,12 +328,7 @@ class DashboardController extends Controller
 
                 // chartStatusKerja
                 $st = strtolower((string)($d->f8_status_saat_ini ?? ''));
-                if ($st === '1')      $namaPerGrafik['chartStatusKerja'][$mapStatus['Bekerja']][] = $nama;
-                elseif ($st === '3')  $namaPerGrafik['chartStatusKerja'][$mapStatus['Wiraswasta']][] = $nama;
-                elseif ($st === '4')  $namaPerGrafik['chartStatusKerja'][$mapStatus['Lanjut Kuliah']][] = $nama;
-                elseif ($st === '5')  $namaPerGrafik['chartStatusKerja'][$mapStatus['Cari Kerja']][] = $nama;
-                elseif ($st === '2')  $namaPerGrafik['chartStatusKerja'][$mapStatus['Belum Bekerja']][] = $nama;
-                else                  $namaPerGrafik['chartStatusKerja'][$mapStatus['Cari Kerja']][] = $nama;
+                if ($st !== '') $namaPerGrafik['chartStatusKerja'][$labelStatus[$st] ?? 'Lainnya'][] = $nama;
 
                 // chartPendapatan
                 $gaji = (int)($d->f505_pendapatan_per_bulan ?? 0);
@@ -329,13 +338,11 @@ class DashboardController extends Controller
 
                 // chartPerusahaanKerja
                 $f11 = strtolower((string)($d->f11_jenis_instansi ?? ''));
-                $map11 = ['1'=>'Instansi Pemerintah', '6'=>'BUMN/BUMD', '7'=>'Institusi', '2'=>'Lembaga Swadaya', '3'=>'Swasta', '4'=>'Wiraswasta', '5'=>'Lainnya'];
-                if (isset($map11[$f11])) $namaPerGrafik['chartPerusahaanKerja'][$mapPerusahaan[$map11[$f11]]][] = $nama;
+                if ($f11 !== '') $namaPerGrafik['chartPerusahaanKerja'][$labelPerusahaan[$f11] ?? 'Lainnya'][] = $nama;
 
                 // chartSumberDana
                 $f12 = strtolower((string)($d->f12_sumber_biaya_kuliah ?? ''));
-                $map12 = ['1'=>'Biaya Sendiri', '2'=>'Beasiswa ADIK', '3'=>'Beasiswa BIDIKMISI', '4'=>'Beasiswa PPA', '5'=>'Beasiswa AFIRMASI', '6'=>'Beasiswa Swasta', '7'=>'Lainnya'];
-                if ($f12 !== '') $namaPerGrafik['chartSumberDana'][$mapDana[$map12[$f12] ?? 'Lainnya']][] = $nama;
+                if ($f12 !== '') $namaPerGrafik['chartSumberDana'][$labelDana[$f12] ?? 'Lainnya'][] = $nama;
 
                 // chartPosisiJabatan / chartPilihTingkat / chartLokasi / chartLokasiKota
                 if (!empty($d->f5c_posisi_wiraswasta) && $d->f5c_posisi_wiraswasta != '?') $namaPerGrafik['chartPosisiJabatan'][$d->f5c_posisi_wiraswasta][] = $nama;
@@ -343,10 +350,13 @@ class DashboardController extends Controller
                 if (!empty($d->f510_provinsi) && $d->f510_provinsi != '?') $namaPerGrafik['chartLokasi'][$d->f510_provinsi][] = $nama;
                 if (!empty($d->f510_kab_kota) && $d->f510_kab_kota != '?') $namaPerGrafik['chartLokasiKota'][$d->f510_kab_kota][] = $nama;
 
-                // chartTempatKuliah & chartPerguruanTinggiStudi (f18b) / chartProgramStudiStudi (f18c)
+                // chartTempatKuliah (f18b) / chartSumberBiayaLanjut (f18a) / chartProgramStudiStudi (f18c)
                 if (!empty($d->f18b_perguruan_tinggi_studi) && $d->f18b_perguruan_tinggi_studi != '?') {
                     $namaPerGrafik['chartTempatKuliah'][$d->f18b_perguruan_tinggi_studi][] = $nama;
-                    $namaPerGrafik['chartPerguruanTinggiStudi'][$d->f18b_perguruan_tinggi_studi][] = $nama;
+                }
+                if (!empty($d->f18a_sumber_biaya_studi) && $d->f18a_sumber_biaya_studi != '?') {
+                    $kunciBiaya = in_array(strtolower(trim($d->f18a_sumber_biaya_studi)), ['biaya sendiri', 'beasiswa']) ? ucwords(strtolower(trim($d->f18a_sumber_biaya_studi))) : 'Lainnya';
+                    $namaPerGrafik['chartSumberBiayaLanjut'][$kunciBiaya][] = $nama;
                 }
                 if (!empty($d->f18c_program_studi) && $d->f18c_program_studi != '?') $namaPerGrafik['chartProgramStudiStudi'][$d->f18c_program_studi][] = $nama;
 
@@ -424,6 +434,32 @@ class DashboardController extends Controller
                 }
             }
 
+            // Tampilkan nama (bukan kode) untuk provinsi & kab/kota pada grafik lokasi
+            foreach ($lokasiKerja as $kode => $jumlah) {
+                $namaLokasi = Wilayah::provinsiName((string) $kode);
+                if ($namaLokasi !== null && $namaLokasi !== $kode) {
+                    unset($lokasiKerja[$kode]);
+                    $lokasiKerja[$namaLokasi] = ($lokasiKerja[$namaLokasi] ?? 0) + $jumlah;
+                }
+            }
+            foreach ($lokasiKota as $kode => $jumlah) {
+                $namaLokasi = Wilayah::kabKotaName((string) $kode);
+                if ($namaLokasi !== null && $namaLokasi !== $kode) {
+                    unset($lokasiKota[$kode]);
+                    $lokasiKota[$namaLokasi] = ($lokasiKota[$namaLokasi] ?? 0) + $jumlah;
+                }
+            }
+            foreach ($namaPerGrafik['chartLokasi'] ?? [] as $kode => $names) {
+                $namaLokasi = Wilayah::provinsiName((string) $kode) ?? $kode;
+                unset($namaPerGrafik['chartLokasi'][$kode]);
+                $namaPerGrafik['chartLokasi'][$namaLokasi] = array_values(array_unique(array_merge($namaPerGrafik['chartLokasi'][$namaLokasi] ?? [], $names)));
+            }
+            foreach ($namaPerGrafik['chartLokasiKota'] ?? [] as $kode => $names) {
+                $namaLokasi = Wilayah::kabKotaName((string) $kode) ?? $kode;
+                unset($namaPerGrafik['chartLokasiKota'][$kode]);
+                $namaPerGrafik['chartLokasiKota'][$namaLokasi] = array_values(array_unique(array_merge($namaPerGrafik['chartLokasiKota'][$namaLokasi] ?? [], $names)));
+            }
+
             // Rata-rata Aktivitas Lamaran (dari akumulasi per baris)
             $avgLamaran = [
                 'Dilamar' => round($cntLamaran['f6'] ? $sumLamaran['f6'] / $cntLamaran['f6'] : 0, 1),
@@ -447,7 +483,7 @@ class DashboardController extends Controller
 
             return view('dashboard_kurva', compact(
                 'listTahun', 'prodiLabels', 'tahunTerpilih', 'prodiTerpilih', 'totalAlumni',
-                'statusKerja', 'statusPerusahaanKerja', 'SumberDana', 'pendapatan', 'PilihTingkat', 'PosisiJabatan', 'lokasiKerja', 'lokasiKota', 'tempatKuliah', 'programStudiLanjut', 'kompetensiDikuasai', 
+                'statusKerja', 'statusPerusahaanKerja', 'SumberDana', 'pendapatan', 'PilihTingkat', 'PosisiJabatan', 'lokasiKerja', 'lokasiKota', 'tempatKuliah', 'programStudiLanjut', 'sumberBiayaLanjut', 'kompetensiDikuasai', 
                 'kompetensiDiperlukan', 'waktuCariKerja', 'caraCariKerja', 'avgLamaran', 'keaktifan', 'alasanTidakSesuai', 'daftarNama', 'namaPerGrafik',
                 'metodeSangatBesar', 'metodeBesar', 'metodeCukupBesar', 'metodeKurang', 'metodeTidakSama',
                 'utamaId'
