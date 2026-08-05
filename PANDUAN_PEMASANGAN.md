@@ -115,6 +115,15 @@ php artisan db:seed
    - `WilayahSeeder` → data 35 provinsi + 523 kabupaten/kota (wajib, agar dropdown wilayah terisi).
    - `db:seed` → membuat akun Super Admin sesuai `ADMIN_EMAIL`/`ADMIN_PASSWORD` di `.env`.
 
+> **Sebelum `php artisan migrate` di database yang sudah berisi data:** migrasi terakhir menambah index unik pada kolom `no_mahasiswa` (`kuesioner_alumnis`). MySQL menolak index unik jika sudah ada NIM duplikat. Cek dulu lewat phpMyAdmin atau query:
+> ```sql
+> SELECT no_mahasiswa, COUNT(*) AS jumlah
+> FROM kuesioner_alumnis
+> GROUP BY no_mahasiswa
+> HAVING COUNT(*) > 1;
+> ```
+> Jika hasilnya ada baris, perbaiki/hapus duplikatnya terlebih dahulu, baru jalankan `php artisan migrate --force`.
+
 3. **PENTING — ganti kata sandi super admin segera** setelah berhasil login pertama kali:
    - Login di `APP_URL/login` → menu **Akun** → **Ganti Password**.
    - Sembunyikan `ADMIN_EMAIL`/`ADMIN_PASSWORD` di `.env` setelahnya (atau hapus), agar password admin awal tidak terlihat di file.

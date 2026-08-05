@@ -123,4 +123,19 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Akun Super Admin Awal
+    |--------------------------------------------------------------------------
+    |
+    | Dipakai oleh database/seeders/AdminUserSeeder.php. Dibaca lewat config()
+    | (bukan env() langsung) agar tetap benar setelah `php artisan config:cache`.
+    |
+    */
+
+    'admin' => [
+        'email' => env('ADMIN_EMAIL', 'admin@umm.ac.id'),
+        'password' => env('ADMIN_PASSWORD'),
+    ],
+
 ];

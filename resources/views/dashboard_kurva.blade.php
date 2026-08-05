@@ -206,7 +206,7 @@
                 <div class="glass glass-hover rounded-2xl p-3 sm:p-5 flex items-center gap-2 sm:gap-4 shadow-xl cursor-pointer" onclick="bukaNamaAlumni('bekerja')" title="Lihat daftar nama alumni bekerja">
                     <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-2xl shadow-lg">{{ \App\Models\Setting::get('dashboard_ikon_bekerja', '💼') }}</div>
                     <div>
-                        <div class="text-xl sm:text-2xl font-extrabold text-sky-400">{{ $statusKerja['Bekerja'] ?? 0 }}</div>
+                        <div class="text-xl sm:text-2xl font-extrabold text-sky-400">{{ $kartuBekerja }}</div>
                         <div class="text-xs uppercase tracking-wider text-gray-400">{{ \App\Models\Setting::get('dashboard_stat_bekerja', 'Bekerja') }}</div>
                     </div>
                 </div>
@@ -220,7 +220,7 @@
                 <div class="glass glass-hover rounded-2xl p-3 sm:p-5 flex items-center gap-2 sm:gap-4 shadow-xl cursor-pointer" onclick="bukaNamaAlumni('lanjut')" title="Lihat daftar nama alumni lanjut kuliah">
                     <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-fuchsia-400 to-purple-600 flex items-center justify-center text-2xl shadow-lg">{{ \App\Models\Setting::get('dashboard_ikon_lanjut', '🏫') }}</div>
                     <div>
-                        <div class="text-xl sm:text-2xl font-extrabold text-fuchsia-400">{{ $statusKerja['Lanjut Kuliah'] ?? 0 }}</div>
+                        <div class="text-xl sm:text-2xl font-extrabold text-fuchsia-400">{{ $kartuLanjut }}</div>
                         <div class="text-xs uppercase tracking-wider text-gray-400">{{ \App\Models\Setting::get('dashboard_stat_lanjut', 'Lanjut Kuliah') }}</div>
                     </div>
                 </div>

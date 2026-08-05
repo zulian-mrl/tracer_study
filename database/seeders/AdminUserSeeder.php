@@ -10,8 +10,12 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $email = env('ADMIN_EMAIL', 'admin@umm.ac.id');
-        $password = env('ADMIN_PASSWORD', 'admin12345');
+        $email = config('app.admin.email');
+        $password = config('app.admin.password');
+
+        if (blank($email) || blank($password)) {
+            throw new \RuntimeException('ADMIN_EMAIL / ADMIN_PASSWORD wajib diisi di .env sebelum menjalankan seeder.');
+        }
 
         User::updateOrCreate(
             ['email' => $email],

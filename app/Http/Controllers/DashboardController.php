@@ -481,11 +481,16 @@ class DashboardController extends Controller
                 }
             }
 
+            // Jumlah kartu ringkasan mengikuti label opsi yang aktif (nilai LLDIKTI '1' = bekerja, '4' = lanjut kuliah)
+            $kartuBekerja = isset($labelStatus['1']) ? ($statusKerja[$labelStatus['1']] ?? 0) : 0;
+            $kartuLanjut = isset($labelStatus['4']) ? ($statusKerja[$labelStatus['4']] ?? 0) : 0;
+
             return view('dashboard_kurva', compact(
                 'listTahun', 'prodiLabels', 'tahunTerpilih', 'prodiTerpilih', 'totalAlumni',
                 'statusKerja', 'statusPerusahaanKerja', 'SumberDana', 'pendapatan', 'PilihTingkat', 'PosisiJabatan', 'lokasiKerja', 'lokasiKota', 'tempatKuliah', 'programStudiLanjut', 'sumberBiayaLanjut', 'kompetensiDikuasai', 
                 'kompetensiDiperlukan', 'waktuCariKerja', 'caraCariKerja', 'avgLamaran', 'keaktifan', 'alasanTidakSesuai', 'daftarNama', 'namaPerGrafik',
                 'metodeSangatBesar', 'metodeBesar', 'metodeCukupBesar', 'metodeKurang', 'metodeTidakSama',
+                'kartuBekerja', 'kartuLanjut',
                 'utamaId'
             ));
     }
