@@ -18,24 +18,17 @@ class RecoveryController extends Controller
     public function reset(Request $request)
     {
         $data = $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email',
             'kode' => 'required|string',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::where('email', $data['email'])->first();
-
-        if (!$user->is_super) {
-            return back()->withErrors([
-                'email' => 'Akun ini bukan super admin, gunakan menu Kelola Akun untuk meresetnya.',
-            ])->withInput();
-        }
-
         $stored = Setting::get('kode_pemulihan', '');
 
-        if ($stored === '' || !Hash::check($data['kode'], $stored)) {
+        if (! $user || ! $user->is_super || $stored === '' || ! Hash::check($data['kode'], $stored)) {
             return back()->withErrors([
-                'kode' => 'Kode pemulihan salah atau tidak tersedia. Silakan coba lagi.',
+                'email' => 'Email atau kode pemulihan yang Anda masukkan tidak valid. Silakan coba lagi.',
             ])->withInput();
         }
 

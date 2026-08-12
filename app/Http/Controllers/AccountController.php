@@ -46,7 +46,7 @@ class AccountController extends Controller
             'is_super' => $request->boolean('is_super'),
         ]);
 
-        AuditLog::catat('buat_akun', Auth::user(), $user, "Akun {$data['name']} ({$data['email']}) dibuat" . ($user->is_super ? ' sebagai Super Admin' : ''));
+        AuditLog::catat('buat_akun', Auth::user(), $user, "Akun {$data['name']} ({$data['email']}) dibuat".($user->is_super ? ' sebagai Super Admin' : ''));
 
         return redirect()->route('akun.index')->with('success', 'Akun admin berhasil ditambahkan.');
     }
@@ -61,7 +61,7 @@ class AccountController extends Controller
         abort_if($user->is_super && $utama && $user->id === $utama->id, 403, 'Akun utama super admin tidak bisa diturunkan.');
         abort_if($user->is_super && User::where('is_super', true)->count() <= 1, 403, 'Tidak bisa menurunkan super admin terakhir.');
 
-        $user->update(['is_super' => !$user->is_super]);
+        $user->update(['is_super' => ! $user->is_super]);
 
         $status = $user->is_super ? 'dijadikan Super Admin' : 'diturunkan menjadi Admin Biasa';
 
@@ -80,7 +80,7 @@ class AccountController extends Controller
             'password.confirmed' => 'Ulangi password baru tidak sinkron.',
         ]);
 
-        if (!Hash::check($data['password_lama'], Auth::user()->password)) {
+        if (! Hash::check($data['password_lama'], Auth::user()->password)) {
             return back()->withErrors([
                 'password_lama' => 'Password lama yang Anda masukkan salah.',
             ])->withInput();
@@ -136,7 +136,7 @@ class AccountController extends Controller
 
         abort_if($user->id === Auth::id(), 403, 'Tidak bisa menghapus akun sendiri.');
         abort_if($user->is_super, 403, 'Tidak bisa menghapus akun super admin.');
-        abort_if(User::where('is_super', true)->count() <= 1, 403, 'Tidak bisa menghapus super admin terakhir.');
+        abort_if($user->is_super && User::where('is_super', true)->count() <= 1, 403, 'Tidak bisa menghapus super admin terakhir.');
 
         $user->delete();
 
@@ -156,18 +156,18 @@ class AccountController extends Controller
             File::makeDirectory($dir, 0755, true);
         }
 
-        if ($user->foto && File::exists($dir . DIRECTORY_SEPARATOR . $user->foto)) {
-            File::delete($dir . DIRECTORY_SEPARATOR . $user->foto);
+        if ($user->foto && File::exists($dir.DIRECTORY_SEPARATOR.$user->foto)) {
+            File::delete($dir.DIRECTORY_SEPARATOR.$user->foto);
         }
 
-        $nama = 'user_' . $user->id . '_' . time() . '.' . $request->foto->getClientOriginalExtension();
+        $nama = 'user_'.$user->id.'_'.time().'.'.$request->foto->guessExtension();
         $request->foto->move($dir, $nama);
 
         $user->foto = $nama;
         $user->save();
 
         if ($request->expectsJson()) {
-            return response()->json(['foto' => asset('uploads/fotos/' . $nama)]);
+            return response()->json(['foto' => asset('uploads/fotos/'.$nama)]);
         }
 
         return redirect()->back()->with('success', 'Foto profil berhasil diubah.');

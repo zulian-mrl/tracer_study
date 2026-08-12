@@ -259,6 +259,8 @@
                             'pesan_provinsi' => 'Lokasi provinsi',
                             'pesan_kab_kota' => 'Kabupaten/kota',
                             'pesan_instansi' => 'Jenis perusahaan',
+                            'pesan_f5c' => 'Posisi wiraswasta (F5c)',
+                            'pesan_f5d' => 'Tingkat tempat kerja (F5d)',
                             'pesan_sumber_biaya' => 'Sumber biaya studi lanjut',
                             'pesan_perguruan_tinggi' => 'Perguruan tinggi studi lanjut',
                             'pesan_program_studi' => 'Program studi studi lanjut',
@@ -268,6 +270,14 @@
                             'pesan_f15' => 'Tingkat pendidikan (F15)',
                             'pesan_f302' => 'Mulai cari kerja sebelum lulus',
                             'pesan_f303' => 'Mulai cari kerja setelah lulus',
+                            'pesan_f6' => 'Jumlah perusahaan dilamar (F6)',
+                            'pesan_f7' => 'Jumlah perusahaan merespons (F7)',
+                            'pesan_f17a' => 'Jumlah perusahaan wawancara (F17a)',
+                            'pesan_f11_lainnya' => 'Jenis instansi lainnya (F11)',
+                            'pesan_f416_lainnya' => 'Cara mencari kerja lainnya (F4)',
+                            'pesan_f10_lainnya' => 'Keaktifan mencari kerja lainnya (F10)',
+                            'pesan_f1614_lainnya' => 'Alasan pekerjaan lainnya (F16)',
+                            'pesan_f12_lainnya' => 'Sumber dana kuliah lainnya (F12)',
                         ] as $key => $label)
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">{{ $label }}</label>

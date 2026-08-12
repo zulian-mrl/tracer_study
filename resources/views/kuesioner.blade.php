@@ -126,6 +126,7 @@
         }
 
         /* Warna teks kuesioner (bisa diatur dari Pengaturan) */
+        .text-amber-400 { color: var(--kac-aksen); }
         .text-blue-300 { color: var(--kac-univ); }
         .text-gray-300 { color: var(--kac-pilih); }
         .text-gray-400 { color: var(--kac-label); }
@@ -165,7 +166,7 @@
         @endif
 
         <div class="mt-6 text-center text-xs text-gray-500 fade-up">
-            {{ \App\Models\Setting::get('kuesioner_instruksi') }}
+            {!! str_replace('*', '<span class="text-amber-400">*</span>', e(\App\Models\Setting::get('kuesioner_instruksi'))) !!}
         </div>
 
         @if($kuesionerDitutup ?? false)
@@ -197,7 +198,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_nim') }} <span class="text-amber-400">*</span></label>
-                        <input type="text" name="no_mahasiswa" value="{{ old('no_mahasiswa') }}" required class="inp">
+                        <input type="text" name="no_mahasiswa" id="nim" value="{{ old('no_mahasiswa') }}" inputmode="numeric" pattern="[0-9]+" title="NIM harus berupa angka" maxlength="50" required class="inp">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_kode_pt') }} <span class="text-amber-400">*</span></label>
@@ -242,7 +243,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_nik') }} <span class="text-amber-400">*</span></label>
-                        <input type="text" name="nik" id="nik" value="{{ old('nik') }}" minlength="16" maxlength="16" required class="inp">
+                        <input type="text" name="nik" id="nik" value="{{ old('nik') }}" minlength="16" maxlength="16" inputmode="numeric" pattern="[0-9]{16}" required class="inp">
                         <span id="nik_error" class="hidden text-rose-400 text-xs mt-1">NIK harus berjumlah tepat 16 digit angka.</span>
                     </div>
                     <div>
@@ -367,7 +368,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_f5c', 'Bila berwiraswasta, posisi/jabatan') }}</label>
-                            <select name="f5c_posisi" class="inp">
+                            <select name="f5c_posisi" required class="inp">
                                 <option value="" disabled {{ old('f5c_posisi') === null ? 'selected' : '' }}>{{ \App\Models\Setting::get('placeholder_posisi', 'Pilih Posisi') }}</option>
                                 @foreach(\App\Models\Setting::optionList('opsi_f5c_posisi', "Founder|Founder\nCo-Founder|Co-Founder\nStaff|Staff\nFreelance|Freelance / Kerja Lepas") as $f5cval => $f5clabel)
                                 <option value="{{ $f5cval }}" {{ old('f5c_posisi') == $f5cval ? 'selected' : '' }}>{{ $f5clabel }}</option>
@@ -376,7 +377,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_f5d', 'Tingkat tempat kerja anda') }}</label>
-                            <select name="f5d_tingkat" class="inp">
+                            <select name="f5d_tingkat" required class="inp">
                                 <option value="" disabled {{ old('f5d_tingkat') === null ? 'selected' : '' }}>{{ \App\Models\Setting::get('placeholder_tingkat', 'Pilih Tingkatan') }}</option>
                                 @foreach(\App\Models\Setting::optionList('opsi_f5d_tingkat', "Lokal|Lokal/Wilayah/wiraswasta tidak berbadan hukum\nNasional|Nasional/Wiraswasta berbadan hukum\nInternasional|Multinasional/internasional") as $f5dval => $f5dlabel)
                                 <option value="{{ $f5dval }}" {{ old('f5d_tingkat') == $f5dval ? 'selected' : '' }}>{{ $f5dlabel }}</option>
@@ -664,6 +665,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ========================================================
 
+    const inputNIM = document.getElementById('nim');
+
     const inputNIK = document.getElementById('nik');
 
     const inputHP = document.getElementById('no_hp');
@@ -671,6 +674,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const inputEmail = document.getElementById('email');
 
 
+
+    if (inputNIM) {
+
+        inputNIM.addEventListener('input', function() {
+
+            validasiAngkaNIM(this);
+
+        });
+
+    }
 
     if (inputNIK) {
 
@@ -702,6 +715,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         });
 
+        inputEmail.addEventListener('blur', function() {
+
+            tambahkanDomainEmail(this);
+
+            validasiEmailGmail(this);
+
+        });
+
     }
 
     const formKuesioner = document.querySelector('form[method="POST"]');
@@ -711,6 +732,8 @@ document.addEventListener("DOMContentLoaded", function () {
         formKuesioner.addEventListener('submit', function(e) {
 
             if (inputEmail) {
+
+                tambahkanDomainEmail(inputEmail);
 
                 normalisasiEmailGmail(inputEmail);
 
@@ -761,6 +784,16 @@ document.addEventListener("DOMContentLoaded", function () {
             input.classList.remove('border-red-500');
 
         }
+
+    }
+
+
+
+    function validasiAngkaNIM(input) {
+
+        // Hapus karakter non-angka
+
+        input.value = input.value.replace(/[^0-9]/g, '');
 
     }
 
@@ -843,6 +876,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+    // Lengkapi otomatis @domain bawaan jika alumni belum menulisnya.
+    // Jika teks setelah @ sudah merupakan awalan domain, tambahkan sisa domain saja.
+    function tambahkanDomainEmail(input) {
+
+        const value = input.value.trim();
+
+        if (!value) return;
+
+        const atIndex = value.lastIndexOf('@');
+
+        if (atIndex === -1) {
+
+            input.value = value + '@' + EMAIL_DOMAIN;
+
+            return;
+
+        }
+
+        const suffix = value.substring(atIndex + 1).toLowerCase();
+
+        if (suffix === EMAIL_DOMAIN.toLowerCase()) return;
+
+        if (EMAIL_DOMAIN.toLowerCase().startsWith(suffix)) {
+
+            input.value = value.substring(0, atIndex + 1) + EMAIL_DOMAIN;
+
+        }
+
+    }
+
     function validasiEmailGmail(input) {
 
         const errorLabel = document.getElementById('email_error');
@@ -899,7 +962,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const sectionKeselarasanKerja = document.getElementById('keselarasanKerja');
 
-    function matikanBagianTempatKerja(nonaktif) {
+    function matikanBagianTempatKerja(nonaktif, pertahankanNilai) {
 
         if (!sectionTempatKerja) return;
 
@@ -911,11 +974,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 e.disabled = true;
 
-                if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
+                // Saat halaman dimuat ulang karena pesan error, jangan menghapus
+                // isian alumni; cukup nonaktifkan saja agar nilainya tetap tampil.
+                if (!pertahankanNilai) {
 
-                else if (e.tagName === 'SELECT') { e.selectedIndex = 0; }
+                    if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
 
-                else { e.value = ''; }
+                    else if (e.tagName === 'SELECT') { e.selectedIndex = 0; }
+
+                    else { e.value = ''; }
+
+                }
 
             } else {
 
@@ -935,6 +1004,137 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+    function provinsiBelumBekerja() {
+
+        const el = document.getElementById('provinsi');
+
+        return !!el && el.value === 'Belum Bekerja';
+
+    }
+
+    // Nonaktifkan detail tempat kerja kecuali #provinsi (agar alumni bisa ganti pilihan)
+    function matikanDetailTempatKerja(nonaktif, pertahankanNilai) {
+
+        if (!sectionTempatKerja) return;
+
+        sectionTempatKerja.classList.toggle('opacity-50', nonaktif);
+
+        sectionTempatKerja.querySelectorAll('input, select, textarea').forEach(function (e) {
+
+            if (e.id === 'provinsi') return;
+
+            if (nonaktif) {
+
+                e.disabled = true;
+
+                if (!pertahankanNilai) {
+
+                    if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
+
+                    else if (e.tagName === 'SELECT') { e.selectedIndex = 0; }
+
+                    else { e.value = ''; }
+
+                }
+
+            } else {
+
+                if (e.id === 'kab_kota') {
+
+                    e.disabled = e.options.length <= 1;
+
+                } else {
+
+                    e.disabled = false;
+
+                }
+
+            }
+
+        });
+
+    }
+
+    // Ringkasan aturan bagian pekerjaan berdasarkan status & pilihan "Belum Bekerja"
+    function evaluasiBagianKerja(pertahankanNilai) {
+
+        const status = getStatusTerpilih();
+
+        const belumBekerja = provinsiBelumBekerja();
+
+        if (status === "5" || status === "2") {
+
+            matikanBagianTempatKerja(true, pertahankanNilai);
+
+        } else if (belumBekerja) {
+
+            matikanDetailTempatKerja(true, pertahankanNilai);
+
+        } else {
+
+            matikanBagianTempatKerja(false, pertahankanNilai);
+
+        }
+
+        aturKompetensi(pertahankanNilai);
+
+        aturKeselarasanKerja(pertahankanNilai);
+
+        aturWajibDetailKerja();
+
+    }
+
+    // Wajib/tidaknya detail tempat kerja mengikuti status & data yang terisi:
+    // Bekerja (1) / Wiraswasta (3) wajib; Melanjutkan Pendidikan (4) wajib
+    // hanya jika alumni mengisi wilayah/lokasi kerja nyata.
+    function aturWajibDetailKerja() {
+
+        if (!sectionTempatKerja) return;
+
+        const status = getStatusTerpilih();
+
+        const wajib = status === "1" || status === "3"
+                   || (status === "4" && detailTempatKerjaTerisi());
+
+        sectionTempatKerja.querySelectorAll('input, select, textarea').forEach(function (e) {
+
+            if (e.name === 'f5b_nama_perusahaan' || e.name === 'f11_02') return;
+
+            e.required = wajib;
+
+        });
+
+    }
+
+    // Kolom "Lainnya, tuliskan:" wajib diisi jika opsi "Lainnya" dipilih:
+    // f11_02 (jenis instansi=7), f416_tuliskan (f415), f10_lainnya (f10_aktif=5),
+    // f1614 (f1613), f12_02 (f12_01=7).
+    function aturWajibLainnya() {
+
+        const q = function (s) { return document.querySelector(s); };
+
+        const instansi = q('input[name="f11_jenis_instansi"]:checked');
+        const f1102 = q('input[name="f11_02"]');
+        if (f1102) f1102.required = !!(instansi && instansi.value === '7');
+
+        const aktif = q('input[name="f10_aktif"]:checked');
+        const f10Lainnya = q('input[name="f10_lainnya"]');
+        if (f10Lainnya) f10Lainnya.required = !!(aktif && aktif.value === '5');
+
+        const f415 = q('input[name="f415"]');
+        const f416 = q('input[name="f416_tuliskan"]');
+        if (f416) f416.required = !!(f415 && f415.checked);
+
+        const f1613 = q('input[name="f1613"]');
+        const f1614 = q('input[name="f1614"]');
+        if (f1614) f1614.required = !!(f1613 && f1613.checked);
+
+        const dana = q('input[name="f12_01"]:checked');
+        const f1202 = q('input[name="f12_02"]');
+        if (f1202) f1202.required = !!(dana && dana.value === '7');
+
+    }
+
     function getStatusTerpilih() {
 
         let status = "";
@@ -949,7 +1149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    function evaluasiStatusUtama() {
+    function evaluasiStatusUtama(pertahankanNilai) {
 
         const statusTerpilih = getStatusTerpilih();
 
@@ -963,15 +1163,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if(radioTidak) radioTidak.disabled = false;
 
-        logikaKunciWaktuTunggu();
+        logikaKunciWaktuTunggu(pertahankanNilai);
 
-        // Detail Tempat Bekerja hanya dinonaktifkan untuk status
+        // Detail Tempat Bekerja: nonaktif untuk Tidak Kerja/Cari Kerja (5),
 
-        // Tidak Kerja/Cari Kerja (5) atau Belum Memungkinkan Bekerja (2).
+        // Belum Memungkinkan Bekerja (2), atau bila alumni memilih "Belum Bekerja".
 
-        // Melanjutkan Pendidikan (4) tetap bisa diisi.
-
-        matikanBagianTempatKerja(statusTerpilih === "5" || statusTerpilih === "2");
+        evaluasiBagianKerja(pertahankanNilai);
 
         // Pertanyaan Studi Lanjut (F18) hanya bisa diisi & wajib jika status
 
@@ -1005,11 +1203,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         e.required = false;
 
-                        if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
+                        if (!pertahankanNilai) {
 
-                        else if (e.tagName === 'SELECT') { e.selectedIndex = 0; }
+                            if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
 
-                        else { e.value = ''; }
+                            else if (e.tagName === 'SELECT') { e.selectedIndex = 0; }
+
+                            else { e.value = ''; }
+
+                        }
 
                     }
 
@@ -1025,13 +1227,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
-        // Kompetensi (F17): atur status wajib/disabled kolom A & B
-
-        aturKompetensi();
-
-        // Keselarasan Kerja (F14 & F15)
-
-        aturKeselarasanKerja();
+        // Kompetensi (F17) & Keselarasan (F14/F15) diatur oleh evaluasiBagianKerja().
 
     }
 
@@ -1041,13 +1237,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Tidak bisa diisi untuk Tidak Kerja (5) / Belum Memungkinkan (2); opsional lainnya.
 
-    function aturKeselarasanKerja() {
+    function aturKeselarasanKerja(pertahankanNilai) {
 
         if (!sectionKeselarasanKerja) return;
 
         const status = getStatusTerpilih();
 
-        const nonaktif = status === "5" || status === "2";
+        const nonaktif = status === "5" || status === "2" || provinsiBelumBekerja();
 
         const wajib = status === "1" || status === "3"
 
@@ -1063,7 +1259,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 e.required = false;
 
-                if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
+                if (!pertahankanNilai) {
+
+                    if (e.type === 'radio' || e.type === 'checkbox') { e.checked = false; }
+
+                }
 
             } else {
 
@@ -1085,7 +1285,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // kolom B dinonaktifkan.
 
-    function aturKompetensi() {
+    function aturKompetensi(pertahankanNilai) {
 
         const status = getStatusTerpilih();
 
@@ -1097,7 +1297,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
             compA.forEach(function (e) { e.disabled = false; e.required = true; });
 
-            compB.forEach(function (e) { e.disabled = true; e.checked = false; e.required = false; });
+            compB.forEach(function (e) { e.disabled = true; e.required = false; if (!pertahankanNilai) { e.checked = false; } });
+
+            return;
+
+        }
+
+        // "Belum Bekerja" dipilih → kebutuhan di pekerjaan (kolom B) tidak relevan
+        if (provinsiBelumBekerja()) {
+
+            compA.forEach(function (e) { e.disabled = false; e.required = (status === "1" || status === "3"); });
+
+            compB.forEach(function (e) { e.disabled = true; e.required = false; if (!pertahankanNilai) { e.checked = false; } });
 
             return;
 
@@ -1165,7 +1376,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Jika "Saya tidak mencari kerja" (f301=3) keduanya dinonaktifkan.
 
-    function aturMulaiCariKerja() {
+    function aturMulaiCariKerja(pertahankanNilai) {
 
         const f302 = document.querySelector('input[name="f302"]');
 
@@ -1181,19 +1392,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
             f302.disabled = false; f302.required = true;
 
-            f303.disabled = true; f303.required = false; f303.value = "";
+            f303.disabled = true; f303.required = false; if (!pertahankanNilai) f303.value = "";
 
         } else if (radioSesudah && radioSesudah.checked) {
 
-            f302.disabled = true; f302.required = false; f302.value = "";
+            f302.disabled = true; f302.required = false; if (!pertahankanNilai) f302.value = "";
 
             f303.disabled = false; f303.required = true;
 
         } else {
 
-            f302.disabled = true; f302.required = false; f302.value = "";
+            f302.disabled = true; f302.required = false; if (!pertahankanNilai) f302.value = "";
 
-            f303.disabled = true; f303.required = false; f303.value = "";
+            f303.disabled = true; f303.required = false; if (!pertahankanNilai) f303.value = "";
 
         }
 
@@ -1201,7 +1412,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    function logikaKunciWaktuTunggu() {
+    function logikaKunciWaktuTunggu(pertahankanNilai) {
 
         let statusTerpilih = "";
 
@@ -1215,19 +1426,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if(inputGajiYa) { inputGajiYa.disabled = false; inputGajiYa.required = true; }
 
-            if(inputBulanTidak) { inputBulanTidak.disabled = true; inputBulanTidak.required = false; inputBulanTidak.value = ""; }
+            if(inputBulanTidak) { inputBulanTidak.disabled = true; inputBulanTidak.required = false; if (!pertahankanNilai) inputBulanTidak.value = ""; }
 
         } else if (radioTidak && radioTidak.checked) {
 
-            if(inputBulanYa) { inputBulanYa.disabled = true; inputBulanYa.required = false; inputBulanYa.value = ""; }
+            if(inputBulanYa) { inputBulanYa.disabled = true; inputBulanYa.required = false; if (!pertahankanNilai) inputBulanYa.value = ""; }
 
-            if(inputGajiYa) { inputGajiYa.disabled = true; inputGajiYa.required = false; inputGajiYa.value = ""; }
+            if(inputGajiYa) { inputGajiYa.disabled = true; inputGajiYa.required = false; if (!pertahankanNilai) inputGajiYa.value = ""; }
 
             if(inputBulanTidak) { inputBulanTidak.disabled = false; inputBulanTidak.required = true; }
 
         } else {
 
-            matikanSemuaInputWaktu();
+            matikanSemuaInputWaktu(pertahankanNilai);
 
         }
 
@@ -1235,13 +1446,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    function matikanSemuaInputWaktu() {
+    function matikanSemuaInputWaktu(pertahankanNilai) {
 
-        if(inputBulanYa) { inputBulanYa.disabled = true; inputBulanYa.required = false; inputBulanYa.value = ""; }
+        if(inputBulanYa) { inputBulanYa.disabled = true; inputBulanYa.required = false; if (!pertahankanNilai) inputBulanYa.value = ""; }
 
-        if(inputGajiYa) { inputGajiYa.disabled = true; inputGajiYa.required = false; inputGajiYa.value = ""; }
+        if(inputGajiYa) { inputGajiYa.disabled = true; inputGajiYa.required = false; if (!pertahankanNilai) inputGajiYa.value = ""; }
 
-        if(inputBulanTidak) { inputBulanTidak.disabled = true; inputBulanTidak.required = false; inputBulanTidak.value = ""; }
+        if(inputBulanTidak) { inputBulanTidak.disabled = true; inputBulanTidak.required = false; if (!pertahankanNilai) inputBulanTidak.value = ""; }
 
     }
 
@@ -1249,15 +1460,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Trigger event listeners status
 
-    radioStatus.forEach(radio => radio.addEventListener('change', evaluasiStatusUtama));
+    radioStatus.forEach(radio => radio.addEventListener('change', function () { evaluasiStatusUtama(); }));
 
-    if(radioYa) radioYa.addEventListener('change', logikaKunciWaktuTunggu);
+    if(radioYa) radioYa.addEventListener('change', function () { logikaKunciWaktuTunggu(); });
 
-    if(radioTidak) radioTidak.addEventListener('change', logikaKunciWaktuTunggu);
+    if(radioTidak) radioTidak.addEventListener('change', function () { logikaKunciWaktuTunggu(); });
 
     document.querySelectorAll('input[name="f301"]').forEach(radio => {
 
-        radio.addEventListener('change', aturMulaiCariKerja);
+        radio.addEventListener('change', function () { aturMulaiCariKerja(); });
 
     });
 
@@ -1269,6 +1480,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             aturKeselarasanKerja();
 
+            aturWajibDetailKerja();
+
         });
 
         sectionTempatKerja.addEventListener('input', function () {
@@ -1277,17 +1490,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
             aturKeselarasanKerja();
 
+            aturWajibDetailKerja();
+
         });
 
     }
 
    
 
-    // Jalankan inisialisasi awal F8
+    // Jalankan inisialisasi awal F8.
+    // `true` = halaman dimuat ulang (mis. pesan error identitas): hanya atur
+    // status disabled/wajib, TANPA menghapus isian yang sudah diisi alumni
+    // agar nilainya tetap terisi kembali saat halaman tampil ulang.
+    evaluasiStatusUtama(true);
 
-    evaluasiStatusUtama();
+    aturMulaiCariKerja(true);
 
-    aturMulaiCariKerja();
+    aturWajibLainnya();
 
 
 
@@ -1341,7 +1560,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
 
+            // Terapkan ulang aturan bagian kerja (mis. "Belum Bekerja" dipilih)
+            evaluasiBagianKerja();
+
         });
+
+
+
+        // Load awal: bila provinsi sudah terpilih (dari old()), isi ulang opsi kab/kota
+        // lalu set value sesuai data-old dan aktifkan select-nya.
+        if (selectProvinsi.value && dataWilayah[selectProvinsi.value]) {
+
+            selectKabKota.disabled = false;
+
+            dataWilayah[selectProvinsi.value].forEach(function (kota) {
+
+                const opsi = document.createElement('option');
+
+                opsi.value = kota;
+
+                opsi.textContent = kota;
+
+                selectKabKota.appendChild(opsi);
+
+            });
+
+            if (selectKabKota.dataset.old) {
+
+                selectKabKota.value = selectKabKota.dataset.old;
+
+            }
+
+        }
 
     }
 
@@ -1356,6 +1606,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector('form');
 
     if (form) {
+
+        form.addEventListener('change', aturWajibLainnya);
 
         form.addEventListener('submit', function (event) {
 

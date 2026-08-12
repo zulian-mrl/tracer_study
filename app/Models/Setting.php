@@ -25,7 +25,7 @@ class Setting extends Model
             'kuesioner_pesan_tutup' => 'Kuesioner ditutup. Anda akan diberitahu ketika dibuka kembali.',
             'kode_pt_default' => '101004',
             'kuesioner_kontak' => '',
-            'kuesioner_footer' => '© ' . date('Y') . ' Tracer Study LPKM UMMY Solok',
+            'kuesioner_footer' => '© '.date('Y').' Tracer Study LPKM UMMY Solok',
             'kuesioner_email_domain' => 'gmail.com',
             'kuesioner_tahun_mulai' => '2020',
             'kuesioner_teks_tombol' => 'SIMPAN DAN KIRIM DATA KUESIONER',
@@ -292,6 +292,8 @@ class Setting extends Model
             'pesan_provinsi' => 'Pilih lokasi provinsi tempat Anda bekerja.',
             'pesan_kab_kota' => 'Pilih kabupaten/kota tempat Anda bekerja.',
             'pesan_instansi' => 'Pilih jenis perusahaan/instansi tempat Anda bekerja.',
+            'pesan_f5c' => 'Pilih posisi/jabatan bila berwiraswasta.',
+            'pesan_f5d' => 'Pilih tingkat tempat kerja Anda.',
             'pesan_sumber_biaya' => 'Pilih sumber biaya studi lanjut.',
             'pesan_perguruan_tinggi' => 'Isi perguruan tinggi tujuan studi lanjut.',
             'pesan_program_studi' => 'Isi program studi tujuan studi lanjut.',
@@ -301,6 +303,14 @@ class Setting extends Model
             'pesan_f15' => 'Pilih tingkat pendidikan yang paling tepat.',
             'pesan_f302' => 'Isi berapa bulan sebelum lulus Anda mulai mencari kerja.',
             'pesan_f303' => 'Isi berapa bulan setelah lulus Anda mulai mencari kerja.',
+            'pesan_f6' => 'Isi berapa perusahaan/instansi yang sudah Anda lamar.',
+            'pesan_f7' => 'Isi berapa perusahaan/instansi yang merespons lamaran Anda.',
+            'pesan_f17a' => 'Isi berapa perusahaan/instansi yang mengundang Anda wawancara.',
+            'pesan_f11_lainnya' => 'Tuliskan jenis perusahaan/instansi lainnya.',
+            'pesan_f416_lainnya' => 'Tuliskan cara mencari kerja lainnya.',
+            'pesan_f10_lainnya' => 'Tuliskan jawaban lainnya.',
+            'pesan_f1614_lainnya' => 'Tuliskan alasan lainnya.',
+            'pesan_f12_lainnya' => 'Tuliskan sumber dana kuliah lainnya.',
 
             // --- Dashboard ---
             'dashboard_judul' => 'Analitik Tracer Study UMMY Solok',
@@ -341,7 +351,7 @@ class Setting extends Model
             'chart_kurva_fill' => '1',
             'chart_kurva_tension' => '0.35',
             'dashboard_aksen' => '#fbbf24',
-            'dashboard_footer' => '© ' . date('Y') . ' Tracer Study LPKM UMMY Solok — Dashboard Analitik Alumni',
+            'dashboard_footer' => '© '.date('Y').' Tracer Study LPKM UMMY Solok — Dashboard Analitik Alumni',
             'dashboard_warna_latar' => '#0f172a',
             'dashboard_warna_latar2' => '#1e1b4b',
 
@@ -484,6 +494,7 @@ class Setting extends Model
                 $out["chart_{$slug}_item_{$i}_warna"] = $warna;
             }
         }
+
         return $out;
     }
 
@@ -501,6 +512,7 @@ class Setting extends Model
             }
         }
         ksort($result);
+
         return array_values($result);
     }
 
@@ -509,12 +521,14 @@ class Setting extends Model
         if (static::$cache === null) {
             static::$cache = static::pluck('value', 'key')->toArray();
         }
+
         return static::$cache;
     }
 
     public static function get(string $key, $default = null)
     {
         $all = static::allCached();
+
         return $all[$key] ?? (static::defaults()[$key] ?? $default);
     }
 
@@ -524,12 +538,15 @@ class Setting extends Model
         $out = [];
         foreach (preg_split('/\r\n|\r|\n/', (string) $raw) as $line) {
             $line = trim($line);
-            if ($line === '') continue;
+            if ($line === '') {
+                continue;
+            }
             $parts = explode('|', $line, 2);
             $value = trim($parts[0]);
             $label = trim($parts[1] ?? $value);
             $out[$value] = $label;
         }
+
         return $out;
     }
 

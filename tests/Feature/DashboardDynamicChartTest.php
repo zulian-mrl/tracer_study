@@ -86,4 +86,45 @@ class DashboardDynamicChartTest extends TestCase
             ->assertOk()
             ->assertSee('\u0022Pegawai Negeri\u0022:[\u0022Budi Setiawan\u0022]', false);
     }
+
+    public function test_kartu_bekerja_termasuk_wiraswasta(): void
+    {
+        DB::table('kuesioner_alumnis')->insert([
+            'no_mahasiswa' => '2210015111002',
+            'kode_PT' => '101004',
+            'tahun_lulus' => '2026',
+            'kode_prodi' => '54211',
+            'nama' => 'Siti Aminah',
+            'no_hp' => '081298765432',
+            'email' => 'siti@gmail.com',
+            'nik' => '6543210987654321',
+            'f8_status_saat_ini' => '3',
+            'f504_mendapat_pekerjaan_6_bulan' => '1',
+            'f301_kapan_mencari_pekerjaan' => '1',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $admin = User::factory()->create(['is_super' => true]);
+
+        $response = $this->actingAs($admin)
+            ->get(route('kuesioner.dashboard', ['tahun_lulus' => '2026']))
+            ->assertOk();
+
+        $this->assertSame(2, (int) $response->viewData('kartuBekerja'));
+        $this->assertSame(['Budi Setiawan', 'Siti Aminah'], $response->viewData('daftarNama')['bekerja']);
+    }
+
+    public function test_daftar_prodi_dashboard_mengikuti_pengaturan(): void
+    {
+        Setting::set('prodi_list', "54211|Agroteknologi\n99999|Prodi Baru Test");
+
+        $admin = User::factory()->create(['is_super' => true]);
+
+        $this->actingAs($admin)
+            ->get(route('kuesioner.dashboard'))
+            ->assertOk()
+            ->assertSee('[99999] Prodi Baru Test', false)
+            ->assertDontSee('[61201] Manajemen', false);
+    }
 }

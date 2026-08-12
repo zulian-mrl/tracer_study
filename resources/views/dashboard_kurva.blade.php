@@ -87,7 +87,10 @@
                         <span id="avatarNavbar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                     @endif
                 </button>
-                <h1 class="text-base sm:text-lg lg:text-xl font-extrabold tracking-wider grad-text uppercase leading-tight whitespace-nowrap">{{ \App\Models\Setting::get('dashboard_ikon', '📊') }} {{ \App\Models\Setting::get('dashboard_judul', 'Analitik Tracer Study UMMY Solok') }}</h1>
+                <h1 class="flex items-center gap-2 text-base sm:text-lg lg:text-xl font-extrabold tracking-wider uppercase leading-tight whitespace-nowrap">
+                    <span class="text-2xl sm:text-3xl">{{ \App\Models\Setting::get('dashboard_ikon', '📊') }}</span>
+                    <span class="grad-text">{{ \App\Models\Setting::get('dashboard_judul', 'Analitik Tracer Study UMMY Solok') }}</span>
+                </h1>
             </div>
             <div class="flex flex-wrap justify-end items-center gap-2 text-white">
                 @if(auth()->check() && auth()->user()->is_super && auth()->user()->id === $utamaId)
