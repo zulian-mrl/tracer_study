@@ -33,6 +33,9 @@ class DatabaseSeeder extends Seeder
         $this->call(QuestionnaireSeeder::class);
         */
 
+        // Isi data wilayah (provinsi & kab/kota) bila masih kosong
+        $this->call(WilayahSeeder::class);
+
         // Buat/mutakhirkan akun super admin (baca env ADMIN_EMAIL & ADMIN_PASSWORD)
         $this->call(AdminUserSeeder::class);
     }

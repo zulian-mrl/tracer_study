@@ -46,7 +46,7 @@ class KuesionerController extends Controller
         }
 
         // 1. Validasi lengkap di sisi server (tidak bergantung pada JavaScript)
-        $domainEmail = preg_quote(ltrim(trim(Setting::get('kuesioner_email_domain', 'gmail.com')), '@'), '/');
+        $domainEmail = trim((string) Setting::get('kuesioner_email_domain', 'gmail.com'));
         $status = (string) $request->input('f8_status_saat_ini');
         $statusBekerja = in_array($status, ['1', '3'], true);    // Bekerja / Wiraswasta
         $statusTidakKerja = in_array($status, ['2', '5'], true); // Belum bekerja / Cari kerja
@@ -77,7 +77,9 @@ class KuesionerController extends Controller
             'no_hp' => ['required', 'string', 'regex:/^08[0-9]{8,11}$/'],
             'nik' => ['required', 'digits:16'],
             'npwp' => ['nullable', 'string', 'max:30'],
-            'email' => ['required', 'email', 'regex:/@'.$domainEmail.'$/i'],
+            'email' => $domainEmail !== ''
+                ? ['required', 'email', 'regex:/@'.preg_quote(ltrim($domainEmail, '@'), '/').'$/i']
+                : ['required', 'email'],
             'f8_status_saat_ini' => ['required', Rule::in(['1', '2', '3', '4', '5'])],
             'f504_mendapat_pekerjaan_6_bulan' => ['required', Rule::in(['1', '2'])],
             'f502_bulan_dapat_kerja_ya' => [Rule::requiredIf($dapatKerja), 'nullable', 'integer', 'min:0', 'max:99'],
@@ -128,7 +130,7 @@ class KuesionerController extends Controller
         $request->validate($rules, [
             'email.required' => Setting::get('pesan_email_required', 'Alamat email wajib diisi.'),
             'email.email' => Setting::get('pesan_email_format', 'Format alamat email tidak valid.'),
-            'email.regex' => Setting::get('pesan_email_domain', 'Email harus menggunakan @').ltrim(trim(Setting::get('kuesioner_email_domain', 'gmail.com')), '@').'.',
+            'email.regex' => Setting::get('pesan_email_domain', 'Email harus menggunakan @').($domainEmail !== '' ? ltrim($domainEmail, '@').'.' : ''),
             'nik.digits' => Setting::get('pesan_nik_digits', 'NIK harus berjumlah tepat 16 digit angka.'),
             'no_hp.regex' => Setting::get('pesan_no_hp_regex', 'Nomor HP harus diawali 08 dan minimal 10 digit.'),
             'f502_bulan_dapat_kerja_ya.required' => Setting::get('pesan_bulan_ya', 'Isi dalam berapa bulan Anda mendapatkan pekerjaan.'),

@@ -238,8 +238,8 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_email') }} <span class="text-amber-400">*</span></label>
                         @php $emailDomain = ltrim(trim(\App\Models\Setting::get('kuesioner_email_domain', 'gmail.com')), '@'); @endphp
-                        <input type="email" name="email" id="email" value="{{ old('email') }}" pattern="{{ '[a-zA-Z0-9._%+-]+@' . preg_quote($emailDomain, '/') }}" title="Email harus menggunakan {{ $emailDomain }}" required class="inp">
-                        <span id="email_error" class="hidden text-rose-400 text-xs mt-1">Email harus menggunakan {{ $emailDomain }}</span>
+                        <input type="email" name="email" id="email" value="{{ old('email') }}"@if($emailDomain !== '') pattern="{{ '[a-zA-Z0-9._%+-]+@' . preg_quote($emailDomain, '/') }}"@endif title="{{ $emailDomain !== '' ? 'Email harus menggunakan ' . $emailDomain : 'Masukkan alamat email yang valid' }}" required class="inp">
+                        <span id="email_error" class="hidden text-rose-400 text-xs mt-1">{{ $emailDomain !== '' ? 'Email harus menggunakan ' . $emailDomain : 'Format alamat email tidak valid.' }}</span>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-1">{{ \App\Models\Setting::get('label_nik') }} <span class="text-amber-400">*</span></label>
@@ -849,7 +849,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function regexEmail() {
         const d = EMAIL_DOMAIN.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        return new RegExp('^[a-zA-Z0-9._%+-]+@' + d + '$', 'i');
+        return new RegExp(d === '' ? '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$' : '^[a-zA-Z0-9._%+-]+@' + d + '$', 'i');
     }
 
     function normalisasiEmailGmail(input) {

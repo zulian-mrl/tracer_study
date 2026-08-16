@@ -324,11 +324,11 @@ class DashboardController extends Controller
                 }
             }
 
-            // J. Keaktifan Mencari Kerja (semua baris dihitung)
+            // J. Keaktifan Mencari Kerja (semua baris dihitung; '5'/Lainnya & kosong tidak masuk hitungan)
             $aktifVal2 = (string) trim($d->f10_aktif_mencari_kerja ?? '');
             if ($aktifVal2 === '3' || $aktifVal2 === '4') {
                 $keaktifan['Aktif']++;
-            } else {
+            } elseif ($aktifVal2 === '1' || $aktifVal2 === '2') {
                 $keaktifan['Tidak Aktif']++;
             }
 
@@ -441,7 +441,11 @@ class DashboardController extends Controller
 
             // chartKeaktifan
             $aktifVal2 = (string) trim($d->f10_aktif_mencari_kerja ?? '');
-            $namaPerGrafik['chartKeaktifan'][($aktifVal2 === '3' || $aktifVal2 === '4') ? $mapKeaktifan['Aktif'] : $mapKeaktifan['Tidak Aktif']][] = $nama;
+            if ($aktifVal2 === '3' || $aktifVal2 === '4') {
+                $namaPerGrafik['chartKeaktifan'][$mapKeaktifan['Aktif']][] = $nama;
+            } elseif ($aktifVal2 === '1' || $aktifVal2 === '2') {
+                $namaPerGrafik['chartKeaktifan'][$mapKeaktifan['Tidak Aktif']][] = $nama;
+            }
 
             // chartAlasanTidakSesuai
             $mapAlasan = [
@@ -499,26 +503,26 @@ class DashboardController extends Controller
 
         // Tampilkan nama (bukan kode) untuk provinsi & kab/kota pada grafik lokasi
         foreach ($lokasiKerja as $kode => $jumlah) {
-            $namaLokasi = Wilayah::provinsiName((string) $kode);
+            $namaLokasi = $kode === '0' ? 'Belum Bekerja' : Wilayah::provinsiName((string) $kode);
             if ($namaLokasi !== null && $namaLokasi !== $kode) {
                 unset($lokasiKerja[$kode]);
                 $lokasiKerja[$namaLokasi] = ($lokasiKerja[$namaLokasi] ?? 0) + $jumlah;
             }
         }
         foreach ($lokasiKota as $kode => $jumlah) {
-            $namaLokasi = Wilayah::kabKotaName((string) $kode);
+            $namaLokasi = $kode === '0' ? 'Belum Bekerja' : Wilayah::kabKotaName((string) $kode);
             if ($namaLokasi !== null && $namaLokasi !== $kode) {
                 unset($lokasiKota[$kode]);
                 $lokasiKota[$namaLokasi] = ($lokasiKota[$namaLokasi] ?? 0) + $jumlah;
             }
         }
         foreach ($namaPerGrafik['chartLokasi'] ?? [] as $kode => $names) {
-            $namaLokasi = Wilayah::provinsiName((string) $kode) ?? $kode;
+            $namaLokasi = $kode === '0' ? 'Belum Bekerja' : (Wilayah::provinsiName((string) $kode) ?? $kode);
             unset($namaPerGrafik['chartLokasi'][$kode]);
             $namaPerGrafik['chartLokasi'][$namaLokasi] = array_values(array_unique(array_merge($namaPerGrafik['chartLokasi'][$namaLokasi] ?? [], $names)));
         }
         foreach ($namaPerGrafik['chartLokasiKota'] ?? [] as $kode => $names) {
-            $namaLokasi = Wilayah::kabKotaName((string) $kode) ?? $kode;
+            $namaLokasi = $kode === '0' ? 'Belum Bekerja' : (Wilayah::kabKotaName((string) $kode) ?? $kode);
             unset($namaPerGrafik['chartLokasiKota'][$kode]);
             $namaPerGrafik['chartLokasiKota'][$namaLokasi] = array_values(array_unique(array_merge($namaPerGrafik['chartLokasiKota'][$namaLokasi] ?? [], $names)));
         }
