@@ -51,4 +51,20 @@ class KuesionerAlumniExportTest extends TestCase
         $this->assertSame('Tak Dikenal', $this->baris(['f5d' => 'Tak Dikenal'])[19]);
         $this->assertSame('0', $this->baris(['f5d' => '0'])[19]);
     }
+
+    public function test_bind_value_mencegah_formula_injection(): void
+    {
+        $export = new KuesionerAlumniExport([]);
+
+        foreach (['=HYPERLINK("https://jahat.example","Lihat")', '+cmd', '-cmd', '@cmd'] as $value) {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet;
+            $cell = $spreadsheet->getActiveSheet()->getCell('A1');
+
+            $export->bindValue($cell, $value);
+
+            $this->assertSame(\PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING, $cell->getDataType(), "nilai {$value} harus berupa teks");
+            $this->assertSame($value, $cell->getValue());
+            $spreadsheet->disconnectWorksheets();
+        }
+    }
 }

@@ -266,6 +266,7 @@
                 </div>
             </div>
             <!-- SECTION F504: MENDAPAT PEKERJAAN 6 BULAN SETELAH LULUS -->
+    @php $f8old = old('f8_status_saat_ini', ''); $f504locked = in_array($f8old, ['2','5']); @endphp
     <div class="card p-5 md:p-6 fade-up">
         <h2 class="section-title">{{ \App\Models\Setting::get('judul_kerja6bulan') }}</h2>
         <div class="space-y-4 mt-3">
@@ -273,7 +274,7 @@
             <!-- PILIHAN: YA -->
             <div>
                 <div class="flex items-start space-x-3">
-                    <input type="radio" name="f504_mendapat_pekerjaan_6_bulan" id="kerja_ya" value="1" {{ old('f504_mendapat_pekerjaan_6_bulan') == '1' ? 'checked' : '' }} required class="mt-1 w-4 h-4 text-amber-400">
+                    <input type="radio" name="f504_mendapat_pekerjaan_6_bulan" id="kerja_ya" value="1" {{ old('f504_mendapat_pekerjaan_6_bulan') == '1' && !$f504locked ? 'checked' : '' }} {{ $f504locked ? 'disabled' : 'required' }} class="mt-1 w-4 h-4 text-amber-400">
                     <label for="kerja_ya" class="font-medium cursor-pointer w-full text-gray-200">
                         <span>{{ \App\Models\Setting::get('label_kerja_ya', 'Ya') }}</span>
 
@@ -281,7 +282,7 @@
 
                             <div class="flex-1 bg-slate-800/60 p-3 rounded-xl border border-slate-600">
                                 <span class="block text-xs text-gray-400 mb-1">{{ \App\Models\Setting::get('label_f502_bulan_ya', 'Dalam berapa bulan anda mendapatkan pekerjaan? (bagi yang sudah bekerja)') }}</span>
-                                <select name="f502_bulan_dapat_kerja_ya" id="input_bulan_ya" required class="inp text-sm">
+                                <select name="f502_bulan_dapat_kerja_ya" id="input_bulan_ya" {{ $f504locked ? 'disabled' : 'required' }} class="inp text-sm">
                                     <option value="" disabled selected>{{ \App\Models\Setting::get('placeholder_bulan', '-- Pilih Bulan --') }}</option>
                                     @for ($i = 0; $i <= 6; $i++)
                                         <option value="{{ $i }}" {{ old('f502_bulan_dapat_kerja_ya') !== null && old('f502_bulan_dapat_kerja_ya') == $i ? 'selected' : '' }}>
@@ -293,7 +294,7 @@
 
                             <div class="flex-1 bg-slate-800/60 p-3 rounded-xl border border-slate-600">
                                 <span class="block text-xs text-gray-400 mb-1">{{ \App\Models\Setting::get('label_f505_pendapatan', 'Berapa rata-rata pendapatan per bulan? (take home pay)') }}</span>
-                                <input type="number" name="f505_pendapatan_per_bulan" id="input_gaji_ya" value="{{ old('f505_pendapatan_per_bulan') }}" required class="inp text-sm">
+                                <input type="number" name="f505_pendapatan_per_bulan" id="input_gaji_ya" value="{{ old('f505_pendapatan_per_bulan') }}" {{ $f504locked ? 'disabled' : 'required' }} class="inp text-sm">
                             </div>
 
                         </div>
@@ -303,7 +304,7 @@
 
             <div class="mt-4">
                 <div class="flex items-start space-x-3">
-                    <input type="radio" name="f504_mendapat_pekerjaan_6_bulan" id="kerja_tidak" value="2" {{ old('f504_mendapat_pekerjaan_6_bulan') == '2' ? 'checked' : '' }} class="mt-1 w-4 h-4 text-amber-400">
+                    <input type="radio" name="f504_mendapat_pekerjaan_6_bulan" id="kerja_tidak" value="2" {{ (old('f504_mendapat_pekerjaan_6_bulan') == '2' || $f504locked) ? 'checked' : '' }} {{ $f504locked ? 'required' : '' }} class="mt-1 w-4 h-4 text-amber-400">
                     <label for="kerja_tidak" class="font-medium cursor-pointer w-full text-gray-200">
                         <span>{{ \App\Models\Setting::get('label_kerja_tidak', 'Tidak') }}</span>
                         
@@ -1155,13 +1156,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // F504 ("Apakah anda telah mendapatkan pekerjaan <= 6 bulan")
 
-        // tetap aktif dan WAJIB diisi untuk semua status, termasuk
+        // Status 5 (Tidak Kerja/Cari Kerja) atau 2 (Belum Memungkinkan Bekerja):
 
-        // Tidak Kerja/Cari Kerja (5) dan Belum Memungkinkan Bekerja (2).
+        // "Ya" dikunci, "Tidak" otomatis dipilih & wajib diisi.
 
-        if(radioYa) radioYa.disabled = false;
+        // Status lainnya: kedua opsi aktif & wajib dipilih salah satu.
 
-        if(radioTidak) radioTidak.disabled = false;
+        if (statusTerpilih === "5" || statusTerpilih === "2") {
+
+            if (radioYa) { radioYa.disabled = true; radioYa.checked = false; }
+
+            if (inputBulanYa) { inputBulanYa.disabled = true; inputBulanYa.required = false; }
+
+            if (inputGajiYa) { inputGajiYa.disabled = true; inputGajiYa.required = false; }
+
+            if (radioTidak) { radioTidak.disabled = false; radioTidak.checked = true; radioTidak.required = true; }
+
+        } else {
+
+            if (radioYa) { radioYa.disabled = false; }
+
+            if (radioTidak) { radioTidak.disabled = false; radioTidak.required = false; }
+
+        }
 
         logikaKunciWaktuTunggu(pertahankanNilai);
 

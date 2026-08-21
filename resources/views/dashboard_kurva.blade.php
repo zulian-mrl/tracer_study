@@ -6,6 +6,7 @@
     <title>{{ \App\Models\Setting::get('dashboard_judul_browser', 'Dashboard Analitik Admin - Tracer Study') }}</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, var(--ak-latar1) 0%, var(--ak-latar2) 50%, var(--ak-latar1) 100%);
@@ -99,6 +100,10 @@
                         {{ \App\Models\Setting::get('dashboard_nav_pengaturan', '⚙️ Pengaturan') }}
                     </a>
                 @endif
+                <a href="{{ route('master.index') }}"
+                   class="text-sm bg-slate-700/70 hover:bg-slate-600 px-4 py-2 rounded-lg border border-slate-500/50 inline-flex items-center gap-1.5">
+                    {{ \App\Models\Setting::get('dashboard_nav_master', '🗂 Master Alumni') }}
+                </a>
                 <button type="button"
                         onclick="openModalAlumni()"
                         class="text-sm bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-900 font-semibold px-4 py-2 rounded-lg shadow-lg transition duration-200">
@@ -127,6 +132,35 @@
     </nav>
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+
+        @if($alumniBelumImpor->isNotEmpty())
+            <!-- PERINGATAN: PENGISI KUESIONER YANG BELUM ADA DI MASTER ALUMNI -->
+            <div class="glass rounded-2xl border border-amber-500/50 bg-amber-950/40 p-4 sm:p-5 shadow-xl fade-up">
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl leading-none">⚠️</span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-amber-300">
+                            {{ $alumniBelumImpor->count() }} alumni sudah mengisi kuesioner tetapi datanya belum terdaftar di master alumni (belum diimpor lembaga).
+                        </p>
+                        <button type="button"
+                                onclick="document.getElementById('daftarBelumImpor').classList.toggle('hidden')"
+                                class="mt-2 text-xs font-semibold bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 px-3 py-1.5 rounded-lg border border-amber-500/40 transition">
+                            👥 Lihat / Sembunyikan Daftar
+                        </button>
+                        <ul id="daftarBelumImpor" class="hidden mt-3 space-y-1.5 text-xs text-gray-300 max-h-60 overflow-y-auto bg-slate-900/50 rounded-lg p-3 border border-slate-700/60">
+                            @foreach($alumniBelumImpor as $belum)
+                                <li class="flex flex-wrap gap-x-2">
+                                    <span class="font-mono font-semibold text-amber-200">{{ $belum->no_mahasiswa }}</span>
+                                    <span>—</span>
+                                    <span>{{ $belum->nama }}</span>
+                                    <span class="text-gray-500">({{ $belum->tahun_lulus }})</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         <!-- FILTER FORM -->
         <div class="glass rounded-2xl p-4 sm:p-6 shadow-xl fade-up">
@@ -194,6 +228,10 @@
                         </svg>
                         {{ \App\Models\Setting::get('dashboard_unduh_excel', 'Unduh Excel') }} {{ $tahunTerpilih ? \App\Models\Setting::get('dashboard_unduh_tahun', 'Tahun') . ' ' . $tahunTerpilih : \App\Models\Setting::get('dashboard_unduh_semua', '(Semua Tahun)') }}
                     </a>
+                    <button type="button" onclick="downloadPDF()" id="btnUnduhPdf" class="no-print inline-flex items-center gap-2 text-sm bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 font-bold px-4 py-2 rounded-lg border border-indigo-400/50 transition duration-150 shadow-lg">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Unduh PDF
+                    </button>
                 </div>
             </div>
 
@@ -826,6 +864,235 @@
                     labels: alasanLabels.length ? alasanLabels : ['Belum Ada Data'],
                     data: alasanData.length ? alasanData : [0], label: 'Frekuensi Alasan Terbanyak', axisY: true
                 }));
+
+                async function downloadPDF() {
+                    var btn = document.getElementById('btnUnduhPdf');
+                    var origHTML = btn.innerHTML;
+                    btn.innerHTML = '<svg class="w-4 h-4 text-white animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Memproses...';
+                    btn.disabled = true;
+                    btn.style.opacity = '0.7';
+                    var savedStates = [];
+
+                    try {
+                        if (!window.jspdf || !window.jspdf.jsPDF) {
+                            throw new Error('jsPDF belum ter-load. Coba muat ulang halaman.');
+                        }
+                        var jsPDF = window.jspdf.jsPDF;
+                        var pdf = new jsPDF('p', 'mm', 'a4');
+                        var PW = 210, PH = 297, M = 10, PAD = 5;
+                        var CW = PW - M * 2;
+                        var curY = M;
+
+                        var tahunVal = @js($tahunTerpilih);
+                        var prodiVal = @js($prodiTerpilih);
+                        var prodiLabels = @js($prodiLabels);
+                        var judulDashboard = @js(\App\Models\Setting::get('dashboard_judul', 'Analitik Tracer Study UMMY Solok')) || 'Dashboard Analitik';
+                        var totalAlumni = @js($totalAlumni) || 0;
+
+                        var judulChart = {
+                            status: @js(\App\Models\Setting::get('judul_chart_status')) || 'Status Kerja Alumni',
+                            pendapatan: @js(\App\Models\Setting::get('judul_chart_pendapatan')) || 'Pendapatan Alumni',
+                            perusahaan: @js(\App\Models\Setting::get('judul_chart_perusahaan')) || 'Perusahaan',
+                            dana: @js(\App\Models\Setting::get('judul_chart_dana')) || 'Sumber Dana',
+                            jabatan: @js(\App\Models\Setting::get('judul_chart_jabatan')) || 'Posisi Jabatan',
+                            tingkat: @js(\App\Models\Setting::get('judul_chart_tingkat')) || 'Tingkat Tempat Kerja',
+                            lokasi: @js(\App\Models\Setting::get('judul_chart_lokasi')) || 'Lokasi Kerja',
+                            lokasiKota: @js(\App\Models\Setting::get('judul_chart_lokasi_kota')) || 'Lokasi Kab/Kota',
+                            kuliah: @js(\App\Models\Setting::get('judul_chart_kuliah')) || 'Tempat Kuliah',
+                            biaya: @js(\App\Models\Setting::get('judul_chart_sumber_biaya')) || 'Sumber Biaya',
+                            prodi: @js(\App\Models\Setting::get('judul_chart_prodi')) || 'Program Studi',
+                            kompetensi: @js(\App\Models\Setting::get('judul_chart_kompetensi')) || 'Kompetensi',
+                            metode: @js(\App\Models\Setting::get('judul_chart_metode')) || 'Metode Belajar',
+                            waktu: @js(\App\Models\Setting::get('judul_chart_waktu')) || 'Waktu Cari Kerja',
+                            cara: @js(\App\Models\Setting::get('judul_chart_cara')) || 'Cara Cari Kerja',
+                            rasio: @js(\App\Models\Setting::get('judul_chart_rasio')) || 'Rasio Lamaran',
+                            keaktifan: @js(\App\Models\Setting::get('judul_chart_keaktifan')) || 'Keaktifan',
+                            alasan: @js(\App\Models\Setting::get('judul_chart_alasan')) || 'Alasan Pekerjaan'
+                        };
+
+                        Object.values(Chart.instances).forEach(function(c) {
+                            try {
+                                var orig = {
+                                    id: c.id,
+                                    devicePixelRatio: c.options.devicePixelRatio,
+                                    legendColor: c.options.plugins.legend.labels.color,
+                                    legendFont: JSON.parse(JSON.stringify(c.options.plugins.legend.labels.font)),
+                                    scales: {}
+                                };
+                                if (c.options.scales) {
+                                    Object.entries(c.options.scales).forEach(function(entry) {
+                                        var key = entry[0], s = entry[1];
+                                        orig.scales[key] = {
+                                            ticksColor: s.ticks ? s.ticks.color : undefined,
+                                            ticksFont: s.ticks && s.ticks.font ? JSON.parse(JSON.stringify(s.ticks.font)) : undefined,
+                                            gridColor: s.grid ? s.grid.color : undefined,
+                                            pointLabelsColor: s.pointLabels ? s.pointLabels.color : undefined,
+                                            pointLabelsFont: s.pointLabels && s.pointLabels.font ? JSON.parse(JSON.stringify(s.pointLabels.font)) : undefined
+                                        };
+                                    });
+                                }
+                                savedStates.push(orig);
+                                c.options.devicePixelRatio = 4;
+                                c.options.plugins.legend.labels.color = '#000';
+                                c.options.plugins.legend.labels.font = { family: "'Times New Roman', Times, serif", size: 12 };
+                                if (c.options.scales) {
+                                    Object.values(c.options.scales).forEach(function(s) {
+                                        if (s.ticks) { s.ticks.color = '#000'; s.ticks.font = { family: "'Times New Roman', Times, serif", size: 11 }; }
+                                        if (s.grid) s.grid.color = '#94a3b8';
+                                        if (s.pointLabels) { s.pointLabels.color = '#000'; s.pointLabels.font = { family: "'Times New Roman', Times, serif", size: 11 }; }
+                                    });
+                                }
+                                c.resize();
+                                c.update();
+                            } catch (e) {
+                                console.warn('Gagal siapkan chart ' + c.id + ':', e);
+                            }
+                        });
+
+                        await new Promise(function(r) { setTimeout(r, 800); });
+
+                        function cap(chart) { return chart ? chart.toBase64Image('image/jpeg', 1.0) : null; }
+                        function chH(chart, w) { return chart ? w * (chart.height / chart.width) : 0; }
+                        function cardTotalH(imgH) { return PAD + 8 + imgH + PAD; }
+
+                        function drawCard(x, y, w, imgData, imgH) {
+                            var totalH = cardTotalH(imgH);
+                            pdf.setDrawColor(226, 232, 240);
+                            pdf.setFillColor(255, 255, 255);
+                            pdf.roundedRect(x, y, w, totalH, 3, 3, 'FD');
+                            if (imgData) pdf.addImage(imgData, 'JPEG', x + PAD, y + PAD + 8, w - PAD * 2, imgH);
+                            return totalH;
+                        }
+
+                        function sanitize(text) {
+                            if (!text) return '';
+                            return text.replace(/[–—]/g, '-').replace(/['']/g, "'").replace(/[""]/g, '"').replace(/…/g, '...').replace(/[^\x20-\xFF]/g, '');
+                        }
+                        function drawTitle(x, y, w, text) {
+                            pdf.setFont('times', 'bold');
+                            pdf.setFontSize(11);
+                            pdf.setTextColor(51, 65, 85);
+                            pdf.text(sanitize(text) || '', x + PAD, y + PAD + 4);
+                        }
+
+                        function renderFull(canvasId, title, forceNewPage) {
+                            var chart = Chart.getChart(canvasId);
+                            if (!chart) return;
+                            var imgData = cap(chart);
+                            var imgW = CW - PAD * 2;
+                            var imgH = chH(chart, imgW);
+                            var totalH = cardTotalH(imgH);
+                            if (forceNewPage || curY + totalH > PH - M) { pdf.addPage(); curY = M; }
+                            drawCard(M, curY, CW, imgData, imgH);
+                            drawTitle(M, curY, CW, title);
+                            curY += totalH + 4;
+                        }
+
+                        function renderPair(cId1, title1, cId2, title2, forceNewPage) {
+                            var c1 = Chart.getChart(cId1);
+                            var c2 = Chart.getChart(cId2);
+                            if (!c1 && !c2) return;
+                            var gap = 6, halfW = (CW - gap) / 2, imgW = halfW - PAD * 2;
+                            var img1 = cap(c1), img2 = cap(c2);
+                            var h1 = chH(c1, imgW), h2 = chH(c2, imgW);
+                            var totalH = Math.max(cardTotalH(h1), cardTotalH(h2));
+                            if (forceNewPage || curY + totalH > PH - M) { pdf.addPage(); curY = M; }
+                            if (c1) { drawCard(M, curY, halfW, img1, h1); drawTitle(M, curY, halfW, title1); }
+                            if (c2) { drawCard(M + halfW + gap, curY, halfW, img2, h2); drawTitle(M + halfW + gap, curY, halfW, title2); }
+                            curY += totalH + 4;
+                        }
+
+                        function renderTwoOne(cId1, title1, cId2, title2, forceNewPage) {
+                            var c1 = Chart.getChart(cId1);
+                            var c2 = Chart.getChart(cId2);
+                            if (!c1 && !c2) return;
+                            var gap = 6, w1 = (CW - gap) * 2 / 3, w2 = CW - gap - w1;
+                            var img1 = cap(c1), img2 = cap(c2);
+                            var h1 = c1 ? (w1 - PAD * 2) * (c1.height / c1.width) : 0;
+                            var h2 = c2 ? (w2 - PAD * 2) * (c2.height / c2.width) : 0;
+                            var totalH = Math.max(cardTotalH(h1), cardTotalH(h2));
+                            if (forceNewPage || curY + totalH > PH - M) { pdf.addPage(); curY = M; }
+                            if (c1) { drawCard(M, curY, w1, img1, h1); drawTitle(M, curY, w1, title1); }
+                            if (c2) { drawCard(M + w1 + gap, curY, w2, img2, h2); drawTitle(M + w1 + gap, curY, w2, title2); }
+                            curY += totalH + 4;
+                        }
+
+                        pdf.setDrawColor(15, 23, 42);
+                        pdf.setLineWidth(0.5);
+                        pdf.line(M, M + 2, PW - M, M + 2);
+                        pdf.setFont('times', 'bold');
+                        pdf.setFontSize(16);
+                        pdf.setTextColor(15, 23, 42);
+                        pdf.text(sanitize(judulDashboard), PW / 2, M + 14, { align: 'center' });
+                        pdf.setFont('times', 'normal');
+                        pdf.setFontSize(10);
+                        var infoY = M + 22;
+                        var infoText = '';
+                        if (tahunVal) infoText += 'Tahun: ' + tahunVal;
+                        if (prodiVal && prodiLabels[prodiVal]) { if (infoText) infoText += '  |  '; infoText += 'Prodi: ' + prodiLabels[prodiVal]; }
+                        if (!infoText) infoText = 'Semua Data';
+                        pdf.text(sanitize(infoText), PW / 2, infoY, { align: 'center' }); infoY += 5;
+                        pdf.text(sanitize('Total Responden: ' + totalAlumni + ' Alumni  |  Dicetak: ' + new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })), PW / 2, infoY, { align: 'center' });
+                        pdf.line(M, infoY + 3, PW - M, infoY + 3);
+                        curY = M + 35;
+
+                        renderPair('chartStatusKerja', judulChart.status, 'chartPendapatan', judulChart.pendapatan, false);
+                        renderPair('chartPerusahaanKerja', judulChart.perusahaan, 'chartSumberDana', judulChart.dana, false);
+                        renderPair('chartPosisiJabatan', judulChart.jabatan, 'chartPilihTingkat', judulChart.tingkat, false);
+                        renderFull('chartLokasi', judulChart.lokasi, false);
+                        renderFull('chartLokasiKota', judulChart.lokasiKota, false);
+                        renderFull('chartTempatKuliah', judulChart.kuliah, false);
+                        renderPair('chartSumberBiayaLanjut', judulChart.biaya, 'chartProgramStudiStudi', judulChart.prodi, false);
+                        renderFull('chartKompetensi', judulChart.kompetensi, false);
+                        renderFull('chartMetodeBelajar', judulChart.metode, false);
+                        renderPair('chartWaktuCariKerja', judulChart.waktu, 'chartCaraCariKerja', judulChart.cara, false);
+                        renderTwoOne('chartRasioLamaran', judulChart.rasio, 'chartKeaktifan', judulChart.keaktifan, false);
+                        renderFull('chartAlasanTidakSesuai', judulChart.alasan, false);
+
+                        var namaFile = 'tracer_study';
+                        if (tahunVal) namaFile += '_tahun_' + tahunVal;
+                        if (prodiVal && prodiLabels[prodiVal]) {
+                            namaFile += '_prodi_' + prodiLabels[prodiVal].replace(/[^a-zA-Z0-9]/g, '_');
+                        } else if (!tahunVal && !prodiVal) {
+                            namaFile += '_semua';
+                        }
+                        namaFile += '.pdf';
+                        pdf.save(namaFile);
+
+                    } catch (err) {
+                        console.error('Gagal generate PDF:', err);
+                        alert('Gagal membuat PDF: ' + (err.message || err));
+                    } finally {
+                        savedStates.forEach(function(orig) {
+                            try {
+                                var c = Chart.getChart(orig.id);
+                                if (!c) return;
+                                c.options.devicePixelRatio = orig.devicePixelRatio;
+                                c.options.plugins.legend.labels.color = orig.legendColor;
+                                c.options.plugins.legend.labels.font = orig.legendFont;
+                                if (c.options.scales && orig.scales) {
+                                    Object.entries(orig.scales).forEach(function(entry) {
+                                        var key = entry[0], s = entry[1];
+                                        if (c.options.scales[key]) {
+                                            if (s.ticksColor !== undefined) c.options.scales[key].ticks.color = s.ticksColor;
+                                            if (s.ticksFont !== undefined) c.options.scales[key].ticks.font = s.ticksFont;
+                                            if (s.gridColor !== undefined) c.options.scales[key].grid.color = s.gridColor;
+                                            if (s.pointLabelsColor !== undefined) c.options.scales[key].pointLabels.color = s.pointLabelsColor;
+                                            if (s.pointLabelsFont !== undefined) c.options.scales[key].pointLabels.font = s.pointLabelsFont;
+                                        }
+                                    });
+                                }
+                                c.resize();
+                                c.update();
+                            } catch (e) {
+                                console.warn('Gagal restore chart ' + orig.id + ':', e);
+                            }
+                        });
+                        btn.innerHTML = origHTML;
+                        btn.disabled = false;
+                        btn.style.opacity = '';
+                    }
+                }
             </script>
         @endif
     </div>

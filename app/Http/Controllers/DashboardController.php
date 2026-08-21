@@ -75,6 +75,13 @@ class DashboardController extends Controller
         // Super admin utama (akun is_super dengan id terkecil) untuk kunci menu Pengaturan
         $utamaId = DB::table('users')->where('is_super', 1)->orderBy('id')->value('id');
 
+        // Peringatan: pengisi kuesioner yang NIM-nya tidak ada di master_alumnis (belum diimpor lembaga)
+        $alumniBelumImpor = DB::table('kuesioner_alumnis as k')
+            ->leftJoin('master_alumnis as m', 'm.no_mahasiswa', '=', 'k.no_mahasiswa')
+            ->whereNull('m.no_mahasiswa')
+            ->orderBy('k.created_at')
+            ->get(['k.no_mahasiswa', 'k.nama', 'k.tahun_lulus', 'k.kode_prodi']);
+
         // Buat query dasar pencarian data kuesioner
         $query = DB::table('kuesioner_alumnis');
 
@@ -561,6 +568,7 @@ class DashboardController extends Controller
             'kompetensiDiperlukan', 'waktuCariKerja', 'caraCariKerja', 'avgLamaran', 'keaktifan', 'alasanTidakSesuai', 'daftarNama', 'namaPerGrafik',
             'metodeSangatBesar', 'metodeBesar', 'metodeCukupBesar', 'metodeKurang', 'metodeTidakSama',
             'kartuBekerja', 'kartuLanjut',
+            'alumniBelumImpor',
             'utamaId'
         ));
     }

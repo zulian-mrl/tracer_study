@@ -11,6 +11,9 @@ class MasterAlumni extends Model
 
     // Menentukan nama tabel secara spesifik
     protected $table = 'master_alumnis';
+    protected $primaryKey = 'no_mahasiswa';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     // Daftarkan kolom yang boleh diisi massal saat proses import Excel
     protected $fillable = [

@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\MasterAlumniController;
 use App\Http\Controllers\RecoveryController;
 
 Route::redirect('/', '/kuesioner');
@@ -30,6 +31,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/export-kuesioner-excel', [DashboardController::class, 'exportExcel'])->name('kuesioner.export');
     Route::get('/dashboard-kurva', [DashboardController::class, 'dashboard'])->name('kuesioner.dashboard');
     Route::post('/admin/alumni/import', [DashboardController::class, 'import'])->name('alumni.import');
+    Route::get('/admin/master-alumni', [MasterAlumniController::class, 'index'])->name('master.index');
+    Route::post('/admin/master-alumni/{master_alumni}/update', [MasterAlumniController::class, 'update'])->name('master.update');
+    Route::post('/admin/master-alumni/{master_alumni}/hapus', [MasterAlumniController::class, 'destroy'])->name('master.destroy');
     Route::get('/admin/pengaturan', [SettingsController::class, 'index'])->name('pengaturan.index');
     Route::post('/admin/pengaturan', [SettingsController::class, 'update'])->name('pengaturan.update');
     Route::post('/admin/pengaturan/wilayah/provinsi', [SettingsController::class, 'wilayahProvinsiStore'])->name('wilayah.provinsi.store');

@@ -108,6 +108,10 @@ DB_PASSWORD=password_user_db_kamu
 SESSION_DRIVER=file
 QUEUE_CONNECTION=database
 CACHE_STORE=database
+# Kunci tambahan bila pakai HTTPS:
+SESSION_SECURE_COOKIE=true
+# Kecilkan log di produksi (opsional):
+LOG_LEVEL=warning
 
 # Akun admin awal (dipakai hanya kalau menjalankan db:seed --class=AdminUserSeeder)
 ADMIN_EMAIL=admin@umm.ac.id
@@ -208,7 +212,7 @@ terbuka.
 - [ ] Ganti password default admin.
 - [ ] Set kode pemulihan (menu Kelola Akun → Kode Pemulihan) agar tidak terkunci.
 - [ ] Pastikan `.env` tidak bisa diakses browser (posisi di luar `public_html`).
-- [ ] Jika pakai HTTPS, aktifkan **SSL** di cPanel dan pastikan `APP_URL` memakai `https`.
+- [ ] Jika pakai HTTPS, aktifkan **SSL** di cPanel dan pastikan `APP_URL` memakai `https` (dan set `SESSION_SECURE_COOKIE=true`).
 
 ---
 

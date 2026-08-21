@@ -27,94 +27,95 @@ class KuesionerAlumniExport extends DefaultValueBinder implements FromCollection
         // DATA UTAMA RESPONDEN (Dibuat Berurutan Sesuai Format Gambar 2)
         if (isset($this->data['alumniRaw'])) {
             foreach ($this->data['alumniRaw'] as $index => $alumni) {
+                $a = (array) $alumni;
                 $rows[] = [
                     $index + 1,
-                    $alumni->kode_PT ?? $alumni->{'Kode Pt'} ?? '0',
-                    $alumni->kode_prodi ?? $alumni->{'Kode Prodi'} ?? '0',
-                    $alumni->no_mahasiswa ?? $alumni->{'Nomor Mhs'} ?? '0', // Kolom D
-                    $alumni->nama ?? '0',
-                    $alumni->no_hp ?? $alumni->Hp ?? '0',
-                    $alumni->email ?? $alumni->Email ?? '0',
-                    $alumni->tahun_lulus ?? $alumni->{'Tahun Lulus'} ?? '0',
-                    $alumni->nik ?? $alumni->NIK ?? '0',                    // Kolom I
-                    $alumni->npwp ?? $alumni->NPWP ?? '0',
-                    $alumni->f8_status_saat_ini ?? $alumni->f8 ?? '0',
-                    $alumni->f502_bulan_dapat_kerja ?? $alumni->f506_bulan_dapat_kerja_setelahnya ?? $alumni->f502 ?? '0',
-                    $alumni->f505_pendapatan_per_bulan ?? $alumni->f505 ?? '0',
-                    $alumni->f510_provinsi ?? $alumni->f5a1 ?? '0',
-                    $alumni->f510_kab_kota ?? $alumni->f5a2 ?? '0',
-                    $alumni->f11_jenis_instansi ?? $alumni->f1101 ?? '0',
-                    $alumni->f11_jenis_instansi_lainnya ?? $alumni->f1102 ?? '0',
-                    $alumni->f5b_nama_perusahaan ?? $alumni->f5b ?? '0',
-                    $this->f5cKode($alumni->f5c_posisi_wiraswasta ?? $alumni->f5c ?? '0'),
-                    $this->f5dKode($alumni->f5d_tingkat_tempat_kerja ?? $alumni->f5d ?? '0'),
-                    $alumni->f18a_sumber_biaya_studi ?? $alumni->f18a ?? '0',
-                    $alumni->f18b_perguruan_tinggi_studi ?? $alumni->f18b ?? '0',
-                    $alumni->f18c_program_studi ?? $alumni->f18c ?? '0',
-                    $alumni->f18d_tanggal_masuk ?? $alumni->f18d ?? '0',
-                    $alumni->f12_sumber_biaya_kuliah ?? $alumni->f1201 ?? '0',
-                    $alumni->f12_sumber_biaya_kuliah_lainnya ?? $alumni->f1202 ?? '0',
-                    $alumni->f14_erat_hubungan_studi ?? $alumni->f14 ?? '0',
-                    $alumni->f15_tingkat_paling_tepat ?? $alumni->f15 ?? '0',
-                    $alumni->f1701_A ?? $alumni->f1761 ?? '0',
-                    $alumni->f1701_B ?? $alumni->f1762 ?? '0',
-                    $alumni->f1702_A ?? $alumni->f1763 ?? '0',
-                    $alumni->f1702_B ?? $alumni->f1764 ?? '0',
-                    $alumni->f1703_A ?? $alumni->f1765 ?? '0',
-                    $alumni->f1703_B ?? $alumni->f1766 ?? '0',
-                    $alumni->f1704_A ?? $alumni->f1767 ?? '0',
-                    $alumni->f1704_B ?? $alumni->f1768 ?? '0',
-                    $alumni->f1705_A ?? $alumni->f1769 ?? '0',
-                    $alumni->f1705_B ?? $alumni->f1770 ?? '0',
-                    $alumni->f1706_A ?? $alumni->f1771 ?? '0',
-                    $alumni->f1706_B ?? $alumni->f1772 ?? '0',
-                    $alumni->f1707_A ?? $alumni->f1773 ?? '0',
-                    $alumni->f1707_B ?? $alumni->f1774 ?? '0',
-                    $alumni->f21_perkuliahan ?? $alumni->f21 ?? '0',
-                    $alumni->f22_demonstrasi ?? $alumni->f22 ?? '0',
-                    $alumni->f23_riset ?? $alumni->f23 ?? '0',
-                    $alumni->f24_magang ?? $alumni->f24 ?? '0',
-                    $alumni->f25_praktikum ?? $alumni->f25 ?? '0',
-                    $alumni->f26_kerja_lapangan ?? $alumni->f26 ?? '0',
-                    $alumni->f27_diskusi ?? $alumni->f27 ?? '0',
-                    $alumni->f301_kapan_mencari_pekerjaan ?? $alumni->f301 ?? '0',
-                    $alumni->f302_bulan_sebelum_lulus ?? $alumni->f302 ?? '0',
-                    $alumni->f303_bulan_setelah_lulus ?? $alumni->f303 ?? '0',
-                    $alumni->f401_iklan_koran_brosur ?? $alumni->f401 ?? '0',
-                    $alumni->f402_melamar_tanpa_lowongan ?? $alumni->f402 ?? '0',
-                    $alumni->f403_bursa_pameran_online ?? $alumni->f403 ?? '0',
-                    $alumni->f404_internet_iklan_online ?? $alumni->f404 ?? '0',
-                    $alumni->f405_dihubungi_perusahaan ?? $alumni->f405 ?? '0',
-                    $alumni->f406_menghubungi_kemenakertrans ?? $alumni->f406 ?? '0',
-                    $alumni->f407_agen_tenaga_kerja ?? $alumni->f407 ?? '0',
-                    $alumni->f408_karir_fakultas_universitas ?? $alumni->f408 ?? '0',
-                    $alumni->f409_kantor_kemanusiaan_alumni ?? $alumni->f409 ?? '0',
-                    $alumni->f410_membangun_jejaring_kuliah ?? $alumni->f410 ?? '0',
-                    $alumni->f411_melalui_relasi ?? $alumni->f411 ?? '0',
-                    $alumni->f412_membangun_bisnis_sendiri ?? $alumni->f412 ?? '0',
-                    $alumni->f413_penempatan_kerja_magang ?? $alumni->f413 ?? '0',
-                    $alumni->f414_tempat_kerja_sama_kuliah ?? $alumni->f414 ?? '0',
-                    $alumni->f415_lainnya ?? $alumni->f415 ?? '0',
-                    $alumni->f416_tuliskan ?? $alumni->f416 ?? '0',
-                    strval($alumni->f6_perusahaan_dilamar ?? 0),
-                    strval($alumni->f7_perusahaan_merespon ?? 0),
-                    strval($alumni->f7a_mengundang_wawancara ?? 0),
-                    $alumni->f10_aktif_mencari_kerja ?? $alumni->f1001 ?? '0',
-                    $alumni->f10_lainnya ?? $alumni->f1002 ?? '0',
-                    $alumni->f1601_pertanyaan_tidak_sesuai ?? $alumni->f1601 ?? '0',
-                    $alumni->f1602_belum_dapat_kerja_sesuai ?? $alumni->f1602 ?? '0',
-                    $alumni->f1603_prospek_karir_baik ?? $alumni->f1603 ?? '0',
-                    $alumni->f1604_suka_area_kerja_tersebut ?? $alumni->f1604 ?? '0',
-                    $alumni->f1605_dipromosikan_posisi_lain ?? $alumni->f1605 ?? '0',
-                    $alumni->f1606_pendapatan_lebih_tinggi ?? $alumni->f1606 ?? '0',
-                    $alumni->f1607_pekerjaan_lebih_aman ?? $alumni->f1607 ?? '0',
-                    $alumni->f1608_pekerjaan_lebih_menarik ?? $alumni->f1608 ?? '0',
-                    $alumni->f1609_mungkinkan_kerja_tambahan ?? $alumni->f1609 ?? '0',
-                    $alumni->f1610_lokasi_dekat_rumah ?? $alumni->f1610 ?? '0',
-                    $alumni->f1611_menjamin_kebutuhan_keluarga ?? $alumni->f1611 ?? '0',
-                    $alumni->f1612_awal_menitip_karir ?? $alumni->f1612 ?? '0',
-                    $alumni->f1613_lainnya ?? $alumni->f1613 ?? '0',
-                    $alumni->f1614_tuliskan ?? $alumni->f1614 ?? '0',
+                    $this->n($a['kode_PT'] ?? null, $a['Kode Pt'] ?? null),
+                    $this->n($a['kode_prodi'] ?? null, $a['Kode Prodi'] ?? null),
+                    $this->n($a['no_mahasiswa'] ?? null, $a['Nomor Mhs'] ?? null), // Kolom D
+                    $this->n($a['nama'] ?? null),
+                    $this->n($a['no_hp'] ?? null, $a['Hp'] ?? null),
+                    $this->n($a['email'] ?? null, $a['Email'] ?? null),
+                    $this->n($a['tahun_lulus'] ?? null, $a['Tahun Lulus'] ?? null),
+                    $this->n($a['nik'] ?? null, $a['NIK'] ?? null),          // Kolom I
+                    $this->n($a['npwp'] ?? null, $a['NPWP'] ?? null),
+                    $this->n($a['f8_status_saat_ini'] ?? null, $a['f8'] ?? null),
+                    $this->n($a['f502_bulan_dapat_kerja'] ?? null, $a['f506_bulan_dapat_kerja_setelahnya'] ?? null, $a['f502'] ?? null),
+                    $this->n($a['f505_pendapatan_per_bulan'] ?? null, $a['f505'] ?? null),
+                    $this->n($a['f510_provinsi'] ?? null, $a['f5a1'] ?? null),
+                    $this->n($a['f510_kab_kota'] ?? null, $a['f5a2'] ?? null),
+                    $this->n($a['f11_jenis_instansi'] ?? null, $a['f1101'] ?? null),
+                    $this->n($a['f11_jenis_instansi_lainnya'] ?? null, $a['f1102'] ?? null),
+                    $this->n($a['f5b_nama_perusahaan'] ?? null, $a['f5b'] ?? null),
+                    $this->f5cKode($this->n($a['f5c_posisi_wiraswasta'] ?? null, $a['f5c'] ?? null)),
+                    $this->f5dKode($this->n($a['f5d_tingkat_tempat_kerja'] ?? null, $a['f5d'] ?? null)),
+                    $this->n($a['f18a_sumber_biaya_studi'] ?? null, $a['f18a'] ?? null),
+                    $this->n($a['f18b_perguruan_tinggi_studi'] ?? null, $a['f18b'] ?? null),
+                    $this->n($a['f18c_program_studi'] ?? null, $a['f18c'] ?? null),
+                    $this->n($a['f18d_tanggal_masuk'] ?? null, $a['f18d'] ?? null),
+                    $this->n($a['f12_sumber_biaya_kuliah'] ?? null, $a['f1201'] ?? null),
+                    $this->n($a['f12_sumber_biaya_kuliah_lainnya'] ?? null, $a['f1202'] ?? null),
+                    $this->n($a['f14_erat_hubungan_studi'] ?? null, $a['f14'] ?? null),
+                    $this->n($a['f15_tingkat_paling_tepat'] ?? null, $a['f15'] ?? null),
+                    $this->n($a['f1701_A'] ?? null, $a['f1761'] ?? null),
+                    $this->n($a['f1701_B'] ?? null, $a['f1762'] ?? null),
+                    $this->n($a['f1702_A'] ?? null, $a['f1763'] ?? null),
+                    $this->n($a['f1702_B'] ?? null, $a['f1764'] ?? null),
+                    $this->n($a['f1703_A'] ?? null, $a['f1765'] ?? null),
+                    $this->n($a['f1703_B'] ?? null, $a['f1766'] ?? null),
+                    $this->n($a['f1704_A'] ?? null, $a['f1767'] ?? null),
+                    $this->n($a['f1704_B'] ?? null, $a['f1768'] ?? null),
+                    $this->n($a['f1705_A'] ?? null, $a['f1769'] ?? null),
+                    $this->n($a['f1705_B'] ?? null, $a['f1770'] ?? null),
+                    $this->n($a['f1706_A'] ?? null, $a['f1771'] ?? null),
+                    $this->n($a['f1706_B'] ?? null, $a['f1772'] ?? null),
+                    $this->n($a['f1707_A'] ?? null, $a['f1773'] ?? null),
+                    $this->n($a['f1707_B'] ?? null, $a['f1774'] ?? null),
+                    $this->n($a['f21_perkuliahan'] ?? null, $a['f21'] ?? null),
+                    $this->n($a['f22_demonstrasi'] ?? null, $a['f22'] ?? null),
+                    $this->n($a['f23_riset'] ?? null, $a['f23'] ?? null),
+                    $this->n($a['f24_magang'] ?? null, $a['f24'] ?? null),
+                    $this->n($a['f25_praktikum'] ?? null, $a['f25'] ?? null),
+                    $this->n($a['f26_kerja_lapangan'] ?? null, $a['f26'] ?? null),
+                    $this->n($a['f27_diskusi'] ?? null, $a['f27'] ?? null),
+                    $this->n($a['f301_kapan_mencari_pekerjaan'] ?? null, $a['f301'] ?? null),
+                    $this->n($a['f302_bulan_sebelum_lulus'] ?? null, $a['f302'] ?? null),
+                    $this->n($a['f303_bulan_setelah_lulus'] ?? null, $a['f303'] ?? null),
+                    $this->n($a['f401_iklan_koran_brosur'] ?? null, $a['f401'] ?? null),
+                    $this->n($a['f402_melamar_tanpa_lowongan'] ?? null, $a['f402'] ?? null),
+                    $this->n($a['f403_bursa_pameran_online'] ?? null, $a['f403'] ?? null),
+                    $this->n($a['f404_internet_iklan_online'] ?? null, $a['f404'] ?? null),
+                    $this->n($a['f405_dihubungi_perusahaan'] ?? null, $a['f405'] ?? null),
+                    $this->n($a['f406_menghubungi_kemenakertrans'] ?? null, $a['f406'] ?? null),
+                    $this->n($a['f407_agen_tenaga_kerja'] ?? null, $a['f407'] ?? null),
+                    $this->n($a['f408_karir_fakultas_universitas'] ?? null, $a['f408'] ?? null),
+                    $this->n($a['f409_kantor_kemanusiaan_alumni'] ?? null, $a['f409'] ?? null),
+                    $this->n($a['f410_membangun_jejaring_kuliah'] ?? null, $a['f410'] ?? null),
+                    $this->n($a['f411_melalui_relasi'] ?? null, $a['f411'] ?? null),
+                    $this->n($a['f412_membangun_bisnis_sendiri'] ?? null, $a['f412'] ?? null),
+                    $this->n($a['f413_penempatan_kerja_magang'] ?? null, $a['f413'] ?? null),
+                    $this->n($a['f414_tempat_kerja_sama_kuliah'] ?? null, $a['f414'] ?? null),
+                    $this->n($a['f415_lainnya'] ?? null, $a['f415'] ?? null),
+                    $this->n($a['f416_tuliskan'] ?? null, $a['f416'] ?? null),
+                    $this->n($a['f6_perusahaan_dilamar'] ?? null),
+                    $this->n($a['f7_perusahaan_merespon'] ?? null),
+                    $this->n($a['f7a_mengundang_wawancara'] ?? null),
+                    $this->n($a['f10_aktif_mencari_kerja'] ?? null, $a['f1001'] ?? null),
+                    $this->n($a['f10_lainnya'] ?? null, $a['f1002'] ?? null),
+                    $this->n($a['f1601_pertanyaan_tidak_sesuai'] ?? null, $a['f1601'] ?? null),
+                    $this->n($a['f1602_belum_dapat_kerja_sesuai'] ?? null, $a['f1602'] ?? null),
+                    $this->n($a['f1603_prospek_karir_baik'] ?? null, $a['f1603'] ?? null),
+                    $this->n($a['f1604_suka_area_kerja_tersebut'] ?? null, $a['f1604'] ?? null),
+                    $this->n($a['f1605_dipromosikan_posisi_lain'] ?? null, $a['f1605'] ?? null),
+                    $this->n($a['f1606_pendapatan_lebih_tinggi'] ?? null, $a['f1606'] ?? null),
+                    $this->n($a['f1607_pekerjaan_lebih_aman'] ?? null, $a['f1607'] ?? null),
+                    $this->n($a['f1608_pekerjaan_lebih_menarik'] ?? null, $a['f1608'] ?? null),
+                    $this->n($a['f1609_mungkinkan_kerja_tambahan'] ?? null, $a['f1609'] ?? null),
+                    $this->n($a['f1610_lokasi_dekat_rumah'] ?? null, $a['f1610'] ?? null),
+                    $this->n($a['f1611_menjamin_kebutuhan_keluarga'] ?? null, $a['f1611'] ?? null),
+                    $this->n($a['f1612_awal_menitip_karir'] ?? null, $a['f1612'] ?? null),
+                    $this->n($a['f1613_lainnya'] ?? null, $a['f1613'] ?? null),
+                    $this->n($a['f1614_tuliskan'] ?? null, $a['f1614'] ?? null),
                 ];
             }
         }
@@ -122,11 +123,32 @@ class KuesionerAlumniExport extends DefaultValueBinder implements FromCollection
         return collect($rows);
     }
 
+    // Ambil nilai jawaban pertama yang benar-benar terisi.
+    // NULL, string kosong, atau properti yang tidak ada otomatis diganti '0'
+    private function n(...$kandidat): string
+    {
+        foreach ($kandidat as $nilai) {
+            if ($nilai !== null && trim((string) $nilai) !== '') {
+                return (string) $nilai;
+            }
+        }
+
+        return '0';
+    }
+
     // Mengunci cell yang berpotensi kehilangan angka 0 di depan / jadi notasi ilmiah
     public function bindValue(Cell $cell, $value)
     {
         // D = Nomor Mhs (NIM), F = Hp (08xxx), I = NIK, J = NPWP (15 digit)
         if (in_array($cell->getColumn(), ['D', 'F', 'I', 'J'], true)) {
+            $cell->setValueExplicit($value, DataType::TYPE_STRING);
+
+            return true;
+        }
+
+        // Cegah formula injection: nilai teks berawalan =, +, -, @ bisa dianggap rumus
+        // oleh Excel (mis. =HYPERLINK(...) atau DDE). Paksa ditulis sebagai teks biasa.
+        if (is_string($value) && $value !== '' && in_array($value[0], ['=', '+', '-', '@'], true)) {
             $cell->setValueExplicit($value, DataType::TYPE_STRING);
 
             return true;
